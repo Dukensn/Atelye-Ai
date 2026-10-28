@@ -283,14 +283,3 @@ body.app header.top img { height: 30px; }
 body.app .player { border-radius: 8px; }
 @media (max-width: 640px) { body.app .player { border-radius: 0; margin: 0 -16px; } }
 body.app .msg { font-weight: 500; }
-
-/* Landing: modules */
-.mgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-.mgrid h3 { font-size: 17px; margin: 12px 0 4px; }
-.mgrid p { color: var(--mute); margin: 0 0 8px; font-size: 15px; }
-.mgrid ul { margin: 0; padding-left: 18px; color: var(--mute); font-size: 14px; line-height: 1.7; }
-.mc { position: relative; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #111; }
-.mc img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.mt { position: absolute; top: 8px; left: 8px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: rgba(0,0,0,.75); color: #fff; padding: 3px 7px; border-radius: 4px; }
-.mt.dispo { background: #fff; color: #000; }
-@media (max-width: 760px) { .mgrid { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
