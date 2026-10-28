@@ -25,7 +25,9 @@
     <span class="tag">Espas elèv</span>
     <h1 id="bonjou">Bonjou!</h1>
     <p class="lead">Suiv etap yo nan lòd. Pran tan ou: chak etap gen yon sèl objektif.</p>
-    <div id="mesaj" class="card hidden"></div>
+    <a id="kominote" class="btn wa full hidden" target="_blank" rel="noopener" style="margin-top:8px">💬 Rejwenn kominote WhatsApp la</a>
+    <p id="kominote-tex" class="small mute hidden" style="margin-top:8px">Se la w ap jwenn enfòmasyon, repons ak akonpayman.</p>
+    <div id="mesaj" class="card hidden" style="margin-top:16px"></div>
 
     <h2 style="margin-top:32px">Videyo yo</h2>
     <div id="videyo"></div>
@@ -90,6 +92,7 @@ async function chaje() {
   if (!r.ok) throw new Error();
   const { non, kontni: k } = await r.json();
   $("#bonjou").textContent = `Bonjou ${non}!`;
+  if (k.lyen_kominote) { $("#kominote").href = k.lyen_kominote; $("#kominote").classList.remove("hidden"); $("#kominote-tex").classList.remove("hidden"); }
   if (k.mesaj) { $("#mesaj").textContent = k.mesaj; $("#mesaj").classList.remove("hidden"); }
   $("#videyo").append(...k.videyo.map(videyo));
   $("#lyen").append(

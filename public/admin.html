@@ -42,6 +42,7 @@
       <label>Lyen 7 jou Claude</label><input name="lyen_claude" type="url">
       <label>Lyen zouti a (GitHub)</label><input name="lyen_zouti" type="url">
       <label>Lyen gid la</label><input name="lyen_gid" type="url">
+      <label>Lyen kominote WhatsApp la</label><input name="lyen_kominote" type="url" placeholder="https://chat.whatsapp.com/…">
       <label>Mesaj pou elèv yo <span class="mute">(si w vle)</span></label><textarea name="mesaj" rows="3"></textarea>
       <div id="k-msg" class="msg hidden"></div>
       <button class="btn full" style="margin-top:16px">Anrejistre</button>
@@ -127,7 +128,7 @@ function ranpliKontni(k) {
   const f = $("#kontni");
   f.v0t.value = k.videyo[0]?.tit || ""; f.v0u.value = k.videyo[0]?.url || "";
   f.v1t.value = k.videyo[1]?.tit || ""; f.v1u.value = k.videyo[1]?.url || "";
-  f.lyen_claude.value = k.lyen_claude; f.lyen_zouti.value = k.lyen_zouti; f.lyen_gid.value = k.lyen_gid; f.mesaj.value = k.mesaj;
+  f.lyen_claude.value = k.lyen_claude; f.lyen_zouti.value = k.lyen_zouti; f.lyen_gid.value = k.lyen_gid; f.lyen_kominote.value = k.lyen_kominote || ""; f.mesaj.value = k.mesaj;
 }
 
 async function rechaje() {
@@ -155,7 +156,7 @@ $("#kontni").addEventListener("submit", async (ev) => {
   const f = ev.target, m = $("#k-msg");
   const kontni = {
     videyo: [{ tit: f.v0t.value, url: f.v0u.value }, { tit: f.v1t.value, url: f.v1u.value }],
-    lyen_claude: f.lyen_claude.value, lyen_zouti: f.lyen_zouti.value, lyen_gid: f.lyen_gid.value, mesaj: f.mesaj.value,
+    lyen_claude: f.lyen_claude.value, lyen_zouti: f.lyen_zouti.value, lyen_gid: f.lyen_gid.value, lyen_kominote: f.lyen_kominote.value, mesaj: f.mesaj.value,
   };
   try { await api("POST", { aksyon: "kontni", kontni }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; }
   catch (e) { m.className = "msg err"; m.textContent = e.message; }
