@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import {
-  KONTNI_DEFO, asireKod, efase, ekri, json, kalkileAfilye, kontni, li, netwaye, paramet, seAdmin,
+  asireKod, efase, ekri, json, kalkileAfilye, kontni, li, netwaye, paramet, seAdmin,
   telefonWhatsApp, toutEnskripsyon, toutRetre,
 } from "../lib/store.js";
 
@@ -66,19 +66,30 @@ export async function POST(req) {
       const x = netwaye(v, 500);
       return x === "" || /^https:\/\//.test(x) ? x : null;
     };
-    const videyo = (Array.isArray(k.videyo) ? k.videyo : KONTNI_DEFO.videyo).slice(0, 6).map((v) => ({
-      tit: netwaye(v?.tit, 120),
-      url: url(v?.url),
+    const imaj = (v) => {
+      const x = netwaye(v, 500);
+      return x === "" || /^https:\/\//.test(x) || /^\/kouveti\/[\w.-]+$/.test(x) ? x : null;
+    };
+    const moduls = (Array.isArray(k.moduls) ? k.moduls : []).slice(0, 20).map((m, i) => ({
+      id: netwaye(m?.id, 40).replace(/[^\w-]/g, "") || `m${Date.now()}${i}`,
+      tit: netwaye(m?.tit, 100),
+      deskripsyon: netwaye(m?.deskripsyon, 600),
+      kouveti: imaj(m?.kouveti),
+      estati: m?.estati === "byento" ? "byento" : "disponib",
+      aprann: (Array.isArray(m?.aprann) ? m.aprann : []).map((x) => netwaye(x, 120)).filter(Boolean).slice(0, 12),
+      leson: (Array.isArray(m?.leson) ? m.leson : []).slice(0, 50).map((l) => ({ tit: netwaye(l?.tit, 120), url: url(l?.url) })),
     }));
+    if (moduls.some((m) => !m.tit)) return json({ ere: "Chak modil bezwen yon tit." }, 400);
     const nouvo = {
-      videyo,
+      moduls,
       lyen_claude: url(k.lyen_claude),
       lyen_zouti: url(k.lyen_zouti),
       lyen_gid: url(k.lyen_gid),
       lyen_kominote: url(k.lyen_kominote),
       mesaj: netwaye(k.mesaj, 1000),
     };
-    if ([nouvo.lyen_claude, nouvo.lyen_zouti, nouvo.lyen_gid, nouvo.lyen_kominote, ...videyo.map((v) => v.url)].some((x) => x === null))
+    const lyen = [nouvo.lyen_claude, nouvo.lyen_zouti, nouvo.lyen_gid, nouvo.lyen_kominote, ...moduls.flatMap((m) => m.leson.map((l) => l.url))];
+    if (lyen.some((x) => x === null) || moduls.some((m) => m.kouveti === null))
       return json({ ere: "Chak lyen dwe kòmanse ak https://" }, 400);
     await ekri("kontni.json", nouvo);
     return json({ ok: true, kontni: nouvo });

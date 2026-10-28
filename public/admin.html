@@ -54,12 +54,11 @@
     </form>
 
     <form id="kontni" class="card hidden">
-      <h2 style="font-size:20px">Kontni espas elèv la</h2>
-      <p class="mute small">Kole lyen yo isit la. Elèv yo wè chanjman yo lamenm.</p>
-      <label>Tit videyo 1</label><input name="v0t">
-      <label>Lyen videyo 1 (YouTube)</label><input name="v0u" type="url" placeholder="https://youtu.be/…">
-      <label>Tit videyo 2</label><input name="v1t">
-      <label>Lyen videyo 2 (YouTube)</label><input name="v1u" type="url" placeholder="https://youtu.be/…">
+      <h2 style="font-size:20px">Modil ak leson</h2>
+      <p class="mute small">Chak modil gen yon imaj kouvèti, yon deskripsyon, sa elèv la ap aprann, ak leson yo (lyen YouTube). Mete « Byento » pou yon modil ki poko pare. Elèv yo wè chanjman yo lamenm.</p>
+      <div id="moduls"></div>
+      <button type="button" class="btn sm light" id="m-add" style="margin:4px 0 8px">+ Ajoute yon modil</button>
+      <h3 style="margin-top:20px">Lyen yo</h3>
       <label>Lyen 7 jou Claude</label><input name="lyen_claude" type="url">
       <label>Lyen zouti a (GitHub)</label><input name="lyen_zouti" type="url">
       <label>Lyen gid la</label><input name="lyen_gid" type="url">
@@ -212,10 +211,50 @@ function afiche() {
   else lis.append(...sa.map(kat));
 }
 
+// Module editor: one card per module, lessons as title + YouTube link rows.
+let MOD = [];
+const KOUVETI = ["/kouveti/stickman.jpg", "/kouveti/motion.jpg", "/kouveti/higgsfield.jpg"];
+function editModil() {
+  const box = $("#moduls"); box.replaceChildren();
+  MOD.forEach((m, i) => {
+    const inp = (lab, val, set, ex = {}) => { const x = el(ex.tag || "input", { value: val ?? "", ...ex.p }); for (const [k, v] of Object.entries(ex.attr || {})) x.setAttribute(k, v); x.oninput = () => set(x.value); return [el("label", { textContent: lab }), x]; };
+    const leson = el("div");
+    const fèLeson = () => {
+      leson.replaceChildren(...m.leson.map((l, j) => {
+        const t = el("input", { value: l.tit, placeholder: `Tit leson ${j + 1}` }); t.oninput = () => (l.tit = t.value);
+        const u = el("input", { value: l.url, placeholder: "https://youtu.be/…", type: "url" }); u.oninput = () => (l.url = u.value);
+        const x = el("button", { type: "button", className: "btn sm light", textContent: "Retire" }); x.onclick = () => { m.leson.splice(j, 1); fèLeson(); };
+        const mo = el("button", { type: "button", className: "btn sm light", textContent: "↑" }); mo.onclick = () => { if (j) { [m.leson[j - 1], m.leson[j]] = [m.leson[j], m.leson[j - 1]]; fèLeson(); } };
+        return el("div", { style: "display:grid;gap:6px;padding:10px 0;border-top:1px solid var(--line)" }, el("b", { className: "small", textContent: `Leson ${j + 1}` }), t, u, el("div", { className: "actions", style: "margin:0" }, mo, x));
+      }));
+    };
+    fèLeson();
+    const add = el("button", { type: "button", className: "btn sm light", textContent: "+ Ajoute yon leson" }); add.onclick = () => { m.leson.push({ tit: "", url: "" }); fèLeson(); };
+    const est = el("select", { style: "width:100%;font:inherit;padding:12px;border-radius:10px;border:0;background:var(--soft)" },
+      el("option", { value: "disponib", textContent: "Disponib" }), el("option", { value: "byento", textContent: "Byento (sèlman deskripsyon)" }));
+    est.value = m.estati; est.onchange = () => (m.estati = est.value);
+    const prev = el("img", { src: m.kouveti || "", style: "width:160px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;margin-top:8px;background:#111" });
+    const del = el("button", { type: "button", className: "btn sm light", textContent: "Retire modil sa a" });
+    del.onclick = () => { if (confirm(`Retire modil « ${m.tit} » ak tout leson li yo?`)) { MOD.splice(i, 1); editModil(); } };
+    const up = el("button", { type: "button", className: "btn sm light", textContent: "↑ Monte" }); up.onclick = () => { if (i) { [MOD[i - 1], MOD[i]] = [MOD[i], MOD[i - 1]]; editModil(); } };
+    box.append(el("div", { className: "card", style: "margin:12px 0" },
+      el("div", { className: "row" }, el("h3", { style: "margin:0", textContent: `Modil ${i + 1}` }), el("div", { className: "actions", style: "margin:0" }, up, del)),
+      ...inp("Tit", m.tit, (v) => (m.tit = v)),
+      ...inp("Deskripsyon", m.deskripsyon, (v) => (m.deskripsyon = v), { tag: "textarea", p: { rows: 3 } }),
+      ...inp("Imaj kouvèti (lyen https:// oswa /kouveti/…)", m.kouveti, (v) => { m.kouveti = v; prev.src = v; }, { attr: { list: "kouveti-lis" } }),
+      prev,
+      el("label", { textContent: "Estati" }), est,
+      ...inp("Sa w ap aprann (yon liy pou chak pwen)", (m.aprann || []).join("\n"), (v) => (m.aprann = v.split("\n").map((x) => x.trim()).filter(Boolean)), { tag: "textarea", p: { rows: 4 } }),
+      el("h3", { style: "margin:16px 0 4px", textContent: "Leson yo" }), leson, add));
+  });
+  if (!$("#kouveti-lis")) document.body.append(el("datalist", { id: "kouveti-lis" }, ...KOUVETI.map((k) => el("option", { value: k }))));
+}
+$("#m-add").onclick = () => { MOD.push({ id: "", tit: "Nouvo modil", deskripsyon: "", kouveti: "", estati: "byento", aprann: [], leson: [] }); editModil(); };
+
 function ranpliKontni(k) {
   const f = $("#kontni");
-  f.v0t.value = k.videyo[0]?.tit || ""; f.v0u.value = k.videyo[0]?.url || "";
-  f.v1t.value = k.videyo[1]?.tit || ""; f.v1u.value = k.videyo[1]?.url || "";
+  MOD = JSON.parse(JSON.stringify(k.moduls || []));
+  editModil();
   f.lyen_claude.value = k.lyen_claude; f.lyen_zouti.value = k.lyen_zouti; f.lyen_gid.value = k.lyen_gid; f.lyen_kominote.value = k.lyen_kominote || ""; f.mesaj.value = k.mesaj;
 }
 
@@ -244,10 +283,10 @@ $("#kontni").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const f = ev.target, m = $("#k-msg");
   const kontni = {
-    videyo: [{ tit: f.v0t.value, url: f.v0u.value }, { tit: f.v1t.value, url: f.v1u.value }],
+    moduls: MOD,
     lyen_claude: f.lyen_claude.value, lyen_zouti: f.lyen_zouti.value, lyen_gid: f.lyen_gid.value, lyen_kominote: f.lyen_kominote.value, mesaj: f.mesaj.value,
   };
-  try { await api("POST", { aksyon: "kontni", kontni }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; }
+  try { await api("POST", { aksyon: "kontni", kontni }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
   catch (e) { m.className = "msg err"; m.textContent = e.message; }
 });
 
