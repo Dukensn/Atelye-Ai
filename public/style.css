@@ -113,3 +113,5 @@ input:focus, textarea:focus { outline: none; border-color: var(--ink); }
 .kv dt { color: var(--mute); }
 .kv dd { margin: 0; overflow-wrap: anywhere; font-weight: 600; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+.egzanp { width: 100%; height: auto; border-radius: var(--radius); margin-top: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.12); }
