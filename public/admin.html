@@ -27,6 +27,7 @@
     <div class="tabs" role="tablist">
       <button role="tab" data-t="atann" aria-selected="true">An atant <span id="c-atann"></span></button>
       <button role="tab" data-t="aksepte" aria-selected="false">Aksepte <span id="c-aksepte"></span></button>
+      <button role="tab" data-t="san_prev" aria-selected="false">San prèv <span id="c-san_prev"></span></button>
       <button role="tab" data-t="refize" aria-selected="false">Refize</button>
       <button role="tab" data-t="kontni" aria-selected="false">Kontni</button>
     </div>
@@ -79,12 +80,11 @@ const lè = (iso) => new Date(iso).toLocaleString("fr-HT", { dateStyle: "short",
 function kat(e) {
   const kv = el("dl", { className: "kv" });
   const ajoute = (k, v) => v && kv.append(el("dt", { textContent: k }), el("dd", { textContent: v }));
-  ajoute("Telefòn", e.telefon); ajoute("Imèl", e.imel);
-  ajoute("Metòd", e.metod === "moncash" ? "MonCash" : "NatCash");
-  ajoute("Tranzaksyon", e.tranzaksyon); ajoute("Dat", lè(e.kreye));
+  ajoute("WhatsApp", e.telefon); ajoute("Enskri", lè(e.kreye));
+  if (e.prev_le) ajoute("Prèv voye", lè(e.prev_le));
   const aksyon = el("div", { className: "actions" });
   const k = el("div", { className: "card" },
-    el("div", { className: "row" }, el("h3", { textContent: e.non, style: "margin:0" }), el("span", { className: "badge " + e.estati, textContent: { atann: "An atant", aksepte: "Aksepte", refize: "Refize" }[e.estati] })),
+    el("div", { className: "row" }, el("h3", { textContent: e.non, style: "margin:0" }), el("span", { className: "badge " + e.estati, textContent: { atann: "An atant", aksepte: "Aksepte", refize: "Refize", san_prev: "San prèv" }[e.estati] })),
     kv, aksyon);
 
   const bouton = (tèks, klas, fn) => { const b = el("button", { className: "btn sm " + klas, textContent: tèks }); b.onclick = () => fn(b); return b; };
@@ -98,8 +98,25 @@ function kat(e) {
     } catch (err) { alert(err.message); b.disabled = false; }
   };
 
+  if (e.foto) {
+    const img = el("img", { className: "hidden", alt: "Prèv peman", style: "margin-top:10px;max-height:420px;width:auto;border-radius:8px" });
+    k.insertBefore(img, aksyon);
+    aksyon.append(bouton("Wè prèv la", "light", async (b) => {
+      if (img.src) { img.classList.toggle("hidden"); return; }
+      b.disabled = true;
+      try {
+        const r = await fetch(`/api/prev?id=${encodeURIComponent(e.id)}`, { headers: { "x-admin": modpas } });
+        if (!r.ok) throw new Error("Pa jwenn foto a.");
+        img.src = URL.createObjectURL(await r.blob()); img.classList.remove("hidden");
+      } catch (err) { alert(err.message); }
+      b.disabled = false;
+    }));
+  }
   if (e.estati === "atann") {
     aksyon.append(bouton("✓ Peman an rive — Aksepte", "", fè("aksepte")), bouton("Refize", "light", fè("refize")));
+  } else if (e.estati === "san_prev") {
+    const wa = `https://wa.me/${e.telefon.replace(/\D/g, "").replace(/^(\d{8})$/, "509$1")}?text=${encodeURIComponent(`Bonjou ${e.non.split(" ")[0]}! Ou te kòmanse enskripsyon w pou Atelier AI. Pa bliye voye foto prèv peman an pou n ka ba w aksè.`)}`;
+    aksyon.append(el("a", { className: "btn sm wa", href: wa, target: "_blank", rel: "noopener", textContent: "Raple l sou WhatsApp" }), bouton("Aksepte kanmenm", "light", fè("aksepte")));
   } else if (e.estati === "aksepte") {
     aksyon.append(
       el("a", { className: "btn sm wa", href: e.whatsapp, target: "_blank", rel: "noopener", textContent: "Voye lyen an sou WhatsApp" }),
@@ -115,7 +132,7 @@ function kat(e) {
 function afiche() {
   document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === tab)));
   const n = (s) => done.lis.filter((e) => e.estati === s).length;
-  $("#c-atann").textContent = `(${n("atann")})`; $("#c-aksepte").textContent = `(${n("aksepte")})`;
+  $("#c-atann").textContent = `(${n("atann")})`; $("#c-aksepte").textContent = `(${n("aksepte")})`; $("#c-san_prev").textContent = `(${n("san_prev")})`;
   $("#kontni").classList.toggle("hidden", tab !== "kontni");
   const lis = $("#lis"); lis.replaceChildren();
   if (tab === "kontni") return;
