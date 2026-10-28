@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peye — Atelier AI</title>
+<link rel="icon" href="/icon.png">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="/" aria-label="Atelier AI"><img src="/logo.png" alt="Atelier AI"></a>
+</div></header>
+
+<main><section><div class="wrap">
+  <div id="fom">
+    <h1>Peye 1 500 goud</h1>
+    <p class="lead">De etap: ou voye lajan an, epi ou ranpli fòmilè a.</p>
+
+    <div class="card">
+      <h2 style="font-size:20px">1. Voye lajan an</h2>
+      <div class="seg" role="group" aria-label="Metòd peman">
+        <button type="button" data-m="moncash" aria-pressed="true">MonCash</button>
+        <button type="button" data-m="natcash" aria-pressed="false">NatCash</button>
+      </div>
+      <div class="paybox">
+        <p class="mute small" style="margin:0">Voye <b>1 500 goud</b> sou nimewo <span id="metod-non">MonCash</span> sa a:</p>
+        <div class="row">
+          <div class="num" id="nimewo">…</div>
+          <button type="button" class="btn light sm" id="kopye">Kopye</button>
+        </div>
+        <p class="small mute" style="margin:0" id="benefisye"></p>
+      </div>
+      <p class="hint">Kenbe nimewo tranzaksyon an (ID) aplikasyon an ba ou apre peman an.</p>
+    </div>
+
+    <form class="card" id="form" novalidate>
+      <h2 style="font-size:20px">2. Ranpli fòmilè a</h2>
+      <label for="non">Non ou</label>
+      <input id="non" name="non" autocomplete="name" required maxlength="80">
+      <label for="telefon">Nimewo WhatsApp ou</label>
+      <input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX" required maxlength="20">
+      <p class="hint">Se sou nimewo sa a nou ap voye lyen espas ou.</p>
+      <label for="imel">Imèl ou <span class="mute">(si w genyen)</span></label>
+      <input id="imel" name="imel" type="email" inputmode="email" autocomplete="email" maxlength="120">
+      <label for="tranzaksyon">Nimewo tranzaksyon an</label>
+      <input id="tranzaksyon" name="tranzaksyon" required maxlength="40" autocapitalize="characters">
+      <div id="ere" class="msg err hidden" role="alert"></div>
+      <button class="btn full" style="margin-top:20px" id="voye">Voye</button>
+    </form>
+  </div>
+
+  <div id="mesi" class="hidden">
+    <h1>Mèsi! 🎉</h1>
+    <p class="lead">Nou resevwa demann ou. N ap verifye peman an, epi n ap voye lyen espas ou sou WhatsApp.</p>
+    <div class="card">
+      <p style="margin:0">Pandan w ap tann, kreye yon kont <b>GitHub</b> gratis sou <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>. W ap bezwen l nan fòmasyon an.</p>
+    </div>
+  </div>
+</div></section></main>
+
+<footer><div class="wrap">© Atelier AI · <a href="/">Akèy</a></div></footer>
+
+<script>
+const $ = (s) => document.querySelector(s);
+let metod = "moncash", konfig = {};
+
+function montre() {
+  $("#metod-non").textContent = metod === "moncash" ? "MonCash" : "NatCash";
+  $("#nimewo").textContent = konfig[metod] || "Byento";
+  $("#kopye").classList.toggle("hidden", !konfig[metod]);
+  document.querySelectorAll(".seg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.m === metod)));
+}
+
+fetch("/api/konfig").then((r) => r.json()).then((k) => {
+  konfig = k;
+  if (k.benefisye) $("#benefisye").textContent = "Non: " + k.benefisye;
+  montre();
+}).catch(() => { $("#nimewo").textContent = "—"; });
+
+document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => { metod = b.dataset.m; montre(); }));
+
+$("#kopye").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(konfig[metod]); $("#kopye").textContent = "Kopye ✓"; }
+  catch { $("#kopye").textContent = "Kopye l alamen"; }
+  setTimeout(() => ($("#kopye").textContent = "Kopye"), 2000);
+});
+
+$("#form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const ere = $("#ere"), btn = $("#voye");
+  ere.classList.add("hidden");
+  btn.disabled = true; btn.textContent = "N ap voye…";
+  const f = new FormData(ev.target);
+  try {
+    const r = await fetch("/api/enskripsyon", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...Object.fromEntries(f), metod }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.ere || (r.status === 429 ? "Tann yon minit epi eseye ankò." : "Gen yon pwoblèm. Eseye ankò."));
+    $("#fom").classList.add("hidden");
+    $("#mesi").classList.remove("hidden");
+    window.scrollTo(0, 0);
+  } catch (e) {
+    ere.textContent = e.message;
+    ere.classList.remove("hidden");
+    btn.disabled = false; btn.textContent = "Voye";
+  }
+});
+</script>
+</body>
+</html>

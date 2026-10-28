@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Espas elèv — Atelier AI</title>
+<link rel="icon" href="/icon.png">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="/" aria-label="Atelier AI"><img src="/logo.png" alt="Atelier AI"></a>
+</div></header>
+
+<main><section><div class="wrap">
+  <p id="chaje" class="mute">N ap chaje…</p>
+
+  <div id="pa-bon" class="hidden">
+    <h1>Lyen sa a pa mache</h1>
+    <p class="lead">Louvri lyen nou te voye ba ou sou WhatsApp la ankò. Si l toujou pa mache, ekri nou sou WhatsApp.</p>
+  </div>
+
+  <div id="espas" class="hidden">
+    <span class="tag">Espas elèv</span>
+    <h1 id="bonjou">Bonjou!</h1>
+    <p class="lead">Suiv etap yo nan lòd. Pran tan ou: chak etap gen yon sèl objektif.</p>
+    <div id="mesaj" class="card hidden"></div>
+
+    <h2 style="margin-top:32px">Videyo yo</h2>
+    <div id="videyo"></div>
+
+    <h2 style="margin-top:32px">Lyen ou yo</h2>
+    <ul class="list" id="lyen"></ul>
+  </div>
+</div></section></main>
+
+<footer><div class="wrap">© Atelier AI · Pa pataje lyen espas ou: se pa w sèlman li ye.</div></footer>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const el = (tag, props = {}, ...kids) => { const e = Object.assign(document.createElement(tag), props); e.append(...kids); return e; };
+
+const params = new URLSearchParams(location.search);
+let kle = params.get("k");
+try {
+  if (kle) { localStorage.setItem("atelier-kle", kle); history.replaceState(null, "", "/espas"); }
+  else kle = localStorage.getItem("atelier-kle");
+} catch {}
+
+function youtubeId(u) {
+  try {
+    const x = new URL(u);
+    if (x.hostname === "youtu.be") return x.pathname.slice(1);
+    if (/youtube\.com$/.test(x.hostname.replace(/^www\.|^m\./, ""))) {
+      if (x.searchParams.get("v")) return x.searchParams.get("v");
+      const m = x.pathname.match(/^\/(?:embed|shorts|live)\/([\w-]+)/);
+      if (m) return m[1];
+    }
+  } catch {}
+  return null;
+}
+
+function videyo(v, i) {
+  const box = el("div", { className: "card" }, el("h3", { textContent: v.tit || `Videyo ${i + 1}` }));
+  const id = v.url && youtubeId(v.url);
+  if (id) {
+    box.append(el("div", { className: "video" }, el("iframe", {
+      src: `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?rel=0`,
+      title: v.tit, allow: "encrypted-media; picture-in-picture; fullscreen", allowFullscreen: true, loading: "lazy",
+    })));
+  } else if (v.url) {
+    box.append(el("a", { className: "btn", href: v.url, target: "_blank", rel: "noopener", textContent: "Gade videyo a", style: "margin-top:10px" }));
+  } else {
+    box.append(el("div", { className: "soon", textContent: "Videyo sa a ap vini byento." }));
+  }
+  return box;
+}
+
+function lyen(ic, tit, tex, url, bouton) {
+  const kò = el("div", {}, el("h3", { textContent: tit }), el("p", { className: "mute", textContent: tex }));
+  if (url) kò.append(el("a", { className: "btn sm", href: url, target: "_blank", rel: "noopener", textContent: bouton }));
+  else kò.append(el("p", { className: "small mute", textContent: "Byento." }));
+  return el("li", {}, el("span", { className: "ic", textContent: ic }), kò);
+}
+
+async function chaje() {
+  if (!kle) throw new Error();
+  const r = await fetch("/api/espas", { headers: { "x-kle": kle } });
+  if (!r.ok) throw new Error();
+  const { non, kontni: k } = await r.json();
+  $("#bonjou").textContent = `Bonjou ${non}!`;
+  if (k.mesaj) { $("#mesaj").textContent = k.mesaj; $("#mesaj").classList.remove("hidden"); }
+  $("#videyo").append(...k.videyo.map(videyo));
+  $("#lyen").append(
+    lyen("🎁", "7 jou Claude gratis", "Aktive esè a sèlman lè w pare pou w kòmanse: 7 jou yo kòmanse lamenm.", k.lyen_claude, "Aktive esè a"),
+    lyen("🧰", "Zouti Atelier AI", "Ouvè l sou GitHub epi peze Fork pou w gen pwòp kopi pa w.", k.lyen_zouti, "Ouvè zouti a"),
+    lyen("📘", "Gid elèv la", "Tout etap yo ekri.", k.lyen_gid, "Li gid la"),
+  );
+  $("#espas").classList.remove("hidden");
+}
+
+chaje().catch(() => $("#pa-bon").classList.remove("hidden")).finally(() => $("#chaje").classList.add("hidden"));
+</script>
+</body>
+</html>

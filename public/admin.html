@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin — Atelier AI</title>
+<link rel="icon" href="/icon.png">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="/" aria-label="Atelier AI"><img src="/logo.png" alt="Atelier AI"></a>
+  <button class="btn light sm hidden" id="soti">Soti</button>
+</div></header>
+
+<main><section style="padding-top:24px"><div class="wrap">
+  <form id="login" class="card">
+    <h1 style="font-size:28px">Admin</h1>
+    <label for="modpas">Modpas</label>
+    <input id="modpas" type="password" autocomplete="current-password" required>
+    <div id="login-ere" class="msg err hidden"></div>
+    <button class="btn full" style="margin-top:16px">Antre</button>
+  </form>
+
+  <div id="panno" class="hidden">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-t="atann" aria-selected="true">An atant <span id="c-atann"></span></button>
+      <button role="tab" data-t="aksepte" aria-selected="false">Aksepte <span id="c-aksepte"></span></button>
+      <button role="tab" data-t="refize" aria-selected="false">Refize</button>
+      <button role="tab" data-t="kontni" aria-selected="false">Kontni</button>
+    </div>
+    <div id="lis"></div>
+
+    <form id="kontni" class="card hidden">
+      <h2 style="font-size:20px">Kontni espas elèv la</h2>
+      <p class="mute small">Kole lyen yo isit la. Elèv yo wè chanjman yo lamenm.</p>
+      <label>Tit videyo 1</label><input name="v0t">
+      <label>Lyen videyo 1 (YouTube)</label><input name="v0u" type="url" placeholder="https://youtu.be/…">
+      <label>Tit videyo 2</label><input name="v1t">
+      <label>Lyen videyo 2 (YouTube)</label><input name="v1u" type="url" placeholder="https://youtu.be/…">
+      <label>Lyen 7 jou Claude</label><input name="lyen_claude" type="url">
+      <label>Lyen zouti a (GitHub)</label><input name="lyen_zouti" type="url">
+      <label>Lyen gid la</label><input name="lyen_gid" type="url">
+      <label>Mesaj pou elèv yo <span class="mute">(si w vle)</span></label><textarea name="mesaj" rows="3"></textarea>
+      <div id="k-msg" class="msg hidden"></div>
+      <button class="btn full" style="margin-top:16px">Anrejistre</button>
+    </form>
+  </div>
+</div></section></main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const el = (tag, props = {}, ...kids) => { const e = Object.assign(document.createElement(tag), props); e.append(...kids); return e; };
+let modpas = "", done = { lis: [], kontni: null }, tab = "atann";
+try { modpas = sessionStorage.getItem("atelier-admin") || ""; } catch {}
+
+async function api(method, body) {
+  const r = await fetch("/api/admin", {
+    method,
+    headers: { "x-admin": modpas, ...(body ? { "content-type": "application/json" } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401) { soti(); throw new Error(d.ere || "Modpas la pa bon."); }
+  if (!r.ok) throw new Error(d.ere || "Gen yon pwoblèm.");
+  return d;
+}
+
+function soti() {
+  modpas = "";
+  try { sessionStorage.removeItem("atelier-admin"); } catch {}
+  $("#panno").classList.add("hidden"); $("#soti").classList.add("hidden"); $("#login").classList.remove("hidden");
+}
+
+const lè = (iso) => new Date(iso).toLocaleString("fr-HT", { dateStyle: "short", timeStyle: "short" });
+
+function kat(e) {
+  const kv = el("dl", { className: "kv" });
+  const ajoute = (k, v) => v && kv.append(el("dt", { textContent: k }), el("dd", { textContent: v }));
+  ajoute("Telefòn", e.telefon); ajoute("Imèl", e.imel);
+  ajoute("Metòd", e.metod === "moncash" ? "MonCash" : "NatCash");
+  ajoute("Tranzaksyon", e.tranzaksyon); ajoute("Dat", lè(e.kreye));
+  const aksyon = el("div", { className: "actions" });
+  const k = el("div", { className: "card" },
+    el("div", { className: "row" }, el("h3", { textContent: e.non, style: "margin:0" }), el("span", { className: "badge " + e.estati, textContent: { atann: "An atant", aksepte: "Aksepte", refize: "Refize" }[e.estati] })),
+    kv, aksyon);
+
+  const bouton = (tèks, klas, fn) => { const b = el("button", { className: "btn sm " + klas, textContent: tèks }); b.onclick = () => fn(b); return b; };
+  const fè = (aks) => async (b) => {
+    if (aks === "refize" && !confirm(`Refize ${e.non}? Si l te gen aksè, l ap pèdi l.`)) return;
+    b.disabled = true;
+    try {
+      const d = await api("POST", { aksyon: aks, id: e.id });
+      if (d.whatsapp) window.open(d.whatsapp, "_blank", "noopener");
+      await rechaje();
+    } catch (err) { alert(err.message); b.disabled = false; }
+  };
+
+  if (e.estati === "atann") {
+    aksyon.append(bouton("✓ Peman an rive — Aksepte", "", fè("aksepte")), bouton("Refize", "light", fè("refize")));
+  } else if (e.estati === "aksepte") {
+    aksyon.append(
+      el("a", { className: "btn sm wa", href: e.whatsapp, target: "_blank", rel: "noopener", textContent: "Voye lyen an sou WhatsApp" }),
+      bouton("Kopye lyen an", "light", async (b) => { try { await navigator.clipboard.writeText(e.lyen); b.textContent = "Kopye ✓"; } catch { prompt("Kopye lyen an:", e.lyen); } }),
+      bouton("Retire aksè", "light", fè("refize")),
+    );
+  } else {
+    aksyon.append(bouton("Aksepte kanmenm", "light", fè("aksepte")));
+  }
+  return k;
+}
+
+function afiche() {
+  document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === tab)));
+  const n = (s) => done.lis.filter((e) => e.estati === s).length;
+  $("#c-atann").textContent = `(${n("atann")})`; $("#c-aksepte").textContent = `(${n("aksepte")})`;
+  $("#kontni").classList.toggle("hidden", tab !== "kontni");
+  const lis = $("#lis"); lis.replaceChildren();
+  if (tab === "kontni") return;
+  const sa = done.lis.filter((e) => e.estati === tab);
+  if (!sa.length) lis.append(el("p", { className: "mute", textContent: "Pa gen anyen la a pou kounye a." }));
+  else lis.append(...sa.map(kat));
+}
+
+function ranpliKontni(k) {
+  const f = $("#kontni");
+  f.v0t.value = k.videyo[0]?.tit || ""; f.v0u.value = k.videyo[0]?.url || "";
+  f.v1t.value = k.videyo[1]?.tit || ""; f.v1u.value = k.videyo[1]?.url || "";
+  f.lyen_claude.value = k.lyen_claude; f.lyen_zouti.value = k.lyen_zouti; f.lyen_gid.value = k.lyen_gid; f.mesaj.value = k.mesaj;
+}
+
+async function rechaje() {
+  done = await api("GET");
+  ranpliKontni(done.kontni);
+  afiche();
+}
+
+$("#login").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  modpas = $("#modpas").value;
+  $("#login-ere").classList.add("hidden");
+  try {
+    await rechaje();
+    try { sessionStorage.setItem("atelier-admin", modpas); } catch {}
+    $("#login").classList.add("hidden"); $("#panno").classList.remove("hidden"); $("#soti").classList.remove("hidden");
+  } catch (e) { $("#login-ere").textContent = e.message; $("#login-ere").classList.remove("hidden"); }
+});
+
+$("#soti").addEventListener("click", soti);
+document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => { tab = b.dataset.t; afiche(); }));
+
+$("#kontni").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const f = ev.target, m = $("#k-msg");
+  const kontni = {
+    videyo: [{ tit: f.v0t.value, url: f.v0u.value }, { tit: f.v1t.value, url: f.v1u.value }],
+    lyen_claude: f.lyen_claude.value, lyen_zouti: f.lyen_zouti.value, lyen_gid: f.lyen_gid.value, mesaj: f.mesaj.value,
+  };
+  try { await api("POST", { aksyon: "kontni", kontni }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; }
+  catch (e) { m.className = "msg err"; m.textContent = e.message; }
+});
+
+if (modpas) rechaje().then(() => {
+  $("#login").classList.add("hidden"); $("#panno").classList.remove("hidden"); $("#soti").classList.remove("hidden");
+}).catch(() => {});
+</script>
+</body>
+</html>
