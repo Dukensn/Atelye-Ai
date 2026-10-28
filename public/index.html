@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Atelier AI — Aprann kreye videyo ak AI, an kreyòl</title>
-<meta name="description" content="Fòmasyon an kreyòl pou kreye videyo ak AI ak telefòn ou: animasyon Stickman, Motion Video, videyo AI ak Higgsfield. Yon sèl peman pou tout kou yo.">
+<meta name="description" content="Fòmasyon an kreyòl pou kreye videyo ak AI ak telefòn ou: animasyon Stickman, Motion Video, videyo AI ak Higgsfield. Bonis: 7 jou Claude Pro gratis.">
 <meta property="og:title" content="Atelier AI — Aprann kreye videyo ak AI">
-<meta property="og:description" content="3 kou an kreyòl. Yon sèl peman, tout kou k ap vini yo enkli.">
+<meta property="og:description" content="Aprann kreye videyo ak AI, an kreyòl, ak telefòn ou. Bonis: 7 jou Claude Pro gratis.">
 <meta property="og:image" content="/kouveti/slides/stickman-1.jpg">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
@@ -27,6 +27,17 @@
   .sl figure { flex: 0 0 100%; margin: 0; scroll-snap-align: start; position: relative; }
   .sl img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .stats b .pri { font: inherit; color: inherit; display: inline; }
+  .tr8 svg { flex: none; }
+  .tr8 { gap: 8px; color: var(--ink); font-size: 14px; }
+  .bonus { display: flex; align-items: center; gap: 14px; margin-top: 22px; padding: 16px 18px; border-radius: 14px; background: #d7ff3a; color: #111; text-decoration: none; max-width: 440px; position: relative; overflow: hidden; }
+  .bonus::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%); translate: -100% 0; animation: briy 3.2s ease-in-out infinite; }
+  @keyframes briy { 60%, 100% { translate: 100% 0; } }
+  @media (prefers-reduced-motion: reduce) { .bonus::after { display: none; } }
+  .bonus .gi { flex: none; width: 48px; height: 48px; border-radius: 12px; background: #111; color: #d7ff3a; display: grid; place-items: center; }
+  .bonus small { display: block; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .bonus b { display: block; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+  .bonus em { display: block; font-style: normal; font-size: 13px; color: #333; margin-top: 2px; }
+  .price li.hl b { color: #d7ff3a; }
   .sl figcaption { position: absolute; left: 14px; bottom: 14px; background: rgba(0,0,0,.72); color: #fff; font-size: 13px; font-weight: 600; padding: 6px 10px; border-radius: 6px; }
   .sl .ar { position: absolute; top: 50%; translate: 0 -50%; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); color: #111; display: grid; place-items: center; cursor: pointer; opacity: 0; transition: opacity .2s; }
   .sl:hover .ar, .sl .ar:focus-visible { opacity: 1; }
@@ -99,14 +110,15 @@
 <!-- HERO -->
 <section class="lh"><div class="wrap g">
   <div>
-    <div class="eyebrow"><span class="dot"></span>Fòmasyon an kreyòl · 3 kou</div>
+    <div class="eyebrow tr8"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>Fòmasyon an kreyòl</div>
     <h1>Aprann kreye videyo ak AI, ak telefòn ou.</h1>
-    <p class="lead">Animasyon Stickman, Motion Video, videyo AI ak Higgsfield. Ou peye yon sèl fwa, epi tout kou yo, menm sa k ap vini yo, rete pou ou.</p>
+    <p class="lead">Animasyon Stickman, Motion Video, videyo AI ak Higgsfield, ak plis ankò. Ou peye yon sèl fwa, epi tout kou yo, menm sa k ap vini yo, rete pou ou.</p>
     <div class="cta">
       <a class="btn" href="/peye">Kòmanse — <span class="pri">1 500</span> goud</a>
       <a class="btn light" href="#kou">Gade kou yo</a>
     </div>
-    <div class="pills"><span>San konn desine</span><span>San òdinatè</span><span>MonCash · NatCash</span></div>
+    <div class="pills"><span>Otomatik</span><span>Sou telefòn</span><span>San òdinatè</span></div>
+    <a class="bonus" href="/peye"><span class="gi"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8a1 1 0 001 1h12a1 1 0 001-1v-8M12 8v13M12 8c-1.5-3-5-3.5-5-1.5S12 8 12 8s5 .5 5-1.5S13.5 5 12 8"/></svg></span><span><small>Bonis pou chak elèv</small><b>7 jou Claude Pro gratis</b><em>Ou resevwa yon lyen espesyal depi w enskri.</em></span></a>
   </div>
   <div class="sl" data-auto aria-roledescription="carousel" aria-label="Kou yo">
     <div class="tr">
@@ -121,8 +133,8 @@
 
 <div class="wrap">
   <div class="stats">
-    <div><b>3</b><span>kou</span></div>
-    <div><b>7 jou</b><span>Claude gratis</span></div>
+    <div><b>Kreyòl</b><span>tout leson yo</span></div>
+    <div><b>7 jou</b><span>Claude Pro gratis</span></div>
     <div><b><span class="pri">1 500</span> G</b><span>yon sèl fwa</span></div>
   </div>
 </div>
@@ -131,6 +143,7 @@
 <section id="kou"><div class="wrap">
   <div class="kh"><h2>Kou yo</h2></div>
   <p class="mute" style="margin:6px 0 0">Yon sèl peman pou tout kou yo. Lè yon nouvo kou soti, li parèt nan espas ou san w pa peye ankò.</p>
+  <p class="mute small" style="margin:4px 0 0">Nouvo kou chak 2 a 3 semèn.</p>
   <nav class="tabs2" aria-label="Kou yo"><a href="#k-stickman">Stickman</a><a href="#k-motion">Motion Video</a><a href="#k-higgsfield">Higgsfield</a></nav>
 
   <div>
@@ -146,7 +159,7 @@
         </div>
       </div>
       <div>
-        <div class="no">Kou 1 <span class="st">Disponib</span></div>
+        <div class="no">Kou 1</div>
         <h3>Kreye videyo Stickman</h3>
         <p>Soti nan zewo rive nan premye videyo animasyon ou sou YouTube. Claude envante istwa a, li desine pèsonaj yo, li mete vwa ak mizik. Ou menm, ou se reyalizatè a.</p>
         <ul>
@@ -168,16 +181,16 @@
         </div>
       </div>
       <div>
-        <div class="no">Kou 2 <span class="st b">Byento</span></div>
+        <div class="no">Kou 2</div>
         <h3>Motion Video</h3>
-        <p>Fè videyo motion design: tèks ki bouje, grafik, entwodiksyon ak reklam pou rezo sosyal.</p>
+        <p>Ak motion design, ou ka fè tout kalite videyo: dokimantè, tutoryèl, videyo eksplikasyon, reklam, entwodiksyon pou chèn ou… Nenpòt videyo w gen nan tèt ou.</p>
         <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Tèks ak tit anime</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Grafik ak chif ki bouje</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Entwodiksyon pou chèn YouTube ou</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Reklam kout pou TikTok ak Instagram</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Dokimantè ak videyo eksplikasyon</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Tutoryèl etap pa etap</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Reklam ak videyo pou rezo sosyal</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Tèks, grafik ak ilistrasyon ki bouje</li>
         </ul>
-        <div class="mt">Enkli nan fòmasyon an · Ap vini byento</div>
+        <div class="mt">Leson an videyo · Kreyòl · Telefòn ase</div>
       </div>
     </article>
 
@@ -190,7 +203,7 @@
         </div>
       </div>
       <div>
-        <div class="no">Kou 3 <span class="st b">Byento</span></div>
+        <div class="no">Kou 3</div>
         <h3>Videyo AI ak Higgsfield</h3>
         <p>Kreye videyo AI ki sanble ak sinema: pèsonaj, sèn ak mouvman kamera, avèk Higgsfield ak Claude.</p>
         <ul>
@@ -199,7 +212,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Mouvman kamera sinema</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Monte yon videyo konplè</li>
         </ul>
-        <div class="mt">Enkli nan fòmasyon an · Ap vini byento</div>
+        <div class="mt">Leson an videyo · Kreyòl · Telefòn ase</div>
       </div>
     </article>
   </div>
@@ -210,7 +223,7 @@
   <div class="earn">
     <div>
       <h2>Fè kòb pandan w ap aprann</h2>
-      <p>Chak elèv gen yon lyen pa l. Pataje fòmasyon an: chak fwa yon moun enskri epi li peye, ou genyen <b style="color:#fff"><span id="kom">300</span> goud</b> sou MonCash oswa NatCash.</p>
+      <p>Chak elèv gen yon lyen pa l. Pataje fòmasyon an: chak fwa yon moun enskri epi li peye, ou genyen <b style="color:#fff"><span id="kom">300</span> goud</b>.</p>
     </div>
     <a class="btn" href="/peye">Enskri epi jwenn lyen ou</a>
   </div>
@@ -223,7 +236,7 @@
     <p class="mute">Twa etap senp.</p>
   </div>
   <div class="grid3">
-    <div class="tile step"><div class="num">ETAP 1</div><h3>Ou enskri epi ou peye</h3><p>Non w, nimewo WhatsApp ou, epi yon foto prèv peman MonCash oswa NatCash.</p></div>
+    <div class="tile step"><div class="num">ETAP 1</div><h3>Ou enskri epi ou peye</h3><p>Non w, nimewo WhatsApp ou, epi yon foto prèv peman an.</p></div>
     <div class="tile step"><div class="num">ETAP 2</div><h3>Ou resevwa espas ou</h3><p>Depi nou verifye peman an, app Atelier AI a louvri pou ou, ak tout kou yo ladan l.</p></div>
     <div class="tile step"><div class="num">ETAP 3</div><h3>Ou pibliye premye videyo w</h3><p>Ou suiv premye kou a epi w mete videyo animasyon ou sou chèn YouTube ou.</p></div>
   </div>
@@ -237,9 +250,9 @@
       <div class="amount"><span class="pri">1 500</span> <small>goud</small></div>
       <ul>
         <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Yon sèl peman, pa gen abònman</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>3 kou, ak sa k ap vini yo enkli</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kominote WhatsApp ak 7 jou Claude gratis</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>MonCash oswa NatCash</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Tout kou yo, ak sa k ap vini yo</li>
+        <li class="hl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg><b>Bonis: 7 jou Claude Pro gratis</b></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kominote WhatsApp pou sipò</li>
       </ul>
     </div>
     <a class="btn" href="/peye">Mwen vle kòmanse</a>
@@ -251,10 +264,11 @@
   <h2 style="margin-bottom:16px">Kesyon moun poze</h2>
   <details><summary>Èske m bezwen konn desine?</summary><p>Non. Se Claude ak zouti yo ki desine. Ou menm, ou chwazi lide a epi w di l sa pou l chanje.</p></details>
   <details><summary>Èske m bezwen yon òdinatè?</summary><p>Non. Yon telefòn ak entènèt ase.</p></details>
-  <details><summary>Kou ki make « Byento » yo, èske m ap peye ankò?</summary><p>Non. Yo enkli nan fòmasyon an. Depi yo soti, yo parèt nan espas ou otomatikman.</p></details>
+  <details><summary>Èske m ap peye ankò pou nouvo kou yo?</summary><p>Non. Tout nouvo kou yo enkli. Depi yon kou soti, li parèt nan espas ou otomatikman.</p></details>
   <details><summary>Konbyen tan sa pran?</summary><p>Premye kou a fèt pou w pibliye premye videyo w nan 7 jou esè Claude la.</p></details>
-  <details><summary>E apre 7 jou yo?</summary><p>Fòmasyon an ak zouti yo rete pou ou. Pou w kontinye itilize Claude apre esè a, se pou w pran yon abònman Claude. Si w pa vle, anile l anvan setyèm jou a: nou montre w kijan.</p></details>
-  <details><summary>Kijan pou m fè kòb ak lyen mwen an?</summary><p>Lè w enskri, ou jwenn yon lyen pa w nan app la. Chak moun ki enskri ak lyen sa a epi ki peye fè w genyen yon komisyon. Ou mande peman an sou MonCash oswa NatCash dirèkteman nan app la.</p></details>
+  <details><summary>Kijan 7 jou Claude Pro gratis yo mache?</summary><p>Lè w enskri, ou resevwa yon lyen espesyal pou w aktive Claude Pro gratis pandan 7 jou. Aktive l lè w pare pou kòmanse travay.</p></details>
+  <details><summary>E apre 7 jou yo?</summary><p>Fòmasyon an ak zouti yo rete pou ou. Pou w kontinye itilize Claude Pro apre esè a, se pou w pran yon abònman. Si w pa vle, anile l anvan setyèm jou a: nou montre w kijan.</p></details>
+  <details><summary>Kijan pou m fè kòb ak lyen mwen an?</summary><p>Lè w enskri, ou jwenn yon lyen pa w nan app la. Chak moun ki enskri ak lyen sa a epi ki peye fè w genyen yon komisyon. Ou mande peman an dirèkteman nan app la.</p></details>
   <details><summary>Konbyen tan pou m resevwa aksè?</summary><p>Nou verifye chak peman alamen. Depi peman an verifye, espas ou louvri epi nou voye lyen an sou WhatsApp.</p></details>
 </div></section>
 </main>
