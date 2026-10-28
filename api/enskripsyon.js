@@ -1,9 +1,8 @@
-import type { Config } from "@netlify/functions";
 import { randomUUID } from "node:crypto";
-import { json, netwaye, store, type Enskripsyon } from "../lib/store.mts";
+import { ekri, json, netwaye } from "../lib/store.js";
 
-export default async (req: Request) => {
-  let b: Record<string, unknown>;
+export async function POST(req) {
+  let b;
   try {
     b = await req.json();
   } catch {
@@ -21,18 +20,12 @@ export default async (req: Request) => {
   if (!metod) return json({ ere: "Chwazi MonCash oswa NatCash." }, 400);
   if (tranzaksyon.length < 4) return json({ ere: "Ekri nimewo tranzaksyon an." }, 400);
 
-  const e: Enskripsyon = {
+  const e = {
     id: randomUUID(),
     non, telefon, imel, metod, tranzaksyon,
     kreye: new Date().toISOString(),
     estati: "atann",
   };
-  await store().setJSON(`enskripsyon/${e.id}`, e);
+  await ekri(`enskripsyon/${e.id}.json`, e);
   return json({ id: e.id });
-};
-
-export const config: Config = {
-  path: "/api/enskripsyon",
-  method: "POST",
-  rateLimit: { action: "rate_limit", aggregateBy: ["ip", "domain"], windowSize: 60, windowLimit: 5 },
-};
+}

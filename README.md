@@ -1,7 +1,7 @@
 # Atelier AI — plateforme de formation
 
 Site très simple : page d'accueil, paiement MonCash / NatCash (vérifié à la main), espace élève, page admin.
-Hébergé sur Netlify (projet `atelier-ai-0max`). Les données sont dans Netlify Blobs (store `atelier`).
+Hébergé sur Vercel. Les données sont dans un store **Vercel Blob privé** (un fichier JSON par inscription).
 
 ## Pages
 
@@ -12,16 +12,19 @@ Hébergé sur Netlify (projet `atelier-ai-0max`). Les données sont dans Netlify
 | `/espas?k=…` | élève validé | les 2 vidéos, le lien d'essai Claude, le dépôt du skill, le guide |
 | `/admin` | toi | valider ou refuser les paiements, envoyer le lien par WhatsApp, modifier le contenu |
 
-## Réglages Netlify (Project configuration → Environment variables)
+## Réglages Vercel
 
-| Variable | Exemple | Secret ? |
+1. **Storage → Create → Blob**, accès **Private**, relié au projet : Vercel ajoute `BLOB_READ_WRITE_TOKEN` tout seul.
+2. **Settings → Environment Variables** :
+
+| Variable | Exemple | Type |
 | --- | --- | --- |
-| `ADMIN_MODPAS` | mot de passe de `/admin` (8 caractères minimum) | oui |
-| `MONCASH_NIMEWO` | `3700 0000` | non |
-| `NATCASH_NIMEWO` | `4100 0000` | non |
-| `NON_BENEFISYE` | nom affiché sous le numéro | non |
+| `ADMIN_MODPAS` | mot de passe de `/admin` (8 caractères minimum) | Sensitive |
+| `MONCASH_NIMEWO` | `3700 0000` | Plain |
+| `NATCASH_NIMEWO` | `4100 0000` | Plain |
+| `NON_BENEFISYE` | nom affiché sous le numéro | Plain |
 
-Après un changement de variable, relancer un déploiement (Deploys → Trigger deploy).
+Après un changement de variable : **Deployments → … → Redeploy**.
 
 ## Comment un élève est validé
 
@@ -32,9 +35,8 @@ Après un changement de variable, relancer un déploiement (Deploys → Trigger 
 
 Le contenu de l'espace élève (liens des vidéos YouTube non répertoriées, lien Claude 7 jours, etc.) se change dans l'onglet **Kontni** de `/admin`, sans redéployer.
 
-## Développement local
+## Structure
 
-```bash
-npm install
-npx netlify-cli dev   # avec un fichier .env contenant les variables ci-dessus
-```
+- `public/` : les pages (HTML/CSS, aucun framework)
+- `api/` : les fonctions Vercel (`konfig`, `enskripsyon`, `espas`, `admin`)
+- `lib/store.js` : lecture/écriture dans Vercel Blob (`ATELIER_MEMWA=1` = mémoire, pour les tests)
