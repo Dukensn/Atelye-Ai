@@ -63,6 +63,10 @@
       <label>Lyen zouti a (GitHub)</label><input name="lyen_zouti" type="url">
       <label>Lyen gid la</label><input name="lyen_gid" type="url">
       <label>Lyen kominote WhatsApp la</label><input name="lyen_kominote" type="url" placeholder="https://chat.whatsapp.com/…">
+      <h3 style="margin-top:20px">Zouti</h3>
+      <p class="mute small">Parèt nan onglet « Zouti » elèv yo. Yon zouti ou fèk ajoute gen etikèt « Nouvo » pandan 14 jou. Claude ak zouti Atelier AI toujou la, pa bezwen ajoute yo.</p>
+      <div id="zouti"></div>
+      <button type="button" class="btn sm light" id="z-add" style="margin:4px 0 8px">+ Ajoute yon zouti</button>
       <h3 style="margin-top:20px">Nouvote</h3>
       <p class="mute small">Parèt sou paj Akèy elèv yo ak nan notifikasyon yo.</p>
       <div id="nouvote"></div>
@@ -228,6 +232,19 @@ function editNouvote() {
       el("span", { className: "small mute", textContent: n.dat ? new Date(n.dat).toLocaleDateString("fr-FR") : "Nouvo" }), t, x, el("div", { className: "actions", style: "margin:0" }, del));
   }));
 }
+// Tools listed in the students' "Zouti" tab.
+let ZT = [];
+function editZouti() {
+  $("#zouti").replaceChildren(...ZT.map((z, i) => {
+    const n = el("input", { value: z.non, placeholder: "Non zouti a" }); n.oninput = () => (z.non = n.value);
+    const t = el("input", { value: z.tex, placeholder: "Kisa li fè (kout)" }); t.oninput = () => (z.tex = t.value);
+    const u = el("input", { value: z.url, placeholder: "https://…", type: "url" }); u.oninput = () => (z.url = u.value);
+    const del = el("button", { type: "button", className: "btn sm light", textContent: "Retire" }); del.onclick = () => { ZT.splice(i, 1); editZouti(); };
+    return el("div", { style: "display:grid;gap:6px;padding:10px 0;border-top:1px solid var(--line)" }, n, t, u, el("div", { className: "actions", style: "margin:0" }, del));
+  }));
+}
+$("#z-add").onclick = () => { ZT.push({ non: "", tex: "", url: "", dat: new Date().toISOString() }); editZouti(); };
+
 $("#n-add").onclick = () => { NV.unshift({ tit: "", tex: "", dat: new Date().toISOString() }); editNouvote(); };
 
 function editModil() {
@@ -273,7 +290,7 @@ function ranpliKontni(k) {
   const f = $("#kontni");
   MOD = JSON.parse(JSON.stringify(k.moduls || []));
   editModil();
-  f.lyen_claude.value = k.lyen_claude; f.lyen_zouti.value = k.lyen_zouti; f.lyen_gid.value = k.lyen_gid; f.lyen_kominote.value = k.lyen_kominote || ""; NV = JSON.parse(JSON.stringify(k.nouvote || [])); editNouvote();
+  f.lyen_claude.value = k.lyen_claude; f.lyen_zouti.value = k.lyen_zouti; f.lyen_gid.value = k.lyen_gid; f.lyen_kominote.value = k.lyen_kominote || ""; NV = JSON.parse(JSON.stringify(k.nouvote || [])); editNouvote(); ZT = JSON.parse(JSON.stringify(k.zouti || [])); editZouti();
 }
 
 async function rechaje() {
@@ -302,7 +319,7 @@ $("#kontni").addEventListener("submit", async (ev) => {
   const f = ev.target, m = $("#k-msg");
   const kontni = {
     moduls: MOD,
-    lyen_claude: f.lyen_claude.value, lyen_zouti: f.lyen_zouti.value, lyen_gid: f.lyen_gid.value, lyen_kominote: f.lyen_kominote.value, nouvote: NV,
+    lyen_claude: f.lyen_claude.value, lyen_zouti: f.lyen_zouti.value, lyen_gid: f.lyen_gid.value, lyen_kominote: f.lyen_kominote.value, nouvote: NV, zouti: ZT,
   };
   try { await api("POST", { aksyon: "kontni", kontni }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
   catch (e) { m.className = "msg err"; m.textContent = e.message; }

@@ -56,13 +56,13 @@
         <a class="btn full" id="k-btn">Kontinye leson an</a>
       </div>
 
-      <div class="lbl">Nouvote</div>
-      <div class="news" id="news"></div>
+      <div class="lbl" style="display:flex;justify-content:space-between"><span>Premye videyo w</span><span id="e-kont"></span></div>
+      <div class="bar" style="margin:0 0 4px"><i id="e-bar"></i></div>
+      <div class="etap" id="etap"></div>
 
-      <div class="lbl">Rapid</div>
+      <div class="lbl">Ou bezwen èd?</div>
       <div class="rows">
-        <a class="r" id="a-kom" target="_blank" rel="noopener"><span class="i wa"></span><span class="t"><b>Kominote WhatsApp</b><span>Enfòmasyon ak akonpayman</span></span><span class="ch">›</span></a>
-        <a class="r" id="a-cla" target="_blank" rel="noopener"><span class="i cla"></span><span class="t"><b>7 jou Claude gratis</b><span>Aktive l lè w pare pou kòmanse</span></span><span class="ch">›</span></a>
+        <a class="r" id="a-kom" target="_blank" rel="noopener"><span class="i wa"></span><span class="t"><b>Ekri nou sou WhatsApp</b><span>Kominote a reponn kesyon ou yo</span></span><span class="ch">›</span></a>
         <button class="r hidden" type="button" data-enstale><span class="i ins"></span><span class="t"><b>Enstale app la</b><span>Atelier AI dirèkteman sou telefòn ou</span></span><span class="ch">›</span></button>
       </div>
     </section>
@@ -70,11 +70,13 @@
     <!-- KOU -->
     <section class="view appwrap" data-v="kou"><div id="kou"></div></section>
 
-    <!-- RESOUS -->
-    <section class="view appwrap" data-v="resous">
-      <div class="ttl">Resous</div>
-      <p class="sub2">Tout lyen ou bezwen yo.</p>
-      <div class="rows" id="resous"></div>
+    <!-- ZOUTI -->
+    <section class="view appwrap" data-v="zouti">
+      <div class="ttl">Zouti</div>
+      <p class="sub2">Zouti w ap itilize pou kreye videyo w yo.</p>
+      <div class="rows" id="zouti"></div>
+      <div class="lbl">Gid ak sipò</div>
+      <div class="rows" id="sipo"></div>
     </section>
 
     <!-- PWOFIL -->
@@ -145,7 +147,7 @@
 <nav class="bnav hidden" id="bnav"><div class="in">
   <a href="#akey" data-n="akey"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg>Akèy</a>
   <a href="#kou" data-n="kou"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>Kou</a>
-  <a href="#resous" data-n="resous"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5z"/><path d="M4 19.5V21h16"/></svg>Resous</a>
+  <a href="#zouti" data-n="zouti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Zouti</a>
   <a href="#pwofil" data-n="pwofil"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Pwofil</a>
 </div></nav>
 
@@ -206,11 +208,11 @@ const sove = () => mem.set("atelier-leson-fini", JSON.stringify([...fini]));
 const pwogre = (m) => m.leson.length ? Math.round(100 * m.leson.filter((_, i) => fini.has(`${m.id}/${i + 1}`)).length / m.leson.length) : 0;
 const bar = (pct) => el("div", { className: "bar" }, el("i", { style: `width:${pct}%` }));
 
-/* ---------- routing: #akey  #kou  #kou/<kou>  #kou/<kou>/<n>  #resous  #pwofil  #afilyasyon ---------- */
+/* ---------- routing: #akey  #kou  #kou/<kou>  #kou/<kou>/<n>  #zouti  #pwofil  #afilyasyon ---------- */
 function ale() {
   if (!D) return;
   const [v, mid, n] = (location.hash.slice(1) || "akey").split("/");
-  const vi = ["akey", "kou", "resous", "pwofil", "afilyasyon"].includes(v) ? v : "akey";
+  const vi = v === "resous" ? "zouti" : ["akey", "kou", "zouti", "pwofil", "afilyasyon"].includes(v) ? v : "akey";
   document.querySelectorAll("[data-v]").forEach((s) => s.classList.toggle("hidden", s.dataset.v !== vi));
   const nav = vi === "afilyasyon" ? "pwofil" : vi;
   document.querySelectorAll(".bnav a").forEach((a) => a.setAttribute("aria-current", a.dataset.n === nav ? "page" : "false"));
@@ -232,7 +234,7 @@ function kou(mid, n) {
       const byento = x.estati === "byento", pct = pwogre(x), konte = D.demannKonte?.[x.id] || 0;
       return el("a", { className: "kc", href: `#kou/${x.id}` }, el("span", { className: "th" }, img(x.kouveti)),
         el("span", { className: "t" }, el("b", { textContent: x.tit }), el("p", { textContent: x.deskripsyon }),
-          byento ? el("small", {}, el("span", { className: "chip", textContent: "Byento" }), konte ? `${konte} demann` : "")
+          byento ? el("small", {}, el("span", { className: "tg", textContent: "Byento" }), konte ? `${konte} demann` : "")
                  : el("small", { textContent: `${x.leson.length} leson` + (pct ? ` · ${pct}% fini` : "") }),
           !byento && pct ? bar(pct) : null));
     }));
@@ -316,20 +318,47 @@ function akey() {
     $("#k-btn").textContent = kòmanse ? "Kontinye leson an" : "Kòmanse premye leson an";
     $("#k-box .lbl").textContent = kòmanse ? "Kontinye aprann" : "Kòmanse aprann";
   }
-  const nv = [...(D.kontni.nouvote || [])].sort((a, b) => b.dat.localeCompare(a.dat)).slice(0, 5);
-  $("#news").replaceChildren(...(nv.length ? nv.map((x) => el("div", {}, x.tit ? el("b", { textContent: x.tit }) : null, x.tex ? el("p", { textContent: x.tex }) : null, el("span", { textContent: lè(x.dat) })))
-    : [el("div", {}, el("p", { textContent: "Pa gen nouvote pou kounye a." }))]));
+  etap();
 }
 
-/* ---------- resources ---------- */
-function resous(k) {
-  const r = (ic, tit, tex, url) => url && el("a", { className: "r", href: url, target: "_blank", rel: "noopener" }, ikon(ic),
-    el("span", { className: "t" }, el("b", { textContent: tit }), el("span", { textContent: tex })), el("span", { className: "ch", textContent: "›" }));
-  $("#resous").replaceChildren(...[
-    r("wa", "Kominote WhatsApp", "Enfòmasyon, repons ak akonpayman", k.lyen_kominote),
-    r("cla", "7 jou Claude gratis", "Aktive l sèlman lè w pare: 7 jou yo kòmanse lamenm", k.lyen_claude),
-    r("zou", "Zouti Atelier AI", "Ouvè l sou GitHub epi peze Fork", k.lyen_zouti),
-    r("gid", "Gid elèv la", "Tout etap yo ekri", k.lyen_gid),
+// First-video checklist: the beginner's path, each step opens what it needs; ticks stay on this phone.
+function etap() {
+  const k = D.kontni, st = moduls().find((m) => m.estati !== "byento" && m.leson.length);
+  const fèt = new Set((() => { try { const x = JSON.parse(mem.get("atelier-etap") || "[]"); return Array.isArray(x) ? x : []; } catch { return []; } })());
+  const lis = [
+    { id: "kat", tit: "Kreye kat debi ou", tex: "Gade leson an", url: st ? `#kou/${st.id}/1` : "#kou" },
+    { id: "claude", tit: "Aktive 7 jou Claude Pro gratis", tex: "Sèlman lè w pare pou travay", url: k.lyen_claude, ext: true },
+    { id: "zouti", tit: "Enstale zouti Atelier AI a", tex: "Ouvè l sou GitHub epi peze Fork", url: k.lyen_zouti, ext: true },
+    { id: "videyo", tit: "Fè premye videyo w ak Claude", tex: "Suiv leson an etap pa etap", url: st && st.leson[1] ? `#kou/${st.id}/2` : "#kou" },
+    { id: "youtube", tit: "Pibliye l sou YouTube", tex: "Ak tit, deskripsyon ak miniati a", url: "https://studio.youtube.com", ext: true },
+  ];
+  const n = lis.filter((e) => fèt.has(e.id)).length;
+  $("#e-kont").textContent = `${n}/${lis.length}`;
+  $("#e-bar").style.width = `${(100 * n) / lis.length}%`;
+  $("#etap").replaceChildren(...lis.map((e, i) => {
+    const ok = fèt.has(e.id);
+    const c = el("button", { type: "button", className: "ck" + (ok ? " ok" : ""), ariaLabel: ok ? "Make kòm pa fini" : "Make kòm fini", ariaPressed: String(ok), textContent: ok ? "✓" : String(i + 1) });
+    c.onclick = () => { ok ? fèt.delete(e.id) : fèt.add(e.id); mem.set("atelier-etap", JSON.stringify([...fèt])); etap(); };
+    const a = el("a", { className: "t", href: e.url || "#", ...(e.ext ? { target: "_blank", rel: "noopener" } : {}) }, el("b", { textContent: e.tit }), el("span", { textContent: e.tex }));
+    return el("div", { className: "e" + (ok ? " ok" : "") }, c, a, el("span", { className: "ch", textContent: "›" }));
+  }));
+}
+
+/* ---------- tools ---------- */
+function zouti(k) {
+  const NOUVO = 14 * 864e5;
+  const r = (ikn, tit, tex, url, dat) => url && el("a", { className: "r", href: url, target: "_blank", rel: "noopener" }, ikn,
+    el("span", { className: "t" }, el("b", {}, tit, dat && Date.now() - Date.parse(dat) < NOUVO ? el("i", { className: "tg", style: "margin-left:8px;vertical-align:2px;font-style:normal", textContent: "Nouvo" }) : null), el("span", { textContent: tex })),
+    el("span", { className: "ch", textContent: "›" }));
+  const mono = (non) => el("span", { className: "zi", textContent: non.trim()[0]?.toUpperCase() || "?" });
+  $("#zouti").replaceChildren(...[
+    r(ikon("cla"), "Claude Pro", "7 jou gratis ak lyen espesyal ou a", k.lyen_claude),
+    r(ikon("zou"), "Zouti Atelier AI", "Studio animasyon ki travay ak Claude", k.lyen_zouti),
+    ...(k.zouti || []).map((z) => r(mono(z.non), z.non, z.tex, z.url, z.dat)),
+  ].filter(Boolean));
+  $("#sipo").replaceChildren(...[
+    r(ikon("gid"), "Gid elèv la", "Tout etap yo ekri", k.lyen_gid),
+    r(ikon("wa"), "Kominote WhatsApp", "Enfòmasyon, repons ak akonpayman", k.lyen_kominote),
   ].filter(Boolean));
 }
 
@@ -415,8 +444,8 @@ async function chaje() {
   D = await r.json();
   const k = D.kontni;
   $("#bonjou").textContent = `Bonjou ${D.non}`;
-  for (const [s, u] of [["#a-kom", k.lyen_kominote], ["#p-kom", k.lyen_kominote], ["#a-cla", k.lyen_claude]]) if (u) $(s).href = u; else kache(s);
-  resous(k); afilyasyon(); bell();
+  for (const [s, u] of [["#a-kom", k.lyen_kominote], ["#p-kom", k.lyen_kominote]]) if (u) $(s).href = u; else kache(s);
+  zouti(k); afilyasyon(); bell();
   kache("#app", false); kache("#bnav", false); kache("#atann"); kache("#pa-bon");
   ale();
 }

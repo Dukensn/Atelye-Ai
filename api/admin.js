@@ -83,6 +83,9 @@ export async function POST(req) {
     const nouvote = (Array.isArray(k.nouvote) ? k.nouvote : []).slice(0, 30)
       .map((n) => ({ tit: netwaye(n?.tit, 100), tex: netwaye(n?.tex, 600), dat: Number.isNaN(Date.parse(n?.dat)) ? new Date().toISOString() : new Date(n.dat).toISOString() }))
       .filter((n) => n.tit || n.tex);
+    const zouti = (Array.isArray(k.zouti) ? k.zouti : []).slice(0, 30)
+      .map((z) => ({ non: netwaye(z?.non, 60), tex: netwaye(z?.tex, 160), url: url(z?.url), dat: Number.isNaN(Date.parse(z?.dat)) ? new Date().toISOString() : new Date(z.dat).toISOString() }))
+      .filter((z) => z.non);
     const nouvo = {
       moduls,
       lyen_claude: url(k.lyen_claude),
@@ -90,8 +93,9 @@ export async function POST(req) {
       lyen_gid: url(k.lyen_gid),
       lyen_kominote: url(k.lyen_kominote),
       nouvote,
+      zouti,
     };
-    const lyen = [nouvo.lyen_claude, nouvo.lyen_zouti, nouvo.lyen_gid, nouvo.lyen_kominote, ...moduls.flatMap((m) => m.leson.map((l) => l.url))];
+    const lyen = [nouvo.lyen_claude, nouvo.lyen_zouti, nouvo.lyen_gid, nouvo.lyen_kominote, ...moduls.flatMap((m) => m.leson.map((l) => l.url)), ...zouti.map((z) => z.url || null)];
     if (lyen.some((x) => x === null) || moduls.some((m) => m.kouveti === null))
       return json({ ere: "Chak lyen dwe kòmanse ak https://" }, 400);
     await ekri("kontni.json", nouvo);
