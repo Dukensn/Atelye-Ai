@@ -5,11 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Atelier AI — Premye videyo animasyon ou sou YouTube</title>
 <meta name="description" content="Aprann fè videyo animasyon pou YouTube ak telefòn ou, avèk Claude. Fòmasyon an kreyòl, 1 500 goud.">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#ffffff">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Atelier AI">
 <link rel="icon" href="/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
+<script src="/enstale.js" defer></script>
 </head>
 <body>
 <header class="top"><div class="wrap">
@@ -29,7 +35,7 @@
     <h1>Fè premye videyo animasyon ou pou YouTube, ak telefòn ou.</h1>
     <p class="lead">Claude envante istwa a, li desine pèsonaj yo, li mete vwa ak mizik. Ou menm, ou se reyalizatè a: se ou ki chwazi, se ou ki di « chanje sa ».</p>
     <div class="cta">
-      <a class="btn" href="/peye">Kòmanse — 1 500 goud</a>
+      <a class="btn" href="/peye">Kòmanse — <span class="pri">1 500</span> goud</a>
       <a class="btn light" href="#kreye">Gade egzanp yo</a>
     </div>
     <div class="checks">
@@ -48,7 +54,7 @@
   <div class="stats">
     <div><b>2</b><span>videyo fòmasyon</span></div>
     <div><b>7 jou</b><span>Claude gratis</span></div>
-    <div><b>1 500 G</b><span>yon sèl fwa</span></div>
+    <div><b><span class="pri">1 500</span> G</b><span>yon sèl fwa</span></div>
   </div>
 </div>
 
@@ -81,7 +87,7 @@
   <div class="price">
     <div>
       <div class="mute small" style="color:#aaa">Tout fòmasyon an</div>
-      <div class="amount">1 500 <small>goud</small></div>
+      <div class="amount"><span class="pri">1 500</span> <small>goud</small></div>
       <ul>
         <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Yon sèl peman, pa gen abònman</li>
         <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Videyo yo ak zouti a rete pou ou</li>
@@ -103,5 +109,15 @@
 </main>
 
 <footer><div class="wrap"><span>© Atelier AI</span><a href="/peye">Enskri</a></div></footer>
+<script>
+// Affiliate link: remember ?ref= for the signup page, and show the current price.
+(() => {
+  const ref = new URLSearchParams(location.search).get("ref");
+  if (ref) try { localStorage.setItem("atelier-ref", ref.toUpperCase()); } catch {}
+  fetch("/api/konfig").then((r) => r.json()).then((k) => {
+    if (k.pri) document.querySelectorAll(".pri").forEach((x) => (x.textContent = Number(k.pri).toLocaleString("fr-FR")));
+  }).catch(() => {});
+})();
+</script>
 </body>
 </html>

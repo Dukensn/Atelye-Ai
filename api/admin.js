@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import {
-  KONTNI_DEFO, efase, ekri, json, kontni, li, lis, netwaye, seAdmin, telefonWhatsApp,
+  KONTNI_DEFO, asireKod, efase, ekri, json, kalkileAfilye, kontni, li, netwaye, paramet, seAdmin,
+  telefonWhatsApp, toutEnskripsyon, toutRetre,
 } from "../lib/store.js";
 
 const lyenEspas = (req, token) => `${new URL(req.url).origin}/espas?k=${token}`;
@@ -13,18 +14,41 @@ function mesajWhatsApp(e, lyen, kominote) {
   return `https://wa.me/${telefonWhatsApp(e.telefon)}?text=${encodeURIComponent(tèks)}`;
 }
 
+const waGen = (moun, montan, filye) =>
+  `https://wa.me/${telefonWhatsApp(moun.telefon)}?text=${encodeURIComponent(
+    `Felisitasyon ${moun.non.split(" ")[0]}! 🎉 ${filye.split(" ")[0]} enskri nan Atelier AI ak lyen pa w la. Ou fèk genyen ${montan} goud. Louvri app Atelier AI a pou w wè kòb ou.`,
+  )}`;
+
+const waPeye = (r) =>
+  `https://wa.me/${telefonWhatsApp(r.telefon)}?text=${encodeURIComponent(
+    `Bonjou ${r.non.split(" ")[0]}! Nou fèk voye ${r.montan} goud sou ${r.metod === "moncash" ? "MonCash" : "NatCash"} ${r.nimewo}. Mèsi paske w pataje Atelier AI! 🙏`,
+  )}`;
+
 export async function GET(req) {
   if (!seAdmin(req)) return json({ ere: "Modpas la pa bon." }, 401);
-  const [tout, k] = await Promise.all([Promise.all((await lis("enskripsyon/")).map(li)), kontni()]);
+  const [tout, retre, k, p] = await Promise.all([toutEnskripsyon(), toutRetre(), kontni(), paramet()]);
+  const parKod = Object.fromEntries(tout.filter((e) => e.kod).map((e) => [e.kod, e]));
   const lisFinal = tout
-    .filter(Boolean)
     .sort((a, b) => b.kreye.localeCompare(a.kreye))
     .map((e) => ({
       ...e,
+      parenn: e.ref && parKod[e.ref] ? parKod[e.ref].non : null,
       lyen: e.token ? lyenEspas(req, e.token) : null,
       whatsapp: e.token ? mesajWhatsApp(e, lyenEspas(req, e.token), k.lyen_kominote) : null,
     }));
-  return json({ lis: lisFinal, kontni: k });
+  const afilye = tout
+    .filter((e) => e.kod)
+    .map((e) => {
+      const a = kalkileAfilye(e, tout, retre);
+      return { id: e.id, non: e.non, telefon: e.telefon, kod: e.kod, filye: a.filye.length,
+        aksepte: a.filye.filter((f) => f.estati === "aksepte").length, gen: a.gen, peye: a.peye, atann: a.atann, balans: a.balans };
+    })
+    .filter((a) => a.filye > 0)
+    .sort((a, b) => b.gen - a.gen);
+  const retreFinal = retre
+    .sort((a, b) => b.kreye.localeCompare(a.kreye))
+    .map((r) => ({ ...r, whatsapp: waPeye(r) }));
+  return json({ lis: lisFinal, kontni: k, paramet: p, afilye, retre: retreFinal });
 }
 
 export async function POST(req) {
@@ -60,6 +84,24 @@ export async function POST(req) {
     return json({ ok: true, kontni: nouvo });
   }
 
+  if (b.aksyon === "paramet") {
+    const pri = Math.round(Number(b.pri)), komisyon = Math.round(Number(b.komisyon));
+    if (!(pri >= 100 && pri <= 1000000)) return json({ ere: "Pri a pa bon." }, 400);
+    if (!(komisyon >= 0 && komisyon < pri)) return json({ ere: "Komisyon an dwe pi piti pase pri a." }, 400);
+    await ekri("paramet.json", { pri, komisyon });
+    return json({ ok: true, paramet: { pri, komisyon } });
+  }
+
+  if (b.aksyon === "retre_peye" || b.aksyon === "retre_anile") {
+    const rid = netwaye(b.id, 40);
+    const r = /^[0-9a-f-]{36}$/.test(rid) ? await li(`retre/${rid}.json`) : null;
+    if (!r) return json({ ere: "Demann sa a pa egziste." }, 404);
+    r.estati = b.aksyon === "retre_peye" ? "peye" : "anile";
+    r.dat_desizyon = new Date().toISOString();
+    await ekri(`retre/${r.id}.json`, r);
+    return json({ ok: true, whatsapp: r.estati === "peye" ? waPeye(r) : null });
+  }
+
   const id = netwaye(b.id, 40);
   if (!/^[0-9a-f-]{36}$/.test(id)) return json({ ere: "Demann sa a pa egziste." }, 404);
   const e = await li(`enskripsyon/${id}.json`);
@@ -70,11 +112,26 @@ export async function POST(req) {
       e.token = randomBytes(24).toString("base64url");
       await ekri(`token/${e.token}.json`, { id: e.id });
     }
+    await asireKod(e);
+    // Credit the referrer once, at the commission in force on the day of approval.
+    let parenn = null;
+    if (e.ref && e.komisyon === undefined) {
+      const ki = await li(`kod/${e.ref}.json`);
+      const p = ki && ki.id !== e.id ? await li(`enskripsyon/${ki.id}.json`) : null;
+      if (p && p.estati === "aksepte") {
+        e.komisyon = (await paramet()).komisyon;
+        parenn = p;
+      }
+    }
     e.estati = "aksepte";
     e.dat_desizyon = new Date().toISOString();
     await ekri(`enskripsyon/${e.id}.json`, e);
     const lyen = lyenEspas(req, e.token);
-    return json({ ok: true, lyen, whatsapp: mesajWhatsApp(e, lyen, (await kontni()).lyen_kominote) });
+    return json({
+      ok: true, lyen,
+      whatsapp: mesajWhatsApp(e, lyen, (await kontni()).lyen_kominote),
+      parenn: parenn ? { non: parenn.non, montan: e.komisyon, whatsapp: waGen(parenn, e.komisyon, e.non) } : null,
+    });
   }
 
   if (b.aksyon === "refize") {

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { ekri, json, netwaye } from "../lib/store.js";
+import { ekri, json, kodBon, netwaye } from "../lib/store.js";
 
 // Step 1: name + WhatsApp only. The payment proof comes in step 2 (api/prev.js).
 export async function POST(req) {
@@ -14,7 +14,9 @@ export async function POST(req) {
   if (non.length < 2) return json({ ere: "Ekri non w." }, 400);
   if (telefon.replace(/\D/g, "").length < 8) return json({ ere: "Nimewo WhatsApp la pa bon." }, 400);
 
+  const ref = String(b.ref ?? "").toUpperCase();
   const e = { id: randomUUID(), non, telefon, kreye: new Date().toISOString(), estati: "san_prev" };
+  if (kodBon(ref)) e.ref = ref;
   await ekri(`enskripsyon/${e.id}.json`, e);
   return json({ id: e.id });
 }

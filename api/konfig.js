@@ -1,5 +1,6 @@
-import { PEMAN, PRI, json } from "../lib/store.js";
+import { PEMAN, json, paramet } from "../lib/store.js";
 
-export function GET() {
-  return json({ pri: PRI, ...PEMAN });
+export async function GET() {
+  const p = await paramet();
+  return json({ pri: p.pri, komisyon: p.komisyon, ...PEMAN });
 }

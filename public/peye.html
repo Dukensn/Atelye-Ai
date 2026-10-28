@@ -4,11 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enskripsyon — Atelier AI</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#ffffff">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Atelier AI">
 <link rel="icon" href="/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
+<script src="/enstale.js" defer></script>
 <style>
   .f { max-width: 440px; margin: 0 auto; padding: 28px 16px 48px; }
   .f h1 { font-size: 28px; margin: 0 0 4px; }
@@ -40,7 +46,7 @@
   <form id="e1" novalidate>
     <div class="etap">Etap 1 sou 2</div>
     <h1>Enskri</h1>
-    <p class="sub">Fòmasyon an: 1 500 goud, yon sèl fwa.</p>
+    <p class="sub">Fòmasyon an: <span class="pri">1 500</span> goud, yon sèl fwa.</p>
     <label for="non">Non ou</label>
     <input id="non" name="non" autocomplete="name" maxlength="80" required>
     <label for="telefon">Nimewo WhatsApp ou</label>
@@ -53,8 +59,8 @@
   <section id="e2" class="hidden">
     <div class="etap">Etap 2 sou 2</div>
     <h1>Peye</h1>
-    <p class="sub">Voye 1 500 goud sou youn nan nimewo sa yo, epi voye yon foto prèv peman an.</p>
-    <button class="btn" id="peye" type="button">Peye 1 500 goud</button>
+    <p class="sub">Voye <span class="pri">1 500</span> goud sou youn nan nimewo sa yo, epi voye yon foto prèv peman an.</p>
+    <button class="btn" id="peye" type="button">Peye <span class="pri">1 500</span> goud</button>
 
     <div id="detay" class="hidden">
       <div class="peman">
@@ -74,6 +80,8 @@
   <section id="e3" class="hidden">
     <h1>Mèsi! 🎉</h1>
     <p class="sub">Nou resevwa prèv ou. N ap verifye l epi n ap voye lyen espas ou sou WhatsApp.</p>
+    <button type="button" class="btn hidden" data-enstale style="width:100%;margin:8px 0 12px">📲 Enstale app Atelier AI a</button>
+    <p class="small mute">Enstale app la sou telefòn ou: depi peman an verifye, li ap louvri espas ou otomatikman. Ou ka tou <a href="/espas">swiv estati ou la a</a>.</p>
     <p class="small mute">Pandan w ap tann, kreye yon kont GitHub gratis sou <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>.</p>
   </section>
 </main>
@@ -85,11 +93,14 @@ const ere = (s, t) => { $(s).textContent = t; $(s).classList.toggle("hidden", !t
 const memwa = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
                 set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 let id = memwa.get("atelier-id"), foto = null;
+const ref = new URLSearchParams(location.search).get("ref");
+if (ref) memwa.set("atelier-ref", ref.toUpperCase());
 
 if (id) montre(memwa.get("atelier-fini") === id ? 2 : 1);
 
 fetch("/api/konfig").then((r) => r.json()).then((k) => {
   for (const c of ["natcash", "moncash", "benefisye"]) if (k[c]) $("#" + c).textContent = k[c];
+  if (k.pri) document.querySelectorAll(".pri").forEach((x) => (x.textContent = Number(k.pri).toLocaleString("fr-FR")));
 }).catch(() => {});
 
 async function poste(url, body) {
@@ -104,7 +115,7 @@ $("#e1").addEventListener("submit", async (ev) => {
   ere("#ere1", "");
   $("#b1").disabled = true;
   try {
-    id = (await poste("/api/enskripsyon", { non: $("#non").value, telefon: $("#telefon").value })).id;
+    id = (await poste("/api/enskripsyon", { non: $("#non").value, telefon: $("#telefon").value, ref: memwa.get("atelier-ref") || "" })).id;
     memwa.set("atelier-id", id);
     montre(1); window.scrollTo(0, 0);
   } catch (e) { ere("#ere1", e.message); }

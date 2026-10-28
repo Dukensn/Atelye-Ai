@@ -40,3 +40,10 @@ Le contenu de l'espace élève (liens des vidéos YouTube non répertoriées, li
 - `public/` : les pages (HTML/CSS, aucun framework)
 - `api/` : les fonctions Vercel (`konfig`, `enskripsyon`, `espas`, `admin`)
 - `lib/store.js` : lecture/écriture dans Vercel Blob (`ATELIER_MEMWA=1` = mémoire, pour les tests)
+
+## Affiliation, app et réglages (ajouté)
+
+- **Réglages** (`/admin` → Paramèt) : prix de la formation et commission par inscription (`paramet.json`).
+- **Affiliation** : chaque élève validé reçoit un code (`kod/<CODE>.json`) et un lien `/?ref=CODE`. Quand une inscription faite avec ce lien est acceptée, la commission du jour est enregistrée sur l'inscription (`komisyon`). Les gains sont recalculés à partir des inscriptions, jamais stockés comme compteur.
+- **Retraits** : l'élève demande tout son solde (`retre/<id>.json`), l'admin paie à la main puis clique « Mwen peye ».
+- **App (PWA)** : `manifest.webmanifest`, `sw.js`, `enstale.js`. L'app s'ouvre sur `/espas` ; pendant l'attente elle interroge `/api/estati` et ouvre l'espace dès que le paiement est accepté.
