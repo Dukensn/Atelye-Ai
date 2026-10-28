@@ -23,5 +23,14 @@ export async function GET(req) {
     pri: p.pri,
     komisyon: p.komisyon,
     afilye: kalkileAfilye(e, tout, retre),
+    demann: e.demann ?? [],
+    demannKonte: konteDemann(tout),
   });
+}
+
+// How many students asked for each upcoming course.
+export function konteDemann(tout) {
+  const c = {};
+  for (const x of tout) for (const id of x.demann ?? []) c[id] = (c[id] ?? 0) + 1;
+  return c;
 }

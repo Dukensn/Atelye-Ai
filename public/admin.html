@@ -54,16 +54,19 @@
     </form>
 
     <form id="kontni" class="card hidden">
-      <h2 style="font-size:20px">Modil ak leson</h2>
-      <p class="mute small">Chak modil gen yon imaj kouvèti, yon deskripsyon, sa elèv la ap aprann, ak leson yo (lyen YouTube). Mete « Byento » pou yon modil ki poko pare. Elèv yo wè chanjman yo lamenm.</p>
+      <h2 style="font-size:20px">Kou ak leson</h2>
+      <p class="mute small">Chak kou gen yon imaj kouvèti, yon deskripsyon, sa elèv la ap aprann, ak leson yo (lyen YouTube). Mete « Byento » pou yon kou ki poko pare: elèv yo ka mande pou w louvri l. Elèv yo wè chanjman yo lamenm.</p>
       <div id="moduls"></div>
-      <button type="button" class="btn sm light" id="m-add" style="margin:4px 0 8px">+ Ajoute yon modil</button>
+      <button type="button" class="btn sm light" id="m-add" style="margin:4px 0 8px">+ Ajoute yon kou</button>
       <h3 style="margin-top:20px">Lyen yo</h3>
       <label>Lyen 7 jou Claude</label><input name="lyen_claude" type="url">
       <label>Lyen zouti a (GitHub)</label><input name="lyen_zouti" type="url">
       <label>Lyen gid la</label><input name="lyen_gid" type="url">
       <label>Lyen kominote WhatsApp la</label><input name="lyen_kominote" type="url" placeholder="https://chat.whatsapp.com/…">
-      <label>Mesaj pou elèv yo <span class="mute">(si w vle)</span></label><textarea name="mesaj" rows="3"></textarea>
+      <h3 style="margin-top:20px">Nouvote</h3>
+      <p class="mute small">Parèt sou paj Akèy elèv yo ak nan notifikasyon yo.</p>
+      <div id="nouvote"></div>
+      <button type="button" class="btn sm light" id="n-add" style="margin:4px 0 8px">+ Ajoute yon nouvote</button>
       <div id="k-msg" class="msg hidden"></div>
       <button class="btn full" style="margin-top:16px">Anrejistre</button>
     </form>
@@ -214,8 +217,23 @@ function afiche() {
 // Module editor: one card per module, lessons as title + YouTube link rows.
 let MOD = [];
 const KOUVETI = ["/kouveti/stickman.jpg", "/kouveti/motion.jpg", "/kouveti/higgsfield.jpg"];
+// News items shown on the students' home page.
+let NV = [];
+function editNouvote() {
+  $("#nouvote").replaceChildren(...NV.map((n, i) => {
+    const t = el("input", { value: n.tit, placeholder: "Tit (si w vle)" }); t.oninput = () => (n.tit = t.value);
+    const x = el("textarea", { value: n.tex, rows: 2, placeholder: "Sa w vle di elèv yo" }); x.oninput = () => (n.tex = x.value);
+    const del = el("button", { type: "button", className: "btn sm light", textContent: "Retire" }); del.onclick = () => { NV.splice(i, 1); editNouvote(); };
+    return el("div", { style: "display:grid;gap:6px;padding:10px 0;border-top:1px solid var(--line)" },
+      el("span", { className: "small mute", textContent: n.dat ? new Date(n.dat).toLocaleDateString("fr-FR") : "Nouvo" }), t, x, el("div", { className: "actions", style: "margin:0" }, del));
+  }));
+}
+$("#n-add").onclick = () => { NV.unshift({ tit: "", tex: "", dat: new Date().toISOString() }); editNouvote(); };
+
 function editModil() {
   const box = $("#moduls"); box.replaceChildren();
+  const demann = {};
+  for (const e of done.lis) for (const id of e.demann || []) demann[id] = (demann[id] || 0) + 1;
   MOD.forEach((m, i) => {
     const inp = (lab, val, set, ex = {}) => { const x = el(ex.tag || "input", { value: val ?? "", ...ex.p }); for (const [k, v] of Object.entries(ex.attr || {})) x.setAttribute(k, v); x.oninput = () => set(x.value); return [el("label", { textContent: lab }), x]; };
     const leson = el("div");
@@ -234,11 +252,11 @@ function editModil() {
       el("option", { value: "disponib", textContent: "Disponib" }), el("option", { value: "byento", textContent: "Byento (sèlman deskripsyon)" }));
     est.value = m.estati; est.onchange = () => (m.estati = est.value);
     const prev = el("img", { src: m.kouveti || "", style: "width:160px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;margin-top:8px;background:#111" });
-    const del = el("button", { type: "button", className: "btn sm light", textContent: "Retire modil sa a" });
-    del.onclick = () => { if (confirm(`Retire modil « ${m.tit} » ak tout leson li yo?`)) { MOD.splice(i, 1); editModil(); } };
+    const del = el("button", { type: "button", className: "btn sm light", textContent: "Retire kou sa a" });
+    del.onclick = () => { if (confirm(`Retire kou « ${m.tit} » ak tout leson li yo?`)) { MOD.splice(i, 1); editModil(); } };
     const up = el("button", { type: "button", className: "btn sm light", textContent: "↑ Monte" }); up.onclick = () => { if (i) { [MOD[i - 1], MOD[i]] = [MOD[i], MOD[i - 1]]; editModil(); } };
     box.append(el("div", { className: "card", style: "margin:12px 0" },
-      el("div", { className: "row" }, el("h3", { style: "margin:0", textContent: `Modil ${i + 1}` }), el("div", { className: "actions", style: "margin:0" }, up, del)),
+      el("div", { className: "row" }, el("h3", { style: "margin:0", textContent: `Kou ${i + 1}` + (demann[m.id] ? ` · ${demann[m.id]} demann` : "") }), el("div", { className: "actions", style: "margin:0" }, up, del)),
       ...inp("Tit", m.tit, (v) => (m.tit = v)),
       ...inp("Deskripsyon", m.deskripsyon, (v) => (m.deskripsyon = v), { tag: "textarea", p: { rows: 3 } }),
       ...inp("Imaj kouvèti (lyen https:// oswa /kouveti/…)", m.kouveti, (v) => { m.kouveti = v; prev.src = v; }, { attr: { list: "kouveti-lis" } }),
@@ -249,13 +267,13 @@ function editModil() {
   });
   if (!$("#kouveti-lis")) document.body.append(el("datalist", { id: "kouveti-lis" }, ...KOUVETI.map((k) => el("option", { value: k }))));
 }
-$("#m-add").onclick = () => { MOD.push({ id: "", tit: "Nouvo modil", deskripsyon: "", kouveti: "", estati: "byento", aprann: [], leson: [] }); editModil(); };
+$("#m-add").onclick = () => { MOD.push({ id: "", tit: "Nouvo kou", deskripsyon: "", kouveti: "", estati: "byento", aprann: [], leson: [] }); editModil(); };
 
 function ranpliKontni(k) {
   const f = $("#kontni");
   MOD = JSON.parse(JSON.stringify(k.moduls || []));
   editModil();
-  f.lyen_claude.value = k.lyen_claude; f.lyen_zouti.value = k.lyen_zouti; f.lyen_gid.value = k.lyen_gid; f.lyen_kominote.value = k.lyen_kominote || ""; f.mesaj.value = k.mesaj;
+  f.lyen_claude.value = k.lyen_claude; f.lyen_zouti.value = k.lyen_zouti; f.lyen_gid.value = k.lyen_gid; f.lyen_kominote.value = k.lyen_kominote || ""; NV = JSON.parse(JSON.stringify(k.nouvote || [])); editNouvote();
 }
 
 async function rechaje() {
@@ -284,7 +302,7 @@ $("#kontni").addEventListener("submit", async (ev) => {
   const f = ev.target, m = $("#k-msg");
   const kontni = {
     moduls: MOD,
-    lyen_claude: f.lyen_claude.value, lyen_zouti: f.lyen_zouti.value, lyen_gid: f.lyen_gid.value, lyen_kominote: f.lyen_kominote.value, mesaj: f.mesaj.value,
+    lyen_claude: f.lyen_claude.value, lyen_zouti: f.lyen_zouti.value, lyen_gid: f.lyen_gid.value, lyen_kominote: f.lyen_kominote.value, nouvote: NV,
   };
   try { await api("POST", { aksyon: "kontni", kontni }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
   catch (e) { m.className = "msg err"; m.textContent = e.message; }

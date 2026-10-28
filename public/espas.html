@@ -46,18 +46,23 @@
   <div id="app" class="hidden">
     <!-- AKÈY -->
     <section class="view appwrap" data-v="akey">
+      <a class="promo" href="#afilyasyon"><span class="i gif"></span><span class="t"><b>Fè kòb ak Atelier AI</b><span id="promo-tex">Pataje fòmasyon an epi genyen kòb chak fwa yon moun enskri epi li peye.</span></span><span class="ch">›</span></a>
+
       <div class="ttl" id="bonjou">Bonjou</div>
-      <p class="sub2">Kontinye kote w te rive a.</p>
 
-      <div class="rows"><a class="r" id="kontinye"><span class="th" id="k-th"></span><span class="t"><span id="k-mod"></span><b id="k-tit"></b></span><span class="ch">›</span></a></div>
+      <div id="k-box">
+        <div class="lbl">Kontinye aprann</div>
+        <a class="kc" id="kontinye" style="border-bottom:0;padding-bottom:12px"><span class="th" id="k-th"></span><span class="t"><small id="k-kou" style="margin:0 0 2px"></small><b id="k-tit"></b><div class="bar"><i id="k-bar"></i></div><small id="k-pwo"></small></span></a>
+        <a class="btn full" id="k-btn">Kontinye leson an</a>
+      </div>
 
-      <div class="lbl">Modil yo</div>
-      <div class="shelf" id="shelf"></div>
+      <div class="lbl">Nouvote</div>
+      <div class="news" id="news"></div>
 
       <div class="lbl">Rapid</div>
       <div class="rows">
         <a class="r" id="a-kom" target="_blank" rel="noopener"><span class="i wa"></span><span class="t"><b>Kominote WhatsApp</b><span>Enfòmasyon ak akonpayman</span></span><span class="ch">›</span></a>
-        <a class="r" href="#pwofil"><span class="i gen"></span><span class="t"><b>Genyen kòb</b><span id="a-gen">Pataje fòmasyon an</span></span><span class="ch">›</span></a>
+        <a class="r" id="a-cla" target="_blank" rel="noopener"><span class="i cla"></span><span class="t"><b>7 jou Claude gratis</b><span>Aktive l lè w pare pou kòmanse</span></span><span class="ch">›</span></a>
         <button class="r hidden" type="button" data-enstale><span class="i ins"></span><span class="t"><b>Enstale app la</b><span>Atelier AI dirèkteman sou telefòn ou</span></span><span class="ch">›</span></button>
       </div>
     </section>
@@ -74,20 +79,47 @@
 
     <!-- PWOFIL -->
     <section class="view appwrap" data-v="pwofil">
-      <div style="display:flex;align-items:center;gap:14px;margin:8px 0 4px">
+      <div class="ph">
+        <a class="gift" href="#afilyasyon" aria-label="Afilyasyon"><span class="i gif"></span><span class="d hidden" id="gift-d"></span></a>
         <div class="av2" id="av"></div>
-        <div><b id="p-non" style="font-size:17px"></b><div class="mute small" id="p-tel"></div></div>
+        <h1 id="p-non"></h1>
+        <p id="p-tel"></p>
+        <p id="p-depi" style="font-size:13px"></p>
+      </div>
+      <div class="stat">
+        <div><b id="s-fini">0</b><span>Leson fini</span></div>
+        <div><b id="s-kou">0</b><span>Kou kòmanse</span></div>
+        <div><b id="s-dispo">0</b><span>Kou disponib</span></div>
       </div>
 
-      <div class="lbl">Afilye</div>
-      <p class="p" style="margin:0 0 12px" id="af-tex"></p>
+      <div class="lbl">Kont mwen</div>
+      <div class="rows">
+        <a class="r" href="#afilyasyon"><span class="i gif"></span><span class="t"><b>Afilyasyon</b><span id="p-af">Pataje epi genyen kòb</span></span><span class="ch">›</span></a>
+        <a class="r" href="#kou"><span class="i kou"></span><span class="t"><b>Kou mwen yo</b><span id="p-kou"></span></span><span class="ch">›</span></a>
+        <button class="r hidden" type="button" id="notif-on"><span class="i bel"></span><span class="t"><b>Aktive notifikasyon yo</b><span>Telefòn ou ap avèti w lè gen nouvote</span></span><span class="ch">›</span></button>
+        <button class="r hidden" type="button" data-enstale><span class="i ins"></span><span class="t"><b>Enstale app la</b><span>Atelier AI dirèkteman sou telefòn ou</span></span><span class="ch">›</span></button>
+        <a class="r" id="p-kom" target="_blank" rel="noopener"><span class="i wa"></span><span class="t"><b>Èd ak sipò</b><span>Ekri nou nan kominote WhatsApp la</span></span><span class="ch">›</span></a>
+        <a class="r" href="/"><span class="i inf"></span><span class="t"><b>Sou Atelier AI</b></span><span class="ch">›</span></a>
+      </div>
+    </section>
+
+    <!-- AFILYASYON (from the profile's gift button) -->
+    <section class="view appwrap" data-v="afilyasyon">
+      <a class="back" href="#pwofil">‹ Pwofil</a>
+      <div class="ttl">Afilyasyon</div>
+      <p class="sub2" id="af-tex"></p>
       <div class="nums">
         <div><b id="k-gen">0</b><span>Genyen</span></div>
         <div><b id="k-bal">0</b><span>Balans</span></div>
         <div><b id="k-env">0</b><span>Enskri</span></div>
       </div>
-      <div class="lnk2" style="border-top:1px solid var(--line);margin-top:12px"><code id="af-lyen"></code><button class="tbtn" type="button" id="af-kopi">Kopye</button><a class="tbtn" id="af-wa" target="_blank" rel="noopener">Pataje</a></div>
-      <div class="rows" id="af-lis" style="border-top:0"></div>
+
+      <div class="lbl">Lyen pa w</div>
+      <div class="lnk2" style="border-top:1px solid var(--line)"><code id="af-lyen"></code><button class="tbtn" type="button" id="af-kopi">Kopye</button><a class="tbtn" id="af-wa" target="_blank" rel="noopener">Pataje</a></div>
+
+      <div class="lbl">Moun ou envite</div>
+      <div class="rows" id="af-lis"></div>
+      <p class="p hidden" id="af-vid" style="margin:0">Pèsonn poko enskri ak lyen ou. Pataje l sou WhatsApp!</p>
 
       <div class="lbl">Mande peman</div>
       <form id="retre" novalidate>
@@ -101,13 +133,6 @@
         <button class="btn full" id="r-btn" style="margin-top:12px">Mande peman</button>
       </form>
       <div class="rows" id="r-lis" style="border-top:0;margin-top:8px"></div>
-
-      <div class="lbl">Paramèt</div>
-      <div class="rows">
-        <button class="r hidden" type="button" id="notif-on"><span class="i bel"></span><span class="t"><b>Aktive notifikasyon yo</b><span>Telefòn ou ap avèti w lè w genyen kòb</span></span></button>
-        <button class="r hidden" type="button" data-enstale><span class="i ins"></span><span class="t"><b>Enstale app la</b><span>Atelier AI dirèkteman sou telefòn ou</span></span></button>
-        <a class="r" href="/"><span class="i inf"></span><span class="t"><b>Sou Atelier AI</b></span><span class="ch">›</span></a>
-      </div>
     </section>
   </div>
 </main>
@@ -143,10 +168,12 @@ const IK = {
   gid: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5z"/><path d="M4 19.5V21h16"/></svg>',
   bel: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>',
   inf: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+  gif: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8a1 1 0 001 1h12a1 1 0 001-1v-8M12 8v13M12 8c-1.5-3-5-3.5-5-1.5S12 8 12 8s5 .5 5-1.5S13.5 5 12 8"/></svg>',
+  kou: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>',
   play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>',
 };
 const ikon = (k) => el("span", { className: "i", innerHTML: IK[k] });
-document.querySelectorAll(".i.wa,.i.gen,.i.ins,.i.bel,.i.inf").forEach((s) => { s.innerHTML = IK[s.classList[1]]; });
+document.querySelectorAll(".i.wa,.i.gen,.i.ins,.i.bel,.i.inf,.i.gif,.i.cla,.i.kou").forEach((s) => { s.innerHTML = IK[s.classList[1]]; });
 
 const params = new URLSearchParams(location.search);
 let kle = params.get("k");
@@ -173,79 +200,125 @@ function youtubeId(u) {
 const miniati = (l, m) => { const id = l?.url && youtubeId(l.url); return id ? `https://i.ytimg.com/vi/${encodeURIComponent(id)}/mqdefault.jpg` : m?.kouveti || ""; };
 const img = (src) => src ? el("img", { src, alt: "", loading: "lazy", onerror() { this.remove(); } }) : null;
 
-/* ---------- routing: #akey  #kou  #kou/<modil>  #kou/<modil>/<n>  #resous  #pwofil ---------- */
+/* ---------- progress (on this phone) ---------- */
+const fini = new Set((() => { try { const x = JSON.parse(mem.get("atelier-leson-fini") || "[]"); return Array.isArray(x) ? x : []; } catch { return []; } })());
+const sove = () => mem.set("atelier-leson-fini", JSON.stringify([...fini]));
+const pwogre = (m) => m.leson.length ? Math.round(100 * m.leson.filter((_, i) => fini.has(`${m.id}/${i + 1}`)).length / m.leson.length) : 0;
+const bar = (pct) => el("div", { className: "bar" }, el("i", { style: `width:${pct}%` }));
+
+/* ---------- routing: #akey  #kou  #kou/<kou>  #kou/<kou>/<n>  #resous  #pwofil  #afilyasyon ---------- */
 function ale() {
   if (!D) return;
   const [v, mid, n] = (location.hash.slice(1) || "akey").split("/");
-  const vi = ["akey", "kou", "resous", "pwofil"].includes(v) ? v : "akey";
+  const vi = ["akey", "kou", "resous", "pwofil", "afilyasyon"].includes(v) ? v : "akey";
   document.querySelectorAll("[data-v]").forEach((s) => s.classList.toggle("hidden", s.dataset.v !== vi));
-  document.querySelectorAll(".bnav a").forEach((a) => a.setAttribute("aria-current", a.dataset.n === vi ? "page" : "false"));
+  const nav = vi === "afilyasyon" ? "pwofil" : vi;
+  document.querySelectorAll(".bnav a").forEach((a) => a.setAttribute("aria-current", a.dataset.n === nav ? "page" : "false"));
   if (vi === "kou") kou(mid, n);
+  if (vi === "akey") akey();
+  if (vi === "pwofil") pwofil();
+  if (vi === "afilyasyon") { mem.set("atelier-vi-af", String(D.afilye.filye.length)); kache("#gift-d"); }
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", ale);
 
-/* ---------- course ---------- */
+/* ---------- courses (Udemy-like: list -> course page -> lesson) ---------- */
 function kou(mid, n) {
   const box = $("#kou"); box.replaceChildren();
   const m = mid && modil(mid);
   if (!m) {
-    box.append(el("div", { className: "ttl", textContent: "Kou" }), el("p", { className: "sub2", textContent: `${moduls().length} modil` }));
-    const l = el("div", { className: "mods" });
-    moduls().forEach((x) => {
-      const c = el("div", { className: "cov" }, img(x.kouveti), x.estati === "byento" ? el("span", { className: "tag", textContent: "BYENTO" }) : null);
-      l.append(el("a", { href: `#kou/${x.id}` }, c, el("b", { textContent: x.tit }), el("span", { textContent: x.estati === "byento" ? "Ap vini byento" : `${x.leson.length} leson` })));
-    });
-    return box.append(l);
+    box.append(el("div", { className: "ttl", textContent: "Kou yo" }), el("p", { className: "sub2", style: "margin-bottom:4px", textContent: "Tout kou yo enkli nan fòmasyon ou, menm sa k ap vini yo." }));
+    box.append(...moduls().map((x) => {
+      const byento = x.estati === "byento", pct = pwogre(x), konte = D.demannKonte?.[x.id] || 0;
+      return el("a", { className: "kc", href: `#kou/${x.id}` }, el("span", { className: "th" }, img(x.kouveti)),
+        el("span", { className: "t" }, el("b", { textContent: x.tit }), el("p", { textContent: x.deskripsyon }),
+          byento ? el("small", {}, el("span", { className: "chip", textContent: "Byento" }), konte ? `${konte} demann` : "")
+                 : el("small", { textContent: `${x.leson.length} leson` + (pct ? ` · ${pct}% fini` : "") }),
+          !byento && pct ? bar(pct) : null));
+    }));
+    return;
   }
-  if (n) return leson(box, m, Math.max(1, Math.min(m.leson.length, parseInt(n, 10))) - 1);
+  if (n && m.estati !== "byento" && m.leson.length) return leson(box, m, Math.max(1, Math.min(m.leson.length, parseInt(n, 10) || 1)) - 1);
 
-  box.append(el("a", { className: "back", href: "#kou", textContent: "‹ Modil yo" }),
-    el("div", { className: "cov" }, img(m.kouveti), m.estati === "byento" ? el("span", { className: "tag", textContent: "BYENTO" }) : null),
+  const byento = m.estati === "byento", pct = pwogre(m);
+  box.append(el("a", { className: "back", href: "#kou", textContent: "‹ Kou yo" }),
+    el("div", { className: "cov" }, img(m.kouveti)),
     el("div", { className: "ttl", style: "margin-top:16px", textContent: m.tit }),
-    el("p", { className: "p", textContent: m.deskripsyon }));
-  if (m.aprann?.length) box.append(el("div", { className: "lbl", textContent: "Sa w ap aprann" }), el("ul", { className: "ul" }, ...m.aprann.map((a) => el("li", { textContent: a }))));
-  if (m.estati === "byento") return box.append(el("p", { className: "p", style: "margin-top:20px", textContent: "Modil sa a ap disponib byento. N ap avèti w nan kominote a." }));
-  box.append(el("div", { className: "lbl", textContent: `${m.leson.length} leson` }), lisLeson(m, -1));
+    el("p", { className: "p", textContent: m.deskripsyon }),
+    el("p", { className: "meta", textContent: byento ? "Kreyòl · Ap vini byento" : `Kreyòl · ${m.leson.length} leson` + (pct ? ` · ${pct}% fini` : "") }));
+  if (!byento && pct) box.append(bar(pct));
+
+  if (byento) {
+    const mande = () => (D.demann || []).includes(m.id), konte = () => D.demannKonte?.[m.id] || 0;
+    const b = el("button", { className: "btn full", type: "button", style: "margin-top:18px" });
+    const t = el("p", { className: "meta", style: "text-align:center" });
+    const montre = () => {
+      b.textContent = mande() ? "Demann ou voye ✓" : "Mande pou yo louvri kou sa a";
+      b.className = mande() ? "btn full ghost" : "btn full";
+      t.textContent = mande() ? `Ou menm ak ${Math.max(0, konte() - 1)} lòt elèv mande l. N ap avèti w lè l louvri.` : konte() ? `${konte()} elèv mande kou sa a deja.` : "Plis moun mande, pi vit li louvri.";
+    };
+    b.onclick = async () => {
+      b.disabled = true;
+      try {
+        const r = await fetch("/api/demann", { method: "POST", headers: { "content-type": "application/json", "x-kle": kle }, body: JSON.stringify({ kou: m.id }) });
+        const d = await r.json(); if (r.ok) { D.demann = d.demann; D.demannKonte = d.demannKonte; }
+      } catch {}
+      b.disabled = false; montre();
+    };
+    montre(); box.append(b, t);
+  } else if (m.leson.length) {
+    const i = Math.max(0, m.leson.findIndex((_, j) => !fini.has(`${m.id}/${j + 1}`)));
+    box.append(el("a", { className: "btn full", style: "margin-top:18px", href: `#kou/${m.id}/${i + 1}`, textContent: pct ? `Kontinye: leson ${i + 1}` : "Kòmanse kou a" }));
+  }
+  if (m.aprann?.length) box.append(el("div", { className: "lbl", textContent: "Sa w ap aprann" }), el("ul", { className: "chk" }, ...m.aprann.map((a) => el("li", { textContent: a }))));
+  if (!byento) box.append(el("div", { className: "lbl", textContent: "Kontni kou a" }), kourikoulòm(m, -1));
 }
 
-function lisLeson(m, aktif) {
-  const r = el("div", { className: "rows" });
-  m.leson.forEach((l, i) => r.append(el("a", { className: "r", href: `#kou/${m.id}/${i + 1}`, ariaCurrent: String(i === aktif) },
-    el("span", { className: "th" }, img(miniati(l, m))),
-    el("span", { className: "t" }, el("span", { textContent: i === aktif ? "Ap jwe kounye a" : `Leson ${i + 1}` }), el("b", { textContent: l.tit || `Leson ${i + 1}` })))));
-  return r;
+function kourikoulòm(m, aktif) {
+  return el("div", { className: "cur" }, ...m.leson.map((l, i) => {
+    const ok = fini.has(`${m.id}/${i + 1}`);
+    return el("a", { href: `#kou/${m.id}/${i + 1}`, ariaCurrent: String(i === aktif) },
+      el("span", { className: "n" + (ok ? " ok" : ""), textContent: ok ? "✓" : String(i + 1) }),
+      el("span", { className: "t" }, l.tit || `Leson ${i + 1}`, el("span", { textContent: i === aktif ? "Ap jwe kounye a" : "Videyo" })));
+  }));
 }
 
 function leson(box, m, i) {
-  const l = m.leson[i], id = l.url && youtubeId(l.url);
-  mem.set("atelier-pozisyon", `${m.id}/${i + 1}`);
+  const l = m.leson[i], id = l.url && youtubeId(l.url), kle_ = `${m.id}/${i + 1}`;
+  mem.set("atelier-pozisyon", kle_);
   const p = el("div", { className: "player" });
   if (id) p.append(el("iframe", { src: `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?rel=0&modestbranding=1`, title: l.tit, allow: "encrypted-media; picture-in-picture; fullscreen", allowFullscreen: true }));
   else if (l.url) p.append(el("div", { className: "vid" }, el("a", { href: l.url, target: "_blank", rel: "noopener", textContent: "Gade videyo a ↗" })));
   else p.append(el("div", { className: "vid", textContent: "Videyo sa a ap vini byento." }));
+  const dènye = i === m.leson.length - 1;
+  const b = el("button", { className: "btn full", type: "button", style: "margin-top:16px", textContent: dènye ? (fini.has(kle_) ? "Kou a fini ✓" : "Make kou a kòm fini") : "Fini · Leson swivan ›" });
+  b.onclick = () => { fini.add(kle_); sove(); location.hash = dènye ? `#kou/${m.id}` : `#kou/${m.id}/${i + 2}`; };
   box.append(el("a", { className: "back", href: `#kou/${m.id}`, textContent: `‹ ${m.tit}` }), p,
     el("div", { className: "ttl", style: "font-size:19px;margin-top:14px", textContent: l.tit || `Leson ${i + 1}` }),
-    el("p", { className: "sub2", textContent: `Leson ${i + 1} sou ${m.leson.length} · ${m.tit}` }),
-    el("div", { className: "lbl", textContent: "Leson yo" }), lisLeson(m, i));
-  kontinye();
+    el("p", { className: "sub2", style: "margin:0", textContent: `Leson ${i + 1} sou ${m.leson.length} · ${m.tit}` }), b,
+    el("div", { className: "lbl", textContent: "Kontni kou a" }), kourikoulòm(m, i));
 }
 
-function kontinye() {
+/* ---------- home ---------- */
+function akey() {
   const [mid, n] = (mem.get("atelier-pozisyon") || "").split("/");
   let m = modil(mid), i = parseInt(n, 10) - 1;
-  if (!m || !m.leson[i]) { m = moduls().find((x) => x.estati !== "byento" && x.leson.length); i = 0; }
-  if (!m) return kache("#kontinye");
-  $("#kontinye").href = `#kou/${m.id}/${i + 1}`;
-  $("#k-th").replaceChildren(img(miniati(m.leson[i], m)) || "");
-  $("#k-mod").textContent = `${m.tit} · Leson ${i + 1}`;
-  $("#k-tit").textContent = m.leson[i].tit;
-}
-
-function shelf() {
-  $("#shelf").replaceChildren(...moduls().map((m) => el("a", { href: `#kou/${m.id}` },
-    el("div", { className: "cov" }, img(m.kouveti), m.estati === "byento" ? el("span", { className: "tag", textContent: "BYENTO" }) : null),
-    el("b", { textContent: m.tit }), el("span", { textContent: m.estati === "byento" ? "Ap vini byento" : `${m.leson.length} leson` }))));
+  if (!m || m.estati === "byento" || !m.leson[i]) { m = moduls().find((x) => x.estati !== "byento" && x.leson.length); i = 0; }
+  kache("#k-box", !m);
+  if (m) {
+    const kòmanse = !!mem.get("atelier-pozisyon"), pct = pwogre(m);
+    $("#kontinye").href = $("#k-btn").href = `#kou/${m.id}/${i + 1}`;
+    $("#k-th").replaceChildren(img(miniati(m.leson[i], m)) || "");
+    $("#k-kou").textContent = m.tit;
+    $("#k-tit").textContent = `Leson ${i + 1} · ${m.leson[i].tit}`;
+    $("#k-bar").style.width = pct + "%";
+    $("#k-pwo").textContent = `${pct}% fini`;
+    $("#k-btn").textContent = kòmanse ? "Kontinye leson an" : "Kòmanse premye leson an";
+    $("#k-box .lbl").textContent = kòmanse ? "Kontinye aprann" : "Kòmanse aprann";
+  }
+  const nv = [...(D.kontni.nouvote || [])].sort((a, b) => b.dat.localeCompare(a.dat)).slice(0, 5);
+  $("#news").replaceChildren(...(nv.length ? nv.map((x) => el("div", {}, x.tit ? el("b", { textContent: x.tit }) : null, x.tex ? el("p", { textContent: x.tex }) : null, el("span", { textContent: lè(x.dat) })))
+    : [el("div", {}, el("p", { textContent: "Pa gen nouvote pou kounye a." }))]));
 }
 
 /* ---------- resources ---------- */
@@ -265,8 +338,8 @@ function notifikasyon() {
   const a = D.afilye, lis = [];
   a.filye.filter((f) => f.estati === "aksepte").forEach((f) => lis.push({ dat: f.dat, tex: `Ou genyen ${goud(f.montan)}: ${f.non} enskri ak lyen pa w la.` }));
   a.retre.filter((r) => r.estati === "peye").forEach((r) => lis.push({ dat: r.dat_desizyon || r.kreye, tex: `Nou voye ${goud(r.montan)} sou ${r.metod === "moncash" ? "MonCash" : "NatCash"} ${r.nimewo}.` }));
-  if (D.kontni.mesaj) lis.push({ dat: D.depi, tex: D.kontni.mesaj });
-  lis.push({ dat: D.depi, tex: "Byenvini nan Atelier AI! Kòmanse ak modil 1." });
+  (D.kontni.nouvote || []).forEach((n) => lis.push({ dat: n.dat, tex: [n.tit, n.tex].filter(Boolean).join(": ") }));
+  lis.push({ dat: D.depi, tex: "Byenvini nan Atelier AI! Kòmanse ak premye kou a." });
   return lis.sort((x, y) => y.dat.localeCompare(x.dat));
 }
 function bell() {
@@ -284,26 +357,39 @@ $("#sheet-x").onclick = () => { kache("#sheet"); bell(); };
 
 /* ---------- profile / affiliate ---------- */
 function pwofil() {
-  const a = D.afilye, lyen = `${location.origin}/?ref=${a.kod}`;
   $("#av").textContent = D.nonKonple.split(" ").map((m) => m[0]).slice(0, 2).join("").toUpperCase();
   $("#p-non").textContent = D.nonKonple; $("#p-tel").textContent = D.telefon;
-  $("#af-tex").textContent = `Pataje lyen ou. Chak moun ki enskri epi ki peye fè w genyen ${goud(D.komisyon)}.`;
-  $("#a-gen").textContent = `${goud(D.komisyon)} pou chak moun ki enskri`;
+  $("#p-depi").textContent = `Manm depi ${new Date(D.depi).toLocaleDateString("fr-HT", { month: "long", year: "numeric" })}`;
+  const dispo = moduls().filter((m) => m.estati !== "byento");
+  $("#s-fini").textContent = String(fini.size);
+  $("#s-kou").textContent = String(dispo.filter((m) => pwogre(m) > 0).length);
+  $("#s-dispo").textContent = String(dispo.length);
+  $("#p-kou").textContent = `${dispo.length} disponib · ${moduls().length - dispo.length} byento`;
+  $("#p-af").textContent = `Genyen ${goud(D.komisyon)} pou chak moun ou envite`;
+  kache("#notif-on", !("Notification" in window && Notification.permission === "default"));
+}
+
+function afilyasyon() {
+  const a = D.afilye, lyen = `${location.origin}/?ref=${a.kod}`;
+  $("#promo-tex").textContent = `Pataje fòmasyon an epi genyen ${goud(D.komisyon)} chak fwa yon moun enskri epi li peye.`;
+  $("#af-tex").textContent = `Chak moun ki enskri ak lyen ou epi ki peye fòmasyon an fè w genyen ${goud(D.komisyon)}. Ou resevwa kòb la sou MonCash oswa NatCash.`;
   $("#k-gen").textContent = goud(a.gen); $("#k-bal").textContent = goud(a.balans);
   $("#k-env").textContent = String(a.filye.filter((f) => f.estati === "aksepte").length);
   $("#af-lyen").textContent = lyen.replace(/^https?:\/\//, "");
   $("#af-wa").href = `https://wa.me/?text=${encodeURIComponent(`Mwen ap aprann kreye videyo ak AI ak telefòn mwen, avèk Atelier AI. Fòmasyon an an kreyòl. Enskri la a: ${lyen}`)}`;
   $("#af-kopi").onclick = async () => { try { await navigator.clipboard.writeText(lyen); $("#af-kopi").textContent = "Kopye ✓"; } catch { prompt("Kopye lyen an:", lyen); } };
+  kache("#af-vid", a.filye.length > 0);
   $("#af-lis").replaceChildren(...a.filye.map((f) => el("div", { className: "r", style: "cursor:default" },
     el("span", { className: "t" }, el("b", { textContent: f.non }), el("span", { textContent: lè(f.dat) })),
     el("span", { className: f.estati === "aksepte" ? "" : "mute", textContent: f.estati === "aksepte" ? `+${goud(f.montan)}` : f.estati === "atann" ? "Ap verifye" : "Pa valide" }))));
+  kache("#af-lis", !a.filye.length);
   $("#r-tex").textContent = a.atann ? `Ou gen yon demann ${goud(a.atann)} k ap tann.` : a.balans > 0 ? `Ou ka retire ${goud(a.balans)}.` : "Lè w genyen kòb, w ap ka mande peman isit la.";
   $("#r-btn").textContent = a.balans > 0 ? `Mande ${goud(a.balans)}` : "Mande peman";
   $("#r-btn").disabled = !(a.balans > 0) || a.atann > 0;
   $("#r-lis").replaceChildren(...a.retre.map((r) => el("div", { className: "r", style: "cursor:default" },
     el("span", { className: "t" }, el("b", { textContent: goud(r.montan) }), el("span", { textContent: `${r.metod === "moncash" ? "MonCash" : "NatCash"} · ${lè(r.kreye)}` })),
     el("span", { className: "mute small", textContent: { atann: "An atant", peye: "Peye", anile: "Anile" }[r.estati] }))));
-  kache("#notif-on", !("Notification" in window && Notification.permission === "default"));
+  kache("#gift-d", a.filye.length <= Number(mem.get("atelier-vi-af") || 0));
 }
 
 document.querySelectorAll(".seg2 button").forEach((b) => b.addEventListener("click", () => {
@@ -329,8 +415,8 @@ async function chaje() {
   D = await r.json();
   const k = D.kontni;
   $("#bonjou").textContent = `Bonjou ${D.non}`;
-  if (k.lyen_kominote) $("#a-kom").href = k.lyen_kominote; else kache("#a-kom");
-  shelf(); resous(k); kontinye(); pwofil(); bell();
+  for (const [s, u] of [["#a-kom", k.lyen_kominote], ["#p-kom", k.lyen_kominote], ["#a-cla", k.lyen_claude]]) if (u) $(s).href = u; else kache(s);
+  resous(k); afilyasyon(); bell();
   kache("#app", false); kache("#bnav", false); kache("#atann"); kache("#pa-bon");
   ale();
 }

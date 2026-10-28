@@ -79,14 +79,17 @@ export async function POST(req) {
       aprann: (Array.isArray(m?.aprann) ? m.aprann : []).map((x) => netwaye(x, 120)).filter(Boolean).slice(0, 12),
       leson: (Array.isArray(m?.leson) ? m.leson : []).slice(0, 50).map((l) => ({ tit: netwaye(l?.tit, 120), url: url(l?.url) })),
     }));
-    if (moduls.some((m) => !m.tit)) return json({ ere: "Chak modil bezwen yon tit." }, 400);
+    if (moduls.some((m) => !m.tit)) return json({ ere: "Chak kou bezwen yon tit." }, 400);
+    const nouvote = (Array.isArray(k.nouvote) ? k.nouvote : []).slice(0, 30)
+      .map((n) => ({ tit: netwaye(n?.tit, 100), tex: netwaye(n?.tex, 600), dat: Number.isNaN(Date.parse(n?.dat)) ? new Date().toISOString() : new Date(n.dat).toISOString() }))
+      .filter((n) => n.tit || n.tex);
     const nouvo = {
       moduls,
       lyen_claude: url(k.lyen_claude),
       lyen_zouti: url(k.lyen_zouti),
       lyen_gid: url(k.lyen_gid),
       lyen_kominote: url(k.lyen_kominote),
-      mesaj: netwaye(k.mesaj, 1000),
+      nouvote,
     };
     const lyen = [nouvo.lyen_claude, nouvo.lyen_zouti, nouvo.lyen_gid, nouvo.lyen_kominote, ...moduls.flatMap((m) => m.leson.map((l) => l.url))];
     if (lyen.some((x) => x === null) || moduls.some((m) => m.kouveti === null))
