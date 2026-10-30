@@ -332,3 +332,5 @@ body.app .msg { font-weight: 500; }
 .zb-a { font-size: 13px; font-weight: 700; margin-top: 6px; }
 @media (min-width: 720px) { .zg { grid-template-columns: repeat(3, 1fr); } }
 .r .th .pl { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.25); }
+
+@media (max-width: 640px) { header.top nav { gap: 8px; } }
