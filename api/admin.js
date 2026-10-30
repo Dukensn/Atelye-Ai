@@ -111,12 +111,15 @@ export async function POST(req) {
 
   if (b.aksyon === "paramet") {
     const pri = Math.round(Number(b.pri)), komisyon = Math.round(Number(b.komisyon));
-    const moncash = b.moncash === true, manyel = b.manyel === true;
+    const manyel = b.manyel === true, tradui = b.tradui === true;
+    const lyen_peman = netwaye(b.lyen_peman, 500);
     if (!(pri >= 100 && pri <= 1000000)) return json({ ere: "Pri a pa bon." }, 400);
     if (!(komisyon >= 0 && komisyon < pri)) return json({ ere: "Komisyon an dwe pi piti pase pri a." }, 400);
-    if (!moncash && !manyel) return json({ ere: "Kite omwen yon metòd peman aktive." }, 400);
-    await ekri("paramet.json", { pri, komisyon, moncash, manyel });
-    return json({ ok: true, paramet: { pri, komisyon, moncash, manyel } });
+    if (lyen_peman && !/^https:\/\/[^\s]+$/.test(lyen_peman)) return json({ ere: "Lyen peman an dwe kòmanse ak https://" }, 400);
+    if (!lyen_peman && !manyel) return json({ ere: "Mete yon lyen peman oswa kite peman alamen aktive." }, 400);
+    const nouvo = { pri, komisyon, lyen_peman, tradui, manyel, moncash: false };
+    await ekri("paramet.json", nouvo);
+    return json({ ok: true, paramet: nouvo });
   }
 
   if (b.aksyon === "retre_peye" || b.aksyon === "retre_anile") {

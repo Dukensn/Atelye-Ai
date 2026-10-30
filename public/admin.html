@@ -50,8 +50,10 @@
       <label>Pri fòmasyon an (goud)</label><input name="pri" type="number" inputmode="numeric" min="100">
       <label>Komisyon afilye (goud pa enskripsyon)</label><input name="komisyon" type="number" inputmode="numeric" min="0">
       <h2 style="font-size:20px;margin-top:22px">Metòd peman</h2>
-      <label class="ck2"><input type="checkbox" name="moncash"> <span><b>MonCash an liy</b><br><small class="mute">Elèv la peye ak kòd PIN li, espas li louvri otomatikman.</small></span></label>
-      <label class="ck2"><input type="checkbox" name="manyel"> <span><b>Peman alamen</b><br><small class="mute">Elèv la voye lajan an epi yon foto prèv; ou aksepte l isit la.</small></span></label>
+      <label>Lyen peman (MonCash · NatCash)</label><input name="lyen_peman" type="url" placeholder="https://pay.kobara.app/…">
+      <label class="ck2"><input type="checkbox" name="tradui"> <span><b>Tradui paj peman an an fransè</b><br><small class="mute">Paj la louvri nan Google Tradiksyon. Si peman an pa mache konsa, dekoche l.</small></span></label>
+      <label class="ck2"><input type="checkbox" name="manyel"> <span><b>Peman alamen</b><br><small class="mute">Montre nimewo MonCash ak NatCash yo pou elèv la voye lajan an li menm.</small></span></label>
+      <p class="hint">Nan tou de ka yo, elèv la voye foto resi a epi ou aksepte l nan onglè « An atant ».</p>
       <div id="p-msg" class="msg hidden"></div>
       <button class="btn full" style="margin-top:16px">Anrejistre</button>
     </form>
@@ -311,7 +313,7 @@ function ranpliKontni(k) {
 async function rechaje() {
   done = await api("GET");
   ranpliKontni(done.kontni);
-  $("#paramet").pri.value = done.paramet.pri; $("#paramet").komisyon.value = done.paramet.komisyon; $("#paramet").moncash.checked = done.paramet.moncash !== false; $("#paramet").manyel.checked = done.paramet.manyel !== false;
+  $("#paramet").pri.value = done.paramet.pri; $("#paramet").komisyon.value = done.paramet.komisyon; $("#paramet").lyen_peman.value = done.paramet.lyen_peman || ""; $("#paramet").tradui.checked = !!done.paramet.tradui; $("#paramet").manyel.checked = done.paramet.manyel !== false;
   afiche();
 }
 
@@ -343,7 +345,7 @@ $("#kontni").addEventListener("submit", async (ev) => {
 $("#paramet").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const f = ev.target, m = $("#p-msg");
-  try { await api("POST", { aksyon: "paramet", pri: f.pri.value, komisyon: f.komisyon.value, moncash: f.moncash.checked, manyel: f.manyel.checked }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
+  try { await api("POST", { aksyon: "paramet", pri: f.pri.value, komisyon: f.komisyon.value, lyen_peman: f.lyen_peman.value, tradui: f.tradui.checked, manyel: f.manyel.checked }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
   catch (e) { m.className = "msg err"; m.textContent = e.message; }
 });
 

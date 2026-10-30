@@ -34,10 +34,12 @@
   .foto input { display: none; }
   .apèsi { margin-top: 12px; max-height: 260px; width: auto; border-radius: 8px; }
   .msg { margin-top: 12px; }
-  .btn.mc { background: #d71920; color: #fff; display: flex; align-items: center; justify-content: center; gap: 12px; }
-  .btn.mc .mcl { background: #fff; color: #d71920; font-weight: 900; font-size: 14px; padding: 4px 8px; border-radius: 6px; }
-  .btn.light { background: var(--soft); color: var(--ink); }
-  .ou { text-align: center; color: var(--mute); margin: 18px 0 0; font-size: 14px; }
+  .btn.pay { display: flex; justify-content: center; text-decoration: none; margin-top: 4px; }
+  .pm { text-align: center; color: var(--mute); margin: 8px 0 0; font-size: 14px; }
+  .gid { margin: 16px 0 0; padding: 14px 14px 14px 34px; background: var(--soft); border-radius: 12px; font-size: 14px; line-height: 1.5; }
+  .gid li + li { margin-top: 6px; }
+  .ou { text-align: center; color: var(--mute); margin: 20px 0 0; font-size: 14px; }
+  .h2 { font-size: 20px; margin: 28px 0 4px; }
 </style>
 </head>
 <body>
@@ -68,28 +70,35 @@
     <div class="etap">Etap 2 sou 2</div>
     <h1>Peye</h1>
     <p class="sub" id="sub2">Peye <span class="pri">1 500</span> goud pou w jwenn aksè ou.</p>
-    <div id="mc-box" class="hidden">
-      <button class="btn mc" id="mc" type="button"><span class="mcl">MonCash</span><span>Peye <span class="pri">1 500</span> goud</span></button>
-      <p class="small mute" style="margin:8px 0 0;text-align:center">Ou konfime ak kòd PIN MonCash ou. Espas ou louvri touswit apre peman an.</p>
-      <div id="ere-mc" class="msg err hidden" role="alert"></div>
-    </div>
-    <div id="manyel-box" class="hidden">
-      <p class="ou hidden" id="ou">oswa</p>
-      <button class="btn light" id="peye" type="button">Peye alamen epi voye yon foto prèv</button>
+
+    <!-- 1 · the payment link (MonCash or NatCash) -->
+    <div id="lyen-box" class="hidden">
+      <a class="btn pay" id="lyen" target="_blank" rel="noopener"><span>Peye <span class="pri">1 500</span> goud</span></a>
+      <p class="pm"><b>MonCash</b> oswa <b>NatCash</b></p>
+      <ol class="gid">
+        <li>Peze bouton an: paj peman an ap louvri.</li>
+        <li>Chwazi <b>MonCash</b> oswa <b>NatCash</b>, antre nimewo w epi konfime.</li>
+        <li>Fè yon <b>foto ekran</b> resi a, epi tounen isit la pou w voye l.</li>
+      </ol>
     </div>
 
-    <div id="detay" class="hidden">
+    <!-- manual: send the money to a number (the admin can switch it off) -->
+    <div id="manyel-box" class="hidden">
+      <p class="ou hidden" id="ou">oswa voye lajan an alamen</p>
       <div class="peman">
         <div class="l"><div><small>NatCash</small><b id="natcash">3582 8339</b></div><button class="kopi" data-k="natcash" type="button">Kopye</button></div>
         <div class="l"><div><small>MonCash</small><b id="moncash">3864 9724</b></div><button class="kopi" data-k="moncash" type="button">Kopye</button></div>
         <div class="l"><div><small>Non</small><b id="benefisye" style="font-size:17px">Dukens Mathieu</b></div></div>
       </div>
-
-      <label class="foto" id="chwazi">📷 <span id="foto-tex">Chwazi foto prèv peman an</span><input id="foto" type="file" accept="image/*"></label>
-      <img id="apesi" class="apèsi hidden" alt="Foto prèv la">
-      <div id="ere2" class="msg err hidden" role="alert"></div>
-      <button class="btn" id="b2" type="button" disabled>Voye prèv la</button>
     </div>
+
+    <!-- 2 · the receipt photo, so we know who paid -->
+    <h2 class="h2">Apre w fin peye</h2>
+    <p class="small mute" style="margin:0">Voye foto resi a. Nou verifye l epi espas ou louvri.</p>
+    <label class="foto" id="chwazi">📷 <span id="foto-tex">Chwazi foto resi a</span><input id="foto" type="file" accept="image/*"></label>
+    <img id="apesi" class="apèsi hidden" alt="Foto resi a">
+    <div id="ere2" class="msg err hidden" role="alert"></div>
+    <button class="btn" id="b2" type="button" disabled>Voye resi a</button>
   </section>
 
   <!-- Retou MonCash: n ap tann konfimasyon an -->
@@ -121,11 +130,19 @@ if (ref) memwa.set("atelier-ref", ref.toUpperCase());
 
 if (id) montre(memwa.get("atelier-fini") === id ? 2 : 1);
 
+// The payment page is in English: open it through Google Translate (French) when the admin wants it.
+function lyenTradui(u) {
+  try {
+    const x = new URL(u);
+    x.hostname = x.hostname.replace(/-/g, "--").replace(/\./g, "-") + ".translate.goog";
+    x.searchParams.set("_x_tr_sl", "auto"); x.searchParams.set("_x_tr_tl", "fr"); x.searchParams.set("_x_tr_hl", "fr");
+    return x.toString();
+  } catch { return u; }
+}
 fetch("/api/konfig").then((r) => r.json()).then((k) => {
-  $("#mc-box").classList.toggle("hidden", !k.moncashOnline);
+  if (k.lyen_peman) { $("#lyen").href = k.tradui ? lyenTradui(k.lyen_peman) : k.lyen_peman; $("#lyen-box").classList.remove("hidden"); }
   $("#manyel-box").classList.toggle("hidden", !k.manyel);
-  $("#ou").classList.toggle("hidden", !(k.moncashOnline && k.manyel));
-  if (!k.moncashOnline) { $("#peye").className = "btn"; $("#peye").textContent = "Peye " + Number(k.pri || 1500).toLocaleString("fr-FR") + " goud"; $("#sub2").textContent = "Voye lajan an sou youn nan nimewo yo, epi voye yon foto prèv peman an."; }
+  $("#ou").classList.toggle("hidden", !(k.lyen_peman && k.manyel));
   for (const c of ["natcash", "moncash", "benefisye"]) if (k[c]) $("#" + c).textContent = k[c];
   if (k.pri) document.querySelectorAll(".pri").forEach((x) => (x.textContent = Number(k.pri).toLocaleString("fr-FR")));
 }).catch(() => {});
@@ -153,17 +170,6 @@ $("#e1").addEventListener("submit", async (ev) => {
 
 document.querySelectorAll(".vwe").forEach((b) => b.addEventListener("click", () => { const i = $("#" + b.dataset.pw); i.type = i.type === "password" ? "text" : "password"; b.textContent = i.type === "password" ? "Wè" : "Kache"; }));
 
-$("#peye").addEventListener("click", () => { $("#peye").classList.add("hidden"); $("#detay").classList.remove("hidden"); });
-
-// MonCash online: the server creates the payment, the phone goes to MonCash, then comes back here (?mc=ok).
-$("#mc").addEventListener("click", async () => {
-  ere("#ere-mc", ""); $("#mc").disabled = true;
-  try {
-    const d = await poste("/api/moncash", { id });
-    if (d.deja) { montre(3); return verifye(); }
-    location.href = d.paymentUrl;
-  } catch (e) { ere("#ere-mc", e.message); $("#mc").disabled = false; }
-});
 
 async function verifye(n = 0) {
   montre(3);
@@ -181,7 +187,7 @@ async function verifye(n = 0) {
   setTimeout(() => verifye(n + 1), 3000);
 }
 const mc = new URLSearchParams(location.search).get("mc");
-if (mc && id) { history.replaceState(null, "", "/peye"); if (mc === "ok") verifye(); else { montre(1); ere("#ere-mc", "Peman an anile. Ou ka eseye ankò."); } }
+if (mc && id) { history.replaceState(null, "", "/peye"); if (mc === "ok") verifye(); else montre(1); }
 
 document.querySelectorAll(".kopi").forEach((b) => b.addEventListener("click", async () => {
   try { await navigator.clipboard.writeText($("#" + b.dataset.k).textContent.replace(/\s/g, "")); b.textContent = "Kopye ✓"; }
