@@ -53,7 +53,7 @@ export async function GET(req) {
   const retreFinal = retre
     .sort((a, b) => b.kreye.localeCompare(a.kreye))
     .map((r) => ({ ...r, whatsapp: waPeye(r) }));
-  return json({ lis: lisFinal, kontni: k, paramet: p, afilye, retre: retreFinal });
+  return json({ lis: lisFinal, kontni: k, paramet: p, afilye, retre: retreFinal, kobara: !!(process.env.KOBARA_SECRET_KEY && process.env.KOBARA_WEBHOOK_SECRET) });
 }
 
 export async function POST(req) {
@@ -111,13 +111,13 @@ export async function POST(req) {
 
   if (b.aksyon === "paramet") {
     const pri = Math.round(Number(b.pri)), komisyon = Math.round(Number(b.komisyon));
-    const manyel = b.manyel === true, tradui = b.tradui === true;
+    const manyel = b.manyel === true, tradui = b.tradui === true, otomatik = b.otomatik === true;
     const lyen_peman = netwaye(b.lyen_peman, 500);
     if (!(pri >= 100 && pri <= 1000000)) return json({ ere: "Pri a pa bon." }, 400);
     if (!(komisyon >= 0 && komisyon < pri)) return json({ ere: "Komisyon an dwe pi piti pase pri a." }, 400);
     if (lyen_peman && !/^https:\/\/[^\s]+$/.test(lyen_peman)) return json({ ere: "Lyen peman an dwe kòmanse ak https://" }, 400);
     if (!lyen_peman && !manyel) return json({ ere: "Mete yon lyen peman oswa kite peman alamen aktive." }, 400);
-    const nouvo = { pri, komisyon, lyen_peman, tradui, manyel, moncash: false };
+    const nouvo = { pri, komisyon, lyen_peman, tradui, manyel, otomatik, moncash: false };
     await ekri("paramet.json", nouvo);
     return json({ ok: true, paramet: nouvo });
   }

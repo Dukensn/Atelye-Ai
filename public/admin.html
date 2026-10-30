@@ -52,6 +52,7 @@
       <h2 style="font-size:20px;margin-top:22px">Metòd peman</h2>
       <label>Lyen peman (MonCash · NatCash)</label><input name="lyen_peman" type="url" placeholder="https://pay.kobara.app/…">
       <label class="ck2"><input type="checkbox" name="tradui"> <span><b>Tradui paj peman an an fransè</b><br><small class="mute">Paj la louvri nan Google Tradiksyon. Si peman an pa mache konsa, dekoche l.</small></span></label>
+      <label class="ck2"><input type="checkbox" name="otomatik"> <span><b>Peman otomatik Kobara</b><br><small class="mute" id="kobara-eta">Kobara konfime peman an epi espas elèv la louvri san foto resi.</small></span></label>
       <label class="ck2"><input type="checkbox" name="manyel"> <span><b>Peman alamen</b><br><small class="mute">Montre nimewo MonCash ak NatCash yo pou elèv la voye lajan an li menm.</small></span></label>
       <p class="hint">Nan tou de ka yo, elèv la voye foto resi a epi ou aksepte l nan onglè « An atant ».</p>
       <div id="p-msg" class="msg hidden"></div>
@@ -119,6 +120,8 @@ function kat(e) {
   if (e.prev_le) ajoute("Prèv voye", lè(e.prev_le));
   if (e.parenn) ajoute("Envite pa", e.parenn + (e.komisyon ? ` (+${goud(e.komisyon)})` : ""));
   if (e.kod) ajoute("Kòd afilye", e.kod);
+  if (e.peman === "kobara") ajoute("Peman", `Kobara an liy${e.kobara_metod ? " · " + e.kobara_metod : ""}${e.kobara_tranzaksyon ? " · " + e.kobara_tranzaksyon : ""}`);
+  if (e.kobara_pwoblem) ajoute("Pwoblèm Kobara", e.kobara_pwoblem);
   if (e.peman === "moncash") ajoute("Peman", `MonCash an liy${e.moncash_tranzaksyon ? " · " + e.moncash_tranzaksyon : ""}`);
   if (e.moncash_pwoblem) ajoute("Pwoblèm MonCash", e.moncash_pwoblem);
   if (e.estati === "aksepte") ajoute("Koneksyon", e.gen_modpas ? "Gen modpas" : "Ap tann li kreye modpas li");
@@ -313,7 +316,8 @@ function ranpliKontni(k) {
 async function rechaje() {
   done = await api("GET");
   ranpliKontni(done.kontni);
-  $("#paramet").pri.value = done.paramet.pri; $("#paramet").komisyon.value = done.paramet.komisyon; $("#paramet").lyen_peman.value = done.paramet.lyen_peman || ""; $("#paramet").tradui.checked = !!done.paramet.tradui; $("#paramet").manyel.checked = done.paramet.manyel !== false;
+  $("#paramet").pri.value = done.paramet.pri; $("#paramet").komisyon.value = done.paramet.komisyon; $("#paramet").lyen_peman.value = done.paramet.lyen_peman || ""; $("#paramet").tradui.checked = !!done.paramet.tradui; $("#paramet").manyel.checked = done.paramet.manyel !== false; $("#paramet").otomatik.checked = done.paramet.otomatik !== false;
+  if (!done.kobara) $("#kobara-eta").textContent = "Kle Kobara yo poko mete nan Vercel (KOBARA_SECRET_KEY, KOBARA_WEBHOOK_SECRET). Jiskaprezan, se lyen an ak foto resi a k ap sèvi.";
   afiche();
 }
 
@@ -345,7 +349,7 @@ $("#kontni").addEventListener("submit", async (ev) => {
 $("#paramet").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const f = ev.target, m = $("#p-msg");
-  try { await api("POST", { aksyon: "paramet", pri: f.pri.value, komisyon: f.komisyon.value, lyen_peman: f.lyen_peman.value, tradui: f.tradui.checked, manyel: f.manyel.checked }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
+  try { await api("POST", { aksyon: "paramet", pri: f.pri.value, komisyon: f.komisyon.value, lyen_peman: f.lyen_peman.value, tradui: f.tradui.checked, manyel: f.manyel.checked, otomatik: f.otomatik.checked }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
   catch (e) { m.className = "msg err"; m.textContent = e.message; }
 });
 

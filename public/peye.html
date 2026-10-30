@@ -78,7 +78,7 @@
       <ol class="gid">
         <li>Peze bouton an: paj peman an ap louvri.</li>
         <li>Chwazi <b>MonCash</b> oswa <b>NatCash</b>, antre nimewo w epi konfime.</li>
-        <li>Fè yon <b>foto ekran</b> resi a, epi tounen isit la pou w voye l.</li>
+        <li id="gid3">Fè yon <b>foto ekran</b> resi a, epi tounen isit la pou w voye l.</li>
       </ol>
     </div>
 
@@ -93,8 +93,8 @@
     </div>
 
     <!-- 2 · the receipt photo, so we know who paid -->
-    <h2 class="h2">Apre w fin peye</h2>
-    <p class="small mute" style="margin:0">Voye foto resi a. Nou verifye l epi espas ou louvri.</p>
+    <h2 class="h2" id="resi-t">Apre w fin peye</h2>
+    <p class="small mute" style="margin:0" id="resi-s">Voye foto resi a. Nou verifye l epi espas ou louvri.</p>
     <label class="foto" id="chwazi">📷 <span id="foto-tex">Chwazi foto resi a</span><input id="foto" type="file" accept="image/*"></label>
     <img id="apesi" class="apèsi hidden" alt="Foto resi a">
     <div id="ere2" class="msg err hidden" role="alert"></div>
@@ -124,7 +124,7 @@ const montre = (n) => ["#e1", "#e2", "#e3", "#e4"].forEach((s, i) => $(s).classL
 const ere = (s, t) => { $(s).textContent = t; $(s).classList.toggle("hidden", !t); };
 const memwa = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
                 set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
-let id = memwa.get("atelier-id"), foto = null;
+let id = memwa.get("atelier-id"), foto = null, otomatik = null;
 const ref = new URLSearchParams(location.search).get("ref");
 if (ref) memwa.set("atelier-ref", ref.toUpperCase());
 
@@ -141,6 +141,13 @@ function lyenTradui(u) {
 }
 fetch("/api/konfig").then((r) => r.json()).then((k) => {
   if (k.lyen_peman) { $("#lyen").href = k.tradui ? lyenTradui(k.lyen_peman) : k.lyen_peman; $("#lyen-box").classList.remove("hidden"); }
+  if (k.otomatik) {
+    // Automatic: a checkout made for this student, so the payment opens the space by itself.
+    otomatik = k; $("#lyen").removeAttribute("target"); $("#lyen-box").classList.remove("hidden");
+    $("#gid3").innerHTML = "Apre peman an, ou tounen isit la epi espas ou <b>louvri pou kont li</b>.";
+    $("#resi-t").textContent = "Pwoblèm ak peman an?";
+    $("#resi-s").textContent = "Si espas ou pa louvri apre w fin peye, voye foto resi a la a.";
+  }
   $("#manyel-box").classList.toggle("hidden", !k.manyel);
   $("#ou").classList.toggle("hidden", !(k.lyen_peman && k.manyel));
   for (const c of ["natcash", "moncash", "benefisye"]) if (k[c]) $("#" + c).textContent = k[c];
@@ -171,6 +178,23 @@ $("#e1").addEventListener("submit", async (ev) => {
 document.querySelectorAll(".vwe").forEach((b) => b.addEventListener("click", () => { const i = $("#" + b.dataset.pw); i.type = i.type === "password" ? "text" : "password"; b.textContent = i.type === "password" ? "Wè" : "Kache"; }));
 
 
+$("#lyen").addEventListener("click", async (ev) => {
+  if (!otomatik || !id) return;
+  ev.preventDefault();
+  const b = $("#lyen"); b.classList.add("ap"); ere("#ere2", "");
+  try {
+    const d = await poste("/api/kobara", { id });
+    if (d.deja) return verifye();
+    location.href = otomatik.tradui ? lyenTradui(d.url) : d.url;
+  } catch (e) {
+    // The automatic checkout failed: fall back to the shared link and the receipt photo.
+    ere("#ere2", e.message + " Ou ka peye ak lyen an epi voye foto resi a.");
+    if (otomatik.lyen_peman) { b.href = otomatik.tradui ? lyenTradui(otomatik.lyen_peman) : otomatik.lyen_peman; b.target = "_blank"; }
+    otomatik = null;
+  }
+  b.classList.remove("ap");
+});
+
 async function verifye(n = 0) {
   montre(3);
   const k = id && await fetch("/api/estati?id=" + encodeURIComponent(id)).then((r) => r.ok ? r.json() : null).catch(() => null);
@@ -181,7 +205,7 @@ async function verifye(n = 0) {
   }
   if (n >= 40) {
     $("#e4-t").textContent = "Nou poko resevwa konfimasyon an";
-    $("#e4-s").textContent = "Si w te konfime peman an sou MonCash, ekri nou sou WhatsApp ak foto resi a, n ap louvri espas ou.";
+    $("#e4-s").textContent = "Si w te konfime peman an sou MonCash oswa NatCash, voye foto resi a oswa ekri nou sou WhatsApp ak foto resi a, n ap louvri espas ou.";
     return;
   }
   setTimeout(() => verifye(n + 1), 3000);
