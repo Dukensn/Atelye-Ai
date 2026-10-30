@@ -295,3 +295,40 @@ body.app .msg { font-weight: 500; }
 .etap .ch { color: #b5b5b5; }
 .zi { flex: none; width: 24px; height: 24px; border-radius: 6px; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 700; }
 .r .t b .tg { font-size: 10px; line-height: 1.4; }
+
+/* password field with show/hide */
+.pw { position: relative; }
+.pw input { width: 100%; padding-right: 76px; }
+.pw .vwe { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font: inherit; font-size: 14px; font-weight: 600; background: none; border: 0; color: var(--ink); text-decoration: underline; cursor: pointer; padding: 8px; }
+
+/* login */
+.lg { max-width: 420px; margin: 0 auto; padding: 36px 16px 48px; }
+.lg h1 { font-size: 28px; letter-spacing: -0.02em; margin: 0 0 6px; }
+.lg label { display: block; font-weight: 600; font-size: 15px; margin: 16px 0 6px; }
+.lg input { width: 100%; border: 0; background: var(--soft); border-radius: 10px; padding: 13px 14px; font-size: 17px; }
+.lg .btn { width: 100%; margin-top: 22px; }
+.lg .alt { text-align: center; margin-top: 18px; font-size: 15px; }
+
+/* Zouti: the 3-step path and big tool buttons */
+.zh { background: #faf9f5; border: 1px solid #ebe8df; border-radius: 18px; padding: 18px 16px 6px; margin-top: 14px; }
+.zh-k { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #b0573a; }
+.zh h2 { font-size: 22px; letter-spacing: -0.02em; margin: 6px 0 10px; }
+.zs { list-style: none; margin: 0; padding: 0; }
+.zs li { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid #ebe8df; }
+.zs .n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+.zs li > div { flex: 1; min-width: 0; }
+.zs b { display: block; font-size: 16px; }
+.zs p { margin: 2px 0 0; font-size: 14px; color: var(--mute); }
+.zp { margin: 10px 0 0; padding: 12px; background: #fff; border: 1px solid #ebe8df; border-radius: 12px; font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; word-break: break-word; max-height: 150px; overflow: auto; user-select: all; -webkit-user-select: all; }
+.zbtn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 10px; padding: 14px 16px; border-radius: 999px; border: 0; background: var(--ink); color: #fff; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; cursor: pointer; }
+.zbtn.o { background: #fff; color: var(--ink); border: 1.5px solid var(--ink); }
+.zg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.zb { display: flex; flex-direction: column; gap: 4px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; text-decoration: none; color: inherit; background: #fff; min-height: 150px; }
+.zb:active { transform: scale(.98); }
+.zb-i { width: 40px; height: 40px; border-radius: 12px; background: var(--soft); display: grid; place-items: center; margin-bottom: 6px; }
+.zb-i .zi { width: 26px; height: 26px; }
+.zb b { font-size: 15px; }
+.zb-t { font-size: 13px; color: var(--mute); line-height: 1.35; flex: 1; }
+.zb-a { font-size: 13px; font-weight: 700; margin-top: 6px; }
+@media (min-width: 720px) { .zg { grid-template-columns: repeat(3, 1fr); } }
+.r .th .pl { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.25); }

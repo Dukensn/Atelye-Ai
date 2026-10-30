@@ -1,12 +1,13 @@
 import { asireKod, ekri, json, kalkileAfilye, kontni, li, paramet, toutEnskripsyon, toutRetre } from "../lib/store.js";
 
+// The session key comes from logging in with the WhatsApp number and password (api/koneksyon.js).
 export async function eleve(req) {
   const k = (req.headers.get("x-kle") ?? "").trim();
   if (!/^[A-Za-z0-9_-]{20,64}$/.test(k)) return null;
-  const t = await li(`token/${k}.json`);
+  const t = await li(`sesyon/${k}.json`);
   if (!t) return null;
   const e = await li(`enskripsyon/${t.id}.json`);
-  return e && e.estati === "aksepte" && e.token === k ? e : null;
+  return e && e.estati === "aksepte" && (e.sesyon ?? []).includes(k) ? e : null;
 }
 
 export async function GET(req) {

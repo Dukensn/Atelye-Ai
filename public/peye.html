@@ -46,11 +46,15 @@
   <form id="e1" novalidate>
     <div class="etap">Etap 1 sou 2</div>
     <h1>Enskri</h1>
+    <p class="small mute" style="margin:-4px 0 10px">Ou gen yon kont deja? <a href="/espas">Konekte</a></p>
     <p class="sub">Fòmasyon an: <span class="pri">1 500</span> goud, yon sèl fwa.</p>
     <label for="non">Non ou</label>
     <input id="non" name="non" autocomplete="name" maxlength="80" required>
     <label for="telefon">Nimewo WhatsApp ou</label>
     <input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX" maxlength="20" required>
+    <label for="modpas">Chwazi yon modpas</label>
+    <div class="pw"><input id="modpas" name="modpas" type="password" autocomplete="new-password" minlength="6" maxlength="100" placeholder="Omwen 6 karaktè" required><button type="button" class="vwe" data-pw="modpas">Wè</button></div>
+    <p class="small mute" style="margin:6px 0 0">W ap konekte ak nimewo WhatsApp ou ak modpas sa a. Pa bay pèsonn li.</p>
     <div id="ere1" class="msg err hidden" role="alert"></div>
     <button class="btn" id="b1">Kontinye</button>
   </form>
@@ -79,9 +83,9 @@
   <!-- Fini -->
   <section id="e3" class="hidden">
     <h1>Mèsi! 🎉</h1>
-    <p class="sub">Nou resevwa prèv ou. N ap verifye l epi n ap voye lyen espas ou sou WhatsApp.</p>
+    <p class="sub">Nou resevwa prèv ou. N ap verifye l epi n ap avèti w sou WhatsApp. Apre sa, konekte ak nimewo WhatsApp ou ak modpas ou.</p>
     <button type="button" class="btn hidden" data-enstale style="width:100%;margin:8px 0 12px">📲 Enstale app Atelier AI a</button>
-    <p class="small mute">Enstale app la sou telefòn ou: depi peman an verifye, li ap louvri espas ou otomatikman. Ou ka tou <a href="/espas">swiv estati ou la a</a>.</p>
+    <p class="small mute">Enstale app la sou telefòn ou pou w jwenn li fasil. Ou ka tou <a href="/espas">swiv estati ou la a</a>.</p>
     <p class="small mute">Pandan w ap tann, kreye yon kont GitHub gratis sou <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>.</p>
   </section>
 </main>
@@ -115,12 +119,16 @@ $("#e1").addEventListener("submit", async (ev) => {
   ere("#ere1", "");
   $("#b1").disabled = true;
   try {
-    id = (await poste("/api/enskripsyon", { non: $("#non").value, telefon: $("#telefon").value, ref: memwa.get("atelier-ref") || "" })).id;
+    if ($("#modpas").value.length < 6) throw new Error("Modpas la dwe gen omwen 6 karaktè.");
+    id = (await poste("/api/enskripsyon", { non: $("#non").value, telefon: $("#telefon").value, modpas: $("#modpas").value, ref: memwa.get("atelier-ref") || "" })).id;
+    memwa.set("atelier-telefon", $("#telefon").value);
     memwa.set("atelier-id", id);
     montre(1); window.scrollTo(0, 0);
   } catch (e) { ere("#ere1", e.message); }
   $("#b1").disabled = false;
 });
+
+document.querySelectorAll(".vwe").forEach((b) => b.addEventListener("click", () => { const i = $("#" + b.dataset.pw); i.type = i.type === "password" ? "text" : "password"; b.textContent = i.type === "password" ? "Wè" : "Kache"; }));
 
 $("#peye").addEventListener("click", () => { $("#peye").classList.add("hidden"); $("#detay").classList.remove("hidden"); });
 

@@ -25,7 +25,7 @@
   .sl .tr { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; scroll-behavior: smooth; }
   .sl .tr::-webkit-scrollbar { display: none; }
   .sl figure { flex: 0 0 100%; margin: 0; scroll-snap-align: start; position: relative; }
-  .sl img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sl img, .sl video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .stats b .pri { font: inherit; color: inherit; display: inline; }
   .tr8 svg { flex: none; }
   .tr8 { gap: 8px; color: var(--ink); font-size: 14px; }
@@ -38,6 +38,7 @@
   .bonus b { display: block; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
   .bonus em { display: block; font-style: normal; font-size: 13px; color: #333; margin-top: 2px; }
   .price li.hl b { color: #d7ff3a; }
+  .sl figure:has(video) figcaption { top: 14px; bottom: auto; }
   .sl figcaption { position: absolute; left: 14px; bottom: 14px; background: rgba(0,0,0,.72); color: #fff; font-size: 13px; font-weight: 600; padding: 6px 10px; border-radius: 6px; }
   .sl .ar { position: absolute; top: 50%; translate: 0 -50%; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); color: #111; display: grid; place-items: center; cursor: pointer; opacity: 0; transition: opacity .2s; }
   .sl:hover .ar, .sl .ar:focus-visible { opacity: 1; }
@@ -150,6 +151,8 @@
     <article class="ko" id="k-stickman">
       <div class="sl" data-auto aria-roledescription="carousel" aria-label="Egzanp videyo Stickman">
         <div class="tr">
+          <figure><video src="/egzanp/stickman-1.mp4" poster="/egzanp/stickman-1.jpg" muted loop playsinline preload="none" aria-label="Egzanp: istwa Ayiti"></video><figcaption>Egzanp: istwa Ayiti</figcaption></figure>
+          <figure><video src="/egzanp/stickman-2.mp4" poster="/egzanp/stickman-2.jpg" muted loop playsinline preload="none" aria-label="Egzanp: istwa emosyonèl"></video><figcaption>Egzanp: istwa emosyonèl</figcaption></figure>
           <figure><img src="/kouveti/slides/stickman-1.jpg" alt="6 lide videyo Claude desine" loading="lazy"></figure>
           <figure><img src="/kouveti/slides/stickman-2.jpg" alt="Istwa: Toussaint Louverture" loading="lazy"><figcaption>Istwa Ayiti</figcaption></figure>
           <figure><img src="/kouveti/slides/stickman-3.jpg" alt="What if: pa gen myèl" loading="lazy"><figcaption>What if</figcaption></figure>
@@ -176,6 +179,8 @@
     <article class="ko" id="k-motion">
       <div class="sl lt" data-auto aria-roledescription="carousel" aria-label="Motion Video">
         <div class="tr">
+          <figure><video src="/egzanp/motion-1.mp4" poster="/egzanp/motion-1.jpg" muted loop playsinline preload="none" aria-label="Egzanp: motion design"></video><figcaption>Egzanp: motion design</figcaption></figure>
+          <figure><video src="/egzanp/motion-2.mp4" poster="/egzanp/motion-2.jpg" muted loop playsinline preload="none" aria-label="Egzanp: reklam"></video><figcaption>Egzanp: reklam</figcaption></figure>
           <figure><img src="/kouveti/slides/motion-1.jpg" alt="Ilistrasyon: kreye videyo sou òdinatè" loading="lazy"></figure>
           <figure><img src="/kouveti/slides/motion-2.jpg" alt="Ilistrasyon: monte yon videyo" loading="lazy"></figure>
         </div>
@@ -197,6 +202,7 @@
     <article class="ko" id="k-higgsfield">
       <div class="sl" data-auto aria-roledescription="carousel" aria-label="Videyo AI ak Higgsfield">
         <div class="tr">
+          <figure><video src="/egzanp/higgsfield-1.mp4" poster="/egzanp/higgsfield-1.jpg" muted loop playsinline preload="none" aria-label="Egzanp: fim AI ak Higgsfield"></video><figcaption>Egzanp: fim AI ak Higgsfield</figcaption></figure>
           <figure><img src="/kouveti/slides/higgsfield-2.jpg" alt="Higgsfield Content Factory" loading="lazy"></figure>
           <figure><img src="/kouveti/slides/higgsfield-1.jpg" alt="Higgsfield ak Claude" loading="lazy"></figure>
           <figure><img src="/kouveti/slides/higgsfield-3.jpg" alt="Higgsfield Seedance" loading="lazy"></figure>
@@ -236,8 +242,8 @@
     <p class="mute">Twa etap senp.</p>
   </div>
   <div class="grid3">
-    <div class="tile step"><div class="num">ETAP 1</div><h3>Ou enskri epi ou peye</h3><p>Non w, nimewo WhatsApp ou, epi yon foto prèv peman an.</p></div>
-    <div class="tile step"><div class="num">ETAP 2</div><h3>Ou resevwa espas ou</h3><p>Depi nou verifye peman an, app Atelier AI a louvri pou ou, ak tout kou yo ladan l.</p></div>
+    <div class="tile step"><div class="num">ETAP 1</div><h3>Ou enskri epi ou peye</h3><p>Non w, nimewo WhatsApp ou, yon modpas, epi yon foto prèv peman an.</p></div>
+    <div class="tile step"><div class="num">ETAP 2</div><h3>Ou resevwa espas ou</h3><p>Depi nou verifye peman an, ou konekte ak nimewo WhatsApp ou ak modpas ou. Tout kou yo ladan l.</p></div>
     <div class="tile step"><div class="num">ETAP 3</div><h3>Ou pibliye premye videyo w</h3><p>Ou suiv premye kou a epi w mete videyo animasyon ou sou chèn YouTube ou.</p></div>
   </div>
 </div></section>
@@ -299,15 +305,17 @@ document.querySelectorAll(".sl").forEach((sl) => {
   fl("p", "M15 18l-6-6 6-6", "Anvan", () => ale(kote() - 1));
   fl("n", "M9 18l6-6-6-6", "Apre", () => ale(kote() + 1));
   sl.append(dt);
-  const mete = () => dots.forEach((b, i) => b.setAttribute("aria-current", String(i === kote())));
-  tr.addEventListener("scroll", () => requestAnimationFrame(mete), { passive: true }); mete();
   let t = null, vizib = false, sispann = false;
+  // example clips (5 s, muted) only load and play while their slide is on screen
+  const jwe = () => [...tr.children].forEach((f, i) => { const v = f.querySelector("video"); if (!v) return; if (vizib && i === kote()) v.play().catch(() => {}); else v.pause(); });
+  const mete = () => { dots.forEach((b, i) => b.setAttribute("aria-current", String(i === kote()))); jwe(); };
+  tr.addEventListener("scroll", () => requestAnimationFrame(mete), { passive: true }); mete();
   const kanpe = () => { sispann = true; clearInterval(t); };
   ["touchstart", "wheel"].forEach((e) => tr.addEventListener(e, kanpe, { passive: true }));
-  if (!sl.hasAttribute("data-auto") || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const oto = sl.hasAttribute("data-auto") && !matchMedia("(prefers-reduced-motion: reduce)").matches;
   new IntersectionObserver(([e]) => {
-    vizib = e.isIntersecting; clearInterval(t);
-    if (vizib && !sispann) t = setInterval(() => ale(kote() + 1), 4500);
+    vizib = e.isIntersecting; clearInterval(t); jwe();
+    if (oto && vizib && !sispann) t = setInterval(() => ale(kote() + 1), 5200);
   }, { threshold: 0.5 }).observe(sl);
 });
 </script>
