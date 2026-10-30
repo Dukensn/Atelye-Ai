@@ -49,6 +49,9 @@
       <p class="mute small">Pri fòmasyon an parèt sou sit la lamenm. Komisyon an se sa yon elèv genyen chak fwa yon moun li envite peye epi w aksepte l.</p>
       <label>Pri fòmasyon an (goud)</label><input name="pri" type="number" inputmode="numeric" min="100">
       <label>Komisyon afilye (goud pa enskripsyon)</label><input name="komisyon" type="number" inputmode="numeric" min="0">
+      <h2 style="font-size:20px;margin-top:22px">Metòd peman</h2>
+      <label class="ck2"><input type="checkbox" name="moncash"> <span><b>MonCash an liy</b><br><small class="mute">Elèv la peye ak kòd PIN li, espas li louvri otomatikman.</small></span></label>
+      <label class="ck2"><input type="checkbox" name="manyel"> <span><b>Peman alamen</b><br><small class="mute">Elèv la voye lajan an epi yon foto prèv; ou aksepte l isit la.</small></span></label>
       <div id="p-msg" class="msg hidden"></div>
       <button class="btn full" style="margin-top:16px">Anrejistre</button>
     </form>
@@ -114,6 +117,8 @@ function kat(e) {
   if (e.prev_le) ajoute("Prèv voye", lè(e.prev_le));
   if (e.parenn) ajoute("Envite pa", e.parenn + (e.komisyon ? ` (+${goud(e.komisyon)})` : ""));
   if (e.kod) ajoute("Kòd afilye", e.kod);
+  if (e.peman === "moncash") ajoute("Peman", `MonCash an liy${e.moncash_tranzaksyon ? " · " + e.moncash_tranzaksyon : ""}`);
+  if (e.moncash_pwoblem) ajoute("Pwoblèm MonCash", e.moncash_pwoblem);
   if (e.estati === "aksepte") ajoute("Koneksyon", e.gen_modpas ? "Gen modpas" : "Ap tann li kreye modpas li");
   const aksyon = el("div", { className: "actions" });
   const k = el("div", { className: "card" },
@@ -306,7 +311,7 @@ function ranpliKontni(k) {
 async function rechaje() {
   done = await api("GET");
   ranpliKontni(done.kontni);
-  $("#paramet").pri.value = done.paramet.pri; $("#paramet").komisyon.value = done.paramet.komisyon;
+  $("#paramet").pri.value = done.paramet.pri; $("#paramet").komisyon.value = done.paramet.komisyon; $("#paramet").moncash.checked = done.paramet.moncash !== false; $("#paramet").manyel.checked = done.paramet.manyel !== false;
   afiche();
 }
 
@@ -338,7 +343,7 @@ $("#kontni").addEventListener("submit", async (ev) => {
 $("#paramet").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const f = ev.target, m = $("#p-msg");
-  try { await api("POST", { aksyon: "paramet", pri: f.pri.value, komisyon: f.komisyon.value }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
+  try { await api("POST", { aksyon: "paramet", pri: f.pri.value, komisyon: f.komisyon.value, moncash: f.moncash.checked, manyel: f.manyel.checked }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
   catch (e) { m.className = "msg err"; m.textContent = e.message; }
 });
 

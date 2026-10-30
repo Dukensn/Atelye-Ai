@@ -1,4 +1,4 @@
-import { ekri, ekriFoto, json, li, liFoto, netwaye, seAdmin } from "../lib/store.js";
+import { ekri, ekriFoto, json, li, liFoto, netwaye, paramet, seAdmin } from "../lib/store.js";
 
 const MAX = 3 * 1024 * 1024;
 const idBon = (id) => /^[0-9a-f-]{36}$/.test(id);
@@ -16,6 +16,8 @@ export async function POST(req) {
   const e = await li(`enskripsyon/${id}.json`);
   if (!e) return json({ ere: "Rekòmanse enskripsyon an." }, 404);
   if (e.estati === "aksepte") return json({ ok: true });
+  const p = await paramet();
+  if (!p.manyel && p.moncash && process.env.MONCASH_SECRET_KEY) return json({ ere: "Peye ak MonCash pou w jwenn aksè ou touswit." }, 403);
 
   const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(String(b.foto ?? ""));
   if (!m) return json({ ere: "Chwazi yon foto." }, 400);

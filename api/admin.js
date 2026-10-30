@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import {
-  asireKod, efase, ekri, fenmenTout, json, kalkileAfilye, kleTelefon, kontni, li, netwaye, paramet, seAdmin,
+  aksepte, efase, ekri, fenmenTout, json, kalkileAfilye, kleTelefon, kontni, li, netwaye, paramet, seAdmin,
   telefonWhatsApp, toutEnskripsyon, toutRetre,
 } from "../lib/store.js";
 
@@ -111,10 +111,12 @@ export async function POST(req) {
 
   if (b.aksyon === "paramet") {
     const pri = Math.round(Number(b.pri)), komisyon = Math.round(Number(b.komisyon));
+    const moncash = b.moncash === true, manyel = b.manyel === true;
     if (!(pri >= 100 && pri <= 1000000)) return json({ ere: "Pri a pa bon." }, 400);
     if (!(komisyon >= 0 && komisyon < pri)) return json({ ere: "Komisyon an dwe pi piti pase pri a." }, 400);
-    await ekri("paramet.json", { pri, komisyon });
-    return json({ ok: true, paramet: { pri, komisyon } });
+    if (!moncash && !manyel) return json({ ere: "Kite omwen yon metòd peman aktive." }, 400);
+    await ekri("paramet.json", { pri, komisyon, moncash, manyel });
+    return json({ ok: true, paramet: { pri, komisyon, moncash, manyel } });
   }
 
   if (b.aksyon === "retre_peye" || b.aksyon === "retre_anile") {
@@ -133,24 +135,7 @@ export async function POST(req) {
   if (!e) return json({ ere: "Demann sa a pa egziste." }, 404);
 
   if (b.aksyon === "aksepte") {
-    if (!e.modpas && !e.token) {
-      e.token = randomBytes(24).toString("base64url");
-      await ekri(`token/${e.token}.json`, { id: e.id });
-    }
-    await asireKod(e);
-    // Credit the referrer once, at the commission in force on the day of approval.
-    let parenn = null;
-    if (e.ref && e.komisyon === undefined) {
-      const ki = await li(`kod/${e.ref}.json`);
-      const p = ki && ki.id !== e.id ? await li(`enskripsyon/${ki.id}.json`) : null;
-      if (p && p.estati === "aksepte") {
-        e.komisyon = (await paramet()).komisyon;
-        parenn = p;
-      }
-    }
-    e.estati = "aksepte";
-    e.dat_desizyon = new Date().toISOString();
-    await ekri(`enskripsyon/${e.id}.json`, e);
+    const { parenn } = await aksepte(e, { peman: e.peman ?? "manyel" });
     return json({
       ok: true, lyen: e.token ? lyenAktive(req, e.token) : null,
       whatsapp: mesajWhatsApp(req, e, (await kontni()).lyen_kominote),
