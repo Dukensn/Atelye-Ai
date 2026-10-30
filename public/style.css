@@ -27,7 +27,7 @@ svg { flex: none; }
 /* header */
 header.top { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 60px; }
-header.top img { height: 34px; width: auto; }
+header.top img { height: 40px; width: auto; }
 header.top nav { display: flex; align-items: center; gap: 20px; font-size: 15px; font-weight: 500; }
 header.top nav a.lnk { text-decoration: none; color: var(--mute); }
 header.top nav a.lnk:hover { color: var(--ink); }
@@ -190,7 +190,7 @@ input:focus, textarea:focus { outline: 2px solid var(--ink); }
 body.app { padding-bottom: calc(64px + env(safe-area-inset-bottom)); background: #fff; min-height: 100vh; }
 body.app header.top { background: rgba(255,255,255,.97); border-bottom: 0; }
 body.app header.top .wrap { height: 56px; max-width: 640px; }
-body.app header.top img { height: 30px; }
+body.app header.top img { height: 34px; }
 .appwrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
 .view { padding-top: 8px; padding-bottom: 24px; }
 .ttl { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 8px 0 2px; }

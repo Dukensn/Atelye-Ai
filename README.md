@@ -1,4 +1,4 @@
-# Atelier AI — plateforme de formation
+# Atelye AI — plateforme de formation
 
 Site très simple : page d'accueil, paiement MonCash / NatCash (vérifié à la main), espace élève, page admin.
 Hébergé sur Vercel. Les données sont dans un store **Vercel Blob privé** (un fichier JSON par inscription).

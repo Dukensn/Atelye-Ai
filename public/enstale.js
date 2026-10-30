@@ -1,4 +1,4 @@
-// Install button for the Atelier AI app (PWA) + service worker registration.
+// Install button for the Atelye AI app (PWA) + service worker registration.
 // Any element with [data-enstale] becomes the install button; it disappears once the app is installed.
 (() => {
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});

@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Admin — Atelier AI</title>
+<title>Admin — Atelye AI</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Atelier AI">
+<meta name="apple-mobile-web-app-title" content="Atelye AI">
 <link rel="icon" href="/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <a href="/" aria-label="Atelier AI"><img src="/logo.png" alt="Atelier AI"></a>
+  <a href="/" aria-label="Atelye AI"><img src="/logo.png" alt="Atelye AI"></a>
   <button class="btn light sm hidden" id="soti">Soti</button>
 </div></header>
 
@@ -67,7 +67,7 @@
       <label>Prompt elèv yo kopye pou Claude</label><textarea name="prompt_skill" rows="7"></textarea>
       <p class="hint">Mete <code>{lyen}</code> kote lyen skill la dwe parèt.</p>
       <h3 style="margin-top:20px">Zouti</h3>
-      <p class="mute small">Parèt nan onglet « Zouti » elèv yo. Yon zouti ou fèk ajoute gen etikèt « Nouvo » pandan 14 jou. Claude ak zouti Atelier AI toujou la, pa bezwen ajoute yo.</p>
+      <p class="mute small">Parèt nan onglet « Zouti » elèv yo. Yon zouti ou fèk ajoute gen etikèt « Nouvo » pandan 14 jou. Claude ak zouti Atelye AI toujou la, pa bezwen ajoute yo.</p>
       <div id="zouti"></div>
       <button type="button" class="btn sm light" id="z-add" style="margin:4px 0 8px">+ Ajoute yon zouti</button>
       <h3 style="margin-top:20px">Nouvote</h3>
@@ -148,7 +148,7 @@ function kat(e) {
   if (e.estati === "atann") {
     aksyon.append(bouton("✓ Peman an rive — Aksepte", "", fè("aksepte")), bouton("Refize", "light", fè("refize")));
   } else if (e.estati === "san_prev") {
-    const wa = `https://wa.me/${e.telefon.replace(/\D/g, "").replace(/^(\d{8})$/, "509$1")}?text=${encodeURIComponent(`Bonjou ${e.non.split(" ")[0]}! Ou te kòmanse enskripsyon w pou Atelier AI. Pa bliye voye foto prèv peman an pou n ka ba w aksè.`)}`;
+    const wa = `https://wa.me/${e.telefon.replace(/\D/g, "").replace(/^(\d{8})$/, "509$1")}?text=${encodeURIComponent(`Bonjou ${e.non.split(" ")[0]}! Ou te kòmanse enskripsyon w pou Atelye AI. Pa bliye voye foto prèv peman an pou n ka ba w aksè.`)}`;
     aksyon.append(el("a", { className: "btn sm wa", href: wa, target: "_blank", rel: "noopener", textContent: "Raple l sou WhatsApp" }), bouton("Aksepte kanmenm", "light", fè("aksepte")));
   } else if (e.estati === "aksepte") {
     aksyon.append(el("a", { className: "btn sm wa", href: e.whatsapp, target: "_blank", rel: "noopener", textContent: e.lyen ? "Voye lyen modpas la sou WhatsApp" : "Voye mesaj koneksyon an" }));

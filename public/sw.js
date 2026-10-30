@@ -1,6 +1,6 @@
-// Atelier AI service worker: makes the site installable and opens fast on weak connections.
+// Atelye AI service worker: makes the site installable and opens fast on weak connections.
 // Pages: network first (always fresh), cached copy when offline. API calls are never cached.
-const KACH = "atelier-v1";
+const KACH = "atelier-v2";
 const BAZ = ["/", "/espas", "/peye", "/style.css", "/enstale.js", "/logo.png", "/icon-192.png"];
 
 self.addEventListener("install", (e) => {

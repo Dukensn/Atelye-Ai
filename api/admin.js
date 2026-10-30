@@ -12,20 +12,20 @@ function mesajWhatsApp(req, e, kominote) {
   const premye = e.non.split(" ")[0];
   const tèks =
     (e.token
-      ? `Bonjou ${premye}! Kont Atelier AI ou pare. Louvri lyen sa a pou w kreye modpas ou: ${lyenAktive(req, e.token)}\nLyen an mache yon sèl fwa. Apre sa, w ap konekte ak nimewo WhatsApp ou ak modpas ou.`
-      : `Bonjou ${premye}! Nou resevwa peman w lan pou Atelier AI. 🎉 Konekte la a ak nimewo WhatsApp ou ak modpas ou te chwazi a: ${orijin(req)}/espas`) +
+      ? `Bonjou ${premye}! Kont Atelye AI ou pare. Louvri lyen sa a pou w kreye modpas ou: ${lyenAktive(req, e.token)}\nLyen an mache yon sèl fwa. Apre sa, w ap konekte ak nimewo WhatsApp ou ak modpas ou.`
+      : `Bonjou ${premye}! Nou resevwa peman w lan pou Atelye AI. 🎉 Konekte la a ak nimewo WhatsApp ou ak modpas ou te chwazi a: ${orijin(req)}/espas`) +
     (kominote ? `\n\nRejwenn kominote WhatsApp la tou, se la w ap jwenn enfòmasyon ak akonpayman: ${kominote}` : "");
   return `https://wa.me/${telefonWhatsApp(e.telefon)}?text=${encodeURIComponent(tèks)}`;
 }
 
 const waGen = (moun, montan, filye) =>
   `https://wa.me/${telefonWhatsApp(moun.telefon)}?text=${encodeURIComponent(
-    `Felisitasyon ${moun.non.split(" ")[0]}! 🎉 ${filye.split(" ")[0]} enskri nan Atelier AI ak lyen pa w la. Ou fèk genyen ${montan} goud. Louvri app Atelier AI a pou w wè kòb ou.`,
+    `Felisitasyon ${moun.non.split(" ")[0]}! 🎉 ${filye.split(" ")[0]} enskri nan Atelye AI ak lyen pa w la. Ou fèk genyen ${montan} goud. Louvri app Atelye AI a pou w wè kòb ou.`,
   )}`;
 
 const waPeye = (r) =>
   `https://wa.me/${telefonWhatsApp(r.telefon)}?text=${encodeURIComponent(
-    `Bonjou ${r.non.split(" ")[0]}! Nou fèk voye ${r.montan} goud sou ${r.metod === "moncash" ? "MonCash" : "NatCash"} ${r.nimewo}. Mèsi paske w pataje Atelier AI! 🙏`,
+    `Bonjou ${r.non.split(" ")[0]}! Nou fèk voye ${r.montan} goud sou ${r.metod === "moncash" ? "MonCash" : "NatCash"} ${r.nimewo}. Mèsi paske w pataje Atelye AI! 🙏`,
   )}`;
 
 export async function GET(req) {
