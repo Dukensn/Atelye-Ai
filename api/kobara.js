@@ -36,7 +36,7 @@ export async function POST(req) {
         provider: "kobara",
         description: "Fòmasyon Atelye AI",
         customer: { name: e.non, phone: e.telefon },
-        success_url: `${orijin}/peye?mc=ok`,
+        success_url: `${orijin}/peye?mc=ok&i=${id}`,
         cancel_url: `${orijin}/peye?mc=anile`,
         metadata: { ref, enskripsyon: id },
       }),

@@ -223,6 +223,8 @@ async function verifye(n = 0) {
   setTimeout(() => verifye(n + 1), n < 20 ? 1000 : 3000);
 }
 const mc = new URLSearchParams(location.search).get("mc");
+// Back from Kobara in another browser (no saved registration): the return link carries the id.
+if (mc === "ok" && !id) { const i = new URLSearchParams(location.search).get("i"); if (/^[0-9a-f-]{36}$/.test(i || "")) id = i; }
 if (mc && id) { history.replaceState(null, "", "/peye"); if (mc === "ok") verifye(); else montre(1); }
 
 document.querySelectorAll(".kopi").forEach((b) => b.addEventListener("click", async () => {
