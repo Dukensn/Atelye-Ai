@@ -1,4 +1,4 @@
-import { efase, ekri, json, kleTelefon, li, louvriSesyon, modpasBon, netwaye } from "../lib/store.js";
+import { efase, egal, ekri, json, kleTelefon, li, louvriSesyon, modpasBon, netwaye } from "../lib/store.js";
 import { eleve } from "./espas.js";
 
 const BLOKE_APRE = 5, BLOKE_MIN = 15;
@@ -11,6 +11,7 @@ export async function POST(req) {
   } catch {
     return json({ ere: "Done yo pa bon." }, 400);
   }
+  if (b.kle_peman) return aprePeman(b);
   const telefon = netwaye(b.telefon, 20);
   const modpas = String(b.modpas ?? "").slice(0, 100);
   const pabon = json({ ere: "Nimewo a oswa modpas la pa bon." }, 401);
@@ -35,6 +36,19 @@ export async function POST(req) {
     await ekri(`enskripsyon/${e.id}.json`, e);
     return json({ estati: e.estati, id: e.id, non: e.non.split(" ")[0] }, 403);
   }
+  const kle = await louvriSesyon(e);
+  await ekri(`enskripsyon/${e.id}.json`, e);
+  return json({ kle });
+}
+
+// Straight after an online payment: the browser that registered holds a one-time key, so the student
+// lands in the space without typing the password. Works once, and only after the payment is accepted.
+async function aprePeman(b) {
+  const id = netwaye(b.id, 40), k = String(b.kle_peman).slice(0, 64);
+  const e = /^[0-9a-f-]{36}$/.test(id) && (await li(`enskripsyon/${id}.json`));
+  if (!e || !e.kle_peman || !egal(k, e.kle_peman)) return json({ ere: "Konekte ak nimewo w ak modpas ou." }, 401);
+  if (e.estati !== "aksepte") return json({ estati: e.estati }, 403);
+  delete e.kle_peman;
   const kle = await louvriSesyon(e);
   await ekri(`enskripsyon/${e.id}.json`, e);
   return json({ kle });

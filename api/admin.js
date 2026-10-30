@@ -37,7 +37,7 @@ export async function GET(req) {
     .map((e) => ({
       ...e,
       parenn: e.ref && parKod[e.ref] ? parKod[e.ref].non : null,
-      modpas: undefined, sesyon: undefined, gen_modpas: !!e.modpas,
+      modpas: undefined, sesyon: undefined, kle_peman: undefined, gen_modpas: !!e.modpas,
       lyen: e.token ? lyenAktive(req, e.token) : null,
       whatsapp: e.estati === "aksepte" ? mesajWhatsApp(req, e, k.lyen_kominote) : null,
     }));

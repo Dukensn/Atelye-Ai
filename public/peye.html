@@ -119,6 +119,11 @@
 </main>
 
 <script>
+if (location.hostname.endsWith(".translate.goog")) {
+  const h = location.hostname.replace(/\.translate\.goog$/, "").replace(/--/g, "\0").replace(/-/g, ".").replace(/\0/g, "-");
+  const q = new URLSearchParams(location.search); for (const k of [...q.keys()]) if (k.startsWith("_x_tr_")) q.delete(k);
+  location.replace(`https://${h}${location.pathname}${q.size ? "?" + q : ""}`);
+}
 const $ = (s) => document.querySelector(s);
 const montre = (n) => ["#e1", "#e2", "#e3", "#e4"].forEach((s, i) => $(s).classList.toggle("hidden", i !== n));
 const ere = (s, t) => { $(s).textContent = t; $(s).classList.toggle("hidden", !t); };
@@ -167,7 +172,8 @@ $("#e1").addEventListener("submit", async (ev) => {
   $("#b1").disabled = true;
   try {
     if ($("#modpas").value.length < 6) throw new Error("Modpas la dwe gen omwen 6 karaktè.");
-    id = (await poste("/api/enskripsyon", { non: $("#non").value, telefon: $("#telefon").value, modpas: $("#modpas").value, ref: memwa.get("atelier-ref") || "" })).id;
+    const r = await poste("/api/enskripsyon", { non: $("#non").value, telefon: $("#telefon").value, modpas: $("#modpas").value, ref: memwa.get("atelier-ref") || "" });
+    id = r.id; memwa.set("atelier-kp", r.kle_peman || "");
     memwa.set("atelier-telefon", $("#telefon").value);
     memwa.set("atelier-id", id);
     montre(1); window.scrollTo(0, 0);
@@ -199,16 +205,22 @@ async function verifye(n = 0) {
   montre(3);
   const k = id && await fetch("/api/estati?id=" + encodeURIComponent(id)).then((r) => r.ok ? r.json() : null).catch(() => null);
   if (k && k.estati === "aksepte") {
+    // Log in with the one-time key from registration and go straight to the space.
+    const kp = memwa.get("atelier-kp");
+    if (kp) {
+      try { const d = await poste("/api/koneksyon", { id, kle_peman: kp }); memwa.set("atelier-sesyon", d.kle); memwa.set("atelier-kp", ""); return location.replace("/espas"); }
+      catch {}
+    }
     $("#e4-t").textContent = "Peman resevwa! 🎉";
     $("#e4-s").textContent = "Espas ou pare. Konekte ak nimewo WhatsApp ou ak modpas ou.";
     $("#e4-b").classList.remove("hidden"); return;
   }
-  if (n >= 40) {
+  if (n >= 60) {
     $("#e4-t").textContent = "Nou poko resevwa konfimasyon an";
     $("#e4-s").textContent = "Si w te konfime peman an sou MonCash oswa NatCash, voye foto resi a oswa ekri nou sou WhatsApp ak foto resi a, n ap louvri espas ou.";
     return;
   }
-  setTimeout(() => verifye(n + 1), 3000);
+  setTimeout(() => verifye(n + 1), n < 20 ? 1000 : 3000);
 }
 const mc = new URLSearchParams(location.search).get("mc");
 if (mc && id) { history.replaceState(null, "", "/peye"); if (mc === "ok") verifye(); else montre(1); }
