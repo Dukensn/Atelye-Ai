@@ -9,7 +9,7 @@ const API = (process.env.KOBARA_API_URL || "https://api.kobara.app/v1").replace(
 export async function POST(req) {
   const kle = process.env.KOBARA_SECRET_KEY;
   const p = await paramet();
-  if (!kle || !p.otomatik) return json({ ere: "Peman otomatik la pa disponib kounye a." }, 503);
+  if (!kle || !process.env.KOBARA_WEBHOOK_SECRET || !p.otomatik) return json({ ere: "Peman otomatik la pa disponib kounye a." }, 503);
   let b;
   try {
     b = await req.json();
