@@ -24,7 +24,7 @@
       ]
     },
     {
-      "source": "/(espas|admin)",
+      "source": "/(espas|admin|staf|skane|billet)(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -44,6 +44,12 @@
           "value": "/"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/billet/:code",
+      "destination": "/billet.html"
     }
   ]
 }

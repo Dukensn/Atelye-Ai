@@ -1,0 +1,142 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{margin:0;box-sizing:border-box} body{background:#ddd;font-family:Inter,system-ui,sans-serif}
+.ab{position:relative;overflow:hidden;margin:20px}
+.w{width:1280px;height:720px}.sq{width:600px;height:600px}
+svg{position:absolute;inset:0;width:100%;height:100%}
+</style></head><body>
+
+<!-- A hero: phone on a yellow sun, three symbol chips -->
+<div class="ab w" id="hero" style="background:#f4f3ee">
+<svg viewBox="0 0 1280 720">
+ <defs>
+  <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000" flood-opacity=".16"/></filter>
+  <filter id="sh2" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".14"/></filter>
+ </defs>
+ <circle cx="760" cy="380" r="270" fill="#ffc83d"/>
+ <g transform="rotate(-8 760 380)" filter="url(#sh)">
+  <rect x="610" y="90" width="300" height="590" rx="46" fill="#0f0f0f"/>
+  <rect x="626" y="106" width="268" height="558" rx="34" fill="#fff"/>
+  <rect x="716" y="122" width="88" height="20" rx="10" fill="#0f0f0f"/>
+  <!-- chart card -->
+  <rect x="648" y="180" width="224" height="180" rx="18" fill="#f4f3ee"/>
+  <polyline points="668,330 712,300 748,312 790,262 830,236 852,206" fill="none" stroke="#0f0f0f" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="852" cy="206" r="12" fill="#d7ff3a" stroke="#0f0f0f" stroke-width="5"/>
+  <!-- rows -->
+  <rect x="648" y="384" width="224" height="62" rx="16" fill="#0f0f0f"/>
+  <circle cx="680" cy="415" r="16" fill="#d7ff3a"/><path d="M672 415l6 6 11-12" stroke="#0f0f0f" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="708" y="404" width="120" height="10" rx="5" fill="#fff"/><rect x="708" y="420" width="80" height="8" rx="4" fill="#777"/>
+  <rect x="648" y="460" width="224" height="62" rx="16" fill="#f4f3ee"/>
+  <circle cx="680" cy="491" r="16" fill="#ffc83d"/><rect x="708" y="480" width="130" height="10" rx="5" fill="#0f0f0f"/><rect x="708" y="496" width="70" height="8" rx="4" fill="#bbb"/>
+  <rect x="648" y="580" width="224" height="58" rx="29" fill="#0f0f0f"/><rect x="712" y="604" width="96" height="10" rx="5" fill="#fff"/>
+ </g>
+ <!-- chip: target (ads) -->
+ <g filter="url(#sh2)" transform="translate(300 120)">
+  <rect width="190" height="190" rx="40" fill="#fff"/>
+  <circle cx="95" cy="95" r="58" fill="none" stroke="#0f0f0f" stroke-width="10"/><circle cx="95" cy="95" r="32" fill="none" stroke="#0f0f0f" stroke-width="10"/><circle cx="95" cy="95" r="10" fill="#ffc83d"/>
+  <path d="M95 95 L160 30" stroke="#0f0f0f" stroke-width="9" stroke-linecap="round"/><path d="M140 26 L164 26 L164 50" stroke="#0f0f0f" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+ </g>
+ <!-- chip: book (digital product) -->
+ <g filter="url(#sh2)" transform="translate(330 450)">
+  <rect width="170" height="170" rx="36" fill="#0f0f0f"/>
+  <rect x="50" y="36" width="70" height="98" rx="8" fill="#ffc83d"/><rect x="50" y="36" width="12" height="98" fill="#e0a400"/>
+  <rect x="72" y="58" width="36" height="8" rx="4" fill="#0f0f0f"/><rect x="72" y="72" width="24" height="8" rx="4" fill="#0f0f0f"/>
+ </g>
+ <!-- chip: play (video AI) -->
+ <g filter="url(#sh2)" transform="translate(1010 430)">
+  <rect width="170" height="170" rx="85" fill="#d7ff3a"/>
+  <path d="M68 52 L124 85 L68 118 Z" fill="#0f0f0f" stroke="#0f0f0f" stroke-width="8" stroke-linejoin="round"/>
+ </g>
+ <!-- sparkle -->
+ <path d="M1060 170 l12 30 30 12 -30 12 -12 30 -12 -30 -30 -12 30 -12z" fill="#0f0f0f"/>
+</svg></div>
+
+<!-- B Facebook Ads: target + rising bars on black -->
+<div class="ab w" id="ads" style="background:#0f0f0f">
+<svg viewBox="0 0 1280 720">
+ <g fill="none" stroke="#fff" stroke-width="10" opacity=".95"><circle cx="430" cy="380" r="210"/><circle cx="430" cy="380" r="140"/></g>
+ <circle cx="430" cy="380" r="70" fill="#ffc83d"/>
+ <path d="M430 380 L640 170" stroke="#d7ff3a" stroke-width="16" stroke-linecap="round"/>
+ <path d="M590 160 L652 158 L650 220" stroke="#d7ff3a" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+ <g fill="#ffc83d"><rect x="760" y="470" width="62" height="110" rx="12"/><rect x="846" y="410" width="62" height="170" rx="12"/><rect x="932" y="340" width="62" height="240" rx="12"/><rect x="1018" y="250" width="62" height="330" rx="12" fill="#d7ff3a"/></g>
+ <rect x="740" y="596" width="360" height="8" rx="4" fill="#fff" opacity=".35"/>
+</svg></div>
+
+<!-- C digital product: one book, copies fanning out, on yellow -->
+<div class="ab w" id="pwodwi" style="background:#ffc83d">
+<svg viewBox="0 0 1280 720">
+ <defs><filter id="sh3" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000" flood-opacity=".22"/></filter></defs>
+ <g id="bk">
+ </g>
+ <g opacity=".14" transform="translate(900 150) rotate(16)"><rect width="200" height="280" rx="14" fill="#0f0f0f"/></g>
+ <g opacity=".26" transform="translate(790 160) rotate(10)"><rect width="200" height="280" rx="14" fill="#0f0f0f"/></g>
+ <g opacity=".45" transform="translate(680 170) rotate(4)"><rect width="200" height="280" rx="14" fill="#0f0f0f"/></g>
+ <g filter="url(#sh3)" transform="translate(400 150)">
+  <rect width="290" height="400" rx="18" fill="#0f0f0f"/><rect width="26" height="400" fill="#000" opacity=".6"/>
+  <rect x="60" y="70" width="170" height="22" rx="11" fill="#ffc83d"/><rect x="60" y="106" width="120" height="22" rx="11" fill="#ffc83d"/>
+  <rect x="60" y="170" width="170" height="10" rx="5" fill="#fff" opacity=".5"/><rect x="60" y="192" width="140" height="10" rx="5" fill="#fff" opacity=".5"/>
+  <circle cx="200" cy="330" r="30" fill="#d7ff3a"/><path d="M186 330l10 10 18-20" stroke="#0f0f0f" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+ </g>
+ 
+</svg></div>
+
+<!-- D video with AI: play screen + stickman on lime -->
+<div class="ab w" id="videyo" style="background:#d7ff3a">
+<svg viewBox="0 0 1280 720">
+ <rect x="320" y="150" width="560" height="380" rx="36" fill="#0f0f0f"/>
+ <path d="M565 270 L690 340 L565 410 Z" fill="#fff" stroke="#fff" stroke-width="14" stroke-linejoin="round"/>
+ <rect x="360" y="480" width="480" height="10" rx="5" fill="#fff" opacity=".25"/><rect x="360" y="480" width="210" height="10" rx="5" fill="#ffc83d"/>
+ <g stroke="#0f0f0f" stroke-width="12" stroke-linecap="round" fill="none">
+  <circle cx="990" cy="300" r="46" fill="#fff"/>
+  <path d="M990 346 L990 470"/><path d="M990 380 L930 430"/><path d="M990 380 L1050 320"/><path d="M990 470 L950 560"/><path d="M990 470 L1030 560"/>
+ </g>
+ <circle cx="975" cy="296" r="6" fill="#0f0f0f"/><circle cx="1005" cy="296" r="6" fill="#0f0f0f"/>
+ <path d="M240 200 l10 24 24 10 -24 10 -10 24 -10 -24 -24 -10 24 -10z" fill="#0f0f0f"/>
+</svg></div>
+
+<!-- E 100 seats: 100 dots, a few left -->
+<div class="ab w" id="plas" style="background:#0f0f0f">
+<svg viewBox="0 0 1280 720" id="plas-svg"></svg></div>
+
+
+<div class="ab w" id="kat" style="background:#f4f3ee">
+<svg viewBox="0 0 1280 720">
+ <defs><filter id="sh4" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000" flood-opacity=".2"/></filter></defs>
+ <circle cx="640" cy="360" r="250" fill="#ffc83d"/>
+ <g transform="rotate(-10 640 360)" filter="url(#sh4)">
+  <rect x="380" y="200" width="520" height="320" rx="34" fill="#0f0f0f"/>
+  <rect x="430" y="270" width="76" height="58" rx="12" fill="#d7ff3a"/><path d="M430 299h76M468 270v58" stroke="#0f0f0f" stroke-width="4"/>
+  <g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"><path d="M820 270a30 30 0 0 1 0 50"/><path d="M842 256a52 52 0 0 1 0 78"/></g>
+  <g fill="#fff"><rect x="430" y="390" width="70" height="16" rx="8"/><rect x="518" y="390" width="70" height="16" rx="8"/><rect x="606" y="390" width="70" height="16" rx="8"/><rect x="694" y="390" width="70" height="16" rx="8"/></g>
+  <rect x="430" y="448" width="150" height="12" rx="6" fill="#fff" opacity=".45"/>
+  <circle cx="820" cy="455" r="26" fill="#ffc83d"/><circle cx="850" cy="455" r="26" fill="#d7ff3a" opacity=".9"/>
+ </g>
+ <g transform="translate(905 470)"><circle r="56" fill="#d7ff3a" stroke="#0f0f0f" stroke-width="8"/><path d="M-24 0l16 16 32-34" stroke="#0f0f0f" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg></div>
+<!-- F steps (1:1) -->
+<div class="ab sq" id="e1" style="background:#f4f3ee"><svg viewBox="0 0 600 600">
+ <circle cx="300" cy="300" r="190" fill="#ffc83d"/>
+ <rect x="215" y="120" width="170" height="340" rx="30" fill="#0f0f0f"/><rect x="227" y="132" width="146" height="316" rx="20" fill="#fff"/>
+ <circle cx="300" cy="270" r="52" fill="#d7ff3a"/><path d="M276 270l16 16 32-34" stroke="#0f0f0f" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+ <rect x="252" y="350" width="96" height="14" rx="7" fill="#0f0f0f"/><rect x="268" y="376" width="64" height="10" rx="5" fill="#bbb"/>
+</svg></div>
+<div class="ab sq" id="e2" style="background:#f4f3ee"><svg viewBox="0 0 600 600">
+ <circle cx="300" cy="300" r="190" fill="#d7ff3a"/>
+ <path d="M150 190 h300 a30 30 0 0 1 30 30 v150 a30 30 0 0 1 -30 30 h-190 l-70 56 v-56 h-40 a30 30 0 0 1 -30 -30 v-150 a30 30 0 0 1 30 -30z" fill="#0f0f0f"/>
+ <path d="M240 296 l40 40 84 -88" stroke="#d7ff3a" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div>
+<div class="ab sq" id="e3" style="background:#f4f3ee"><svg viewBox="0 0 600 600">
+ <circle cx="300" cy="300" r="190" fill="#0f0f0f"/>
+ <rect x="150" y="210" width="300" height="190" rx="22" fill="#fff"/>
+ <circle cx="220" cy="285" r="34" fill="#ffc83d"/><path d="M180 360 a40 34 0 0 1 80 0" fill="#ffc83d"/>
+ <rect x="285" y="262" width="130" height="14" rx="7" fill="#0f0f0f"/><rect x="285" y="292" width="100" height="12" rx="6" fill="#bbb"/><rect x="285" y="320" width="120" height="12" rx="6" fill="#bbb"/>
+ <path d="M430 150 a40 40 0 0 1 40 40 c0 34 -40 70 -40 70 s-40 -36 -40 -70 a40 40 0 0 1 40 -40z" fill="#d7ff3a"/><circle cx="430" cy="190" r="14" fill="#0f0f0f"/>
+</svg></div>
+
+<script>
+// 100 seats: 10x10 grid, 88 taken (yellow), 12 still free (white rings, last one glowing lime)
+const s = document.getElementById("plas-svg"); let h = "";
+for (let i = 0; i < 100; i++) { const x = 340 + (i % 10) * 62, y = 80 + Math.floor(i / 10) * 62; const free = i >= 88;
+  h += free ? `<circle cx="${x}" cy="${y}" r="20" fill="none" stroke="${i === 88 ? '#d7ff3a' : '#fff'}" stroke-width="${i === 88 ? 7 : 4}"/>` : `<circle cx="${x}" cy="${y}" r="22" fill="#ffc83d"/>`; }
+s.innerHTML = h;
+</script>
+</body></html>

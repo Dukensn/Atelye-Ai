@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tikè · Atelye AI</title>
+<meta name="robots" content="noindex">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="/icon.png">
+<link rel="stylesheet" href="/style.css">
+<script src="/enstale.js" defer></script>
+<style>
+  body { background: var(--soft); }
+  main { max-width: 460px; margin: 0 auto; padding: 18px 16px 40px; }
+  .tk { background: #fff; border-radius: 22px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+  .tk .hd { background: #0f0f0f; color: #fff; padding: 18px 20px; }
+  .tk .hd small { color: #d7ff3a; font-weight: 800; letter-spacing: .1em; font-size: 12px; text-transform: uppercase; }
+  .tk .hd h1 { font-size: 22px; margin: 6px 0 0; letter-spacing: -0.02em; color: #fff; }
+  .tk .qr { padding: 22px 22px 10px; display: grid; place-items: center; position: relative; }
+  .tk .qr canvas { width: 100%; max-width: 320px; height: auto; image-rendering: pixelated; }
+  .tk .num { text-align: center; font-size: 34px; font-weight: 800; letter-spacing: .06em; }
+  .tk .num small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: var(--mute); }
+  .tk .cut { border-top: 2px dashed var(--line); margin: 16px 0 0; }
+  .tk dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; padding: 16px 20px 20px; margin: 0; font-size: 15px; }
+  .tk dt { color: var(--mute); } .tk dd { margin: 0; font-weight: 600; }
+  .ban { margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; font-weight: 700; text-align: center; }
+  .ban.utilise { background: #fff1d6; color: #8a5a00; } .ban.annule { background: #fdecea; color: var(--bad); }
+  .tk.annule .qr canvas { opacity: .15; }
+  .act { display: grid; gap: 10px; margin-top: 16px; }
+  .find label { display: block; font-weight: 600; font-size: 14px; margin: 14px 0 6px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a href="/konferans" aria-label="Atelye AI"><img src="/logo.png" alt="Atelye AI"></a><nav><a class="btn sm light" href="/konferans">Atelye a</a></nav></div></header>
+<main>
+  <div id="tikè" class="hidden">
+    <div class="tk" id="tk">
+      <div class="hd"><small>Tikè antre</small><h1 id="t-evt">Atelye konferans Atelye AI</h1></div>
+      <div class="qr"><canvas id="qr" width="330" height="330" aria-label="Kòd QR tikè a"></canvas></div>
+      <div class="num"><small>Nimewo</small><span id="t-num">AT-0000</span></div>
+      <div class="cut"></div>
+      <dl>
+        <dt>Non</dt><dd id="t-non">—</dd>
+        <dt>Tikè</dt><dd id="t-tip">—</dd>
+        <dt>Dat</dt><dd id="t-dat">—</dd>
+        <dt>Lè</dt><dd id="t-le">—</dd>
+        <dt>Kote</dt><dd id="t-kote">—</dd>
+      </dl>
+    </div>
+    <div id="ban" class="ban hidden"></div>
+    <div class="act">
+      <button class="btn full" id="sove" type="button">Sove tikè a kòm imaj</button>
+      <p class="mute small" style="text-align:center;margin:0">Montre kòd QR sa a nan pòt la. Li mache menm san entènèt.</p>
+    </div>
+  </div>
+
+  <div id="jwenn" class="card find hidden">
+    <h2 style="margin-top:0">Jwenn tikè mwen</h2>
+    <p class="mute">Mete nimewo WhatsApp ou ak kòd enskripsyon an (egz. AT-0427).</p>
+    <form id="fj" novalidate>
+      <label for="tel">Nimewo WhatsApp</label><input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX" required>
+      <label for="kod">Kòd enskripsyon</label><input id="kod" type="text" autocapitalize="characters" placeholder="AT-0000" maxlength="12" required>
+      <div id="mj" class="msg hidden"></div>
+      <button class="btn full" style="margin-top:16px">Jwenn tikè a</button>
+    </form>
+  </div>
+</main>
+<script src="/vendor/qrcode.js"></script>
+<script src="/sb.js"></script>
+<script>
+(() => {
+  const $ = (q) => document.querySelector(q);
+  const code = (location.pathname.split("/")[2] || new URLSearchParams(location.search).get("k") || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+  function qr(c, txt) {
+    const q = qrcode(0, "M"); q.addData(txt); q.make();
+    const n = q.getModuleCount(), m = 4, s = Math.floor(c.width / (n + 2 * m)), o = Math.floor((c.width - s * n) / 2), g = c.getContext("2d");
+    g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.fillStyle = "#000";
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) g.fillRect(o + k * s, o + r * s, s, s);
+  }
+  function montre(b) {
+    $("#t-evt").textContent = b.evenement.nom;
+    $("#t-num").textContent = b.numero; $("#t-non").textContent = b.nom; $("#t-tip").textContent = b.type;
+    $("#t-dat").textContent = SB.dat(b.evenement.date, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    $("#t-le").textContent = SB.dat(b.evenement.date, { hour: "2-digit", minute: "2-digit" });
+    $("#t-kote").textContent = [b.evenement.lieu, b.evenement.adresse].filter(Boolean).join(", ");
+    qr($("#qr"), b.code);
+    $("#tk").classList.toggle("annule", b.statut === "annule");
+    const ban = $("#ban");
+    ban.className = "ban " + (b.statut === "actif" ? "hidden" : b.statut);
+    ban.textContent = b.statut === "annule" ? "Tikè sa a anile." : b.statut === "utilise" ? "Tikè sa a deja itilize nan pòt la." : "";
+    $("#tikè").classList.remove("hidden");
+    document.title = `Tikè ${b.numero} · Atelye AI`;
+  }
+
+  if (code) {
+    let lokal = null; try { lokal = JSON.parse(localStorage.getItem("tike-" + code) || "null"); } catch {}
+    if (lokal) montre(lokal);
+    SB.rpc("billet_public", { p_code: code }).then((b) => {
+      if (!b) { if (!lokal) { $("#jwenn").classList.remove("hidden"); $("#mj").className = "msg err"; $("#mj").textContent = "Nou pa jwenn tikè sa a."; } return; }
+      try { localStorage.setItem("tike-" + code, JSON.stringify(b)); } catch {}
+      montre(b);
+    }).catch(() => { if (!lokal) { $("#jwenn").classList.remove("hidden"); $("#mj").className = "msg err"; $("#mj").textContent = "Pa gen entènèt. Eseye ankò."; } });
+  } else $("#jwenn").classList.remove("hidden");
+
+  $("#fj").addEventListener("submit", async (ev) => {
+    ev.preventDefault(); const m = $("#mj"); m.className = "msg hidden";
+    try {
+      const r = await SB.rpc("retrouver_billet", { p_telephone: $("#tel").value, p_code_court: $("#kod").value });
+      if (!r) throw new Error("Nou pa jwenn enskripsyon sa a. Verifye nimewo a ak kòd la.");
+      if (r.billet) { location.href = "/billet/" + r.billet; return; }
+      m.className = "msg " + (r.statut === "refuse" ? "err" : "ok");
+      m.textContent = r.statut === "refuse" ? "Peman an pa t valide" + (r.motif ? `: ${r.motif}.` : ".") + " Ekri nou sou WhatsApp."
+        : r.statut === "rembourse" ? "Enskripsyon sa a te ranbouse." : "Peman w lan ap verifye. W ap resevwa tikè a sou WhatsApp nan 24 è.";
+    } catch (err) { m.className = "msg err"; m.textContent = err.message; }
+  });
+
+  // one image with the QR, number and details, to keep in the phone's gallery
+  $("#sove").addEventListener("click", () => {
+    const W = 720, H = 1180, c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
+    g.fillStyle = "#f2f2f2"; g.fillRect(0, 0, W, H); g.fillStyle = "#fff"; g.fillRect(40, 40, W - 80, H - 80);
+    g.fillStyle = "#0f0f0f"; g.fillRect(40, 40, W - 80, 150);
+    g.fillStyle = "#d7ff3a"; g.font = "800 24px Inter, sans-serif"; g.fillText("TIKÈ ANTRE · ATELYE AI", 80, 100);
+    g.fillStyle = "#fff"; g.font = "800 34px Inter, sans-serif"; g.fillText($("#t-evt").textContent.slice(0, 32), 80, 150);
+    g.drawImage($("#qr"), (W - 520) / 2, 220, 520, 520);
+    g.fillStyle = "#0f0f0f"; g.textAlign = "center"; g.font = "800 64px Inter, sans-serif"; g.fillText($("#t-num").textContent, W / 2, 820);
+    g.textAlign = "left"; g.font = "600 30px Inter, sans-serif";
+    [["Non", "#t-non"], ["Tikè", "#t-tip"], ["Dat", "#t-dat"], ["Lè", "#t-le"], ["Kote", "#t-kote"]].forEach(([k, id], i) => {
+      g.fillStyle = "#606060"; g.fillText(k, 80, 900 + i * 50); g.fillStyle = "#0f0f0f"; g.fillText($(id).textContent.slice(0, 30), 210, 900 + i * 50);
+    });
+    const a = document.createElement("a"); a.download = `tike-${$("#t-num").textContent}.png`; a.href = c.toDataURL("image/png"); a.click();
+  });
+})();
+</script>
+</body>
+</html>

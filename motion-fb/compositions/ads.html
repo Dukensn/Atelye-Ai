@@ -1,0 +1,114 @@
+<template>
+<style>
+#root { position:absolute; inset:0; overflow:hidden; background:#ffffff; font-family:Inter, sans-serif; color:#1c1e21; }
+#fa-cam { position:absolute; inset:0; transform-origin:62% 55%; }
+#fa-win { position:absolute; left:70px; top:60px; width:1780px; height:960px; border-radius:22px; background:#f0f2f5; box-shadow:0 30px 80px rgba(16,24,40,.14), 0 0 0 1px #e4e6eb; overflow:hidden; }
+#fa-top { height:72px; background:#fff; border-bottom:1px solid #e4e6eb; display:flex; align-items:center; gap:18px; padding:0 28px; }
+#fa-top .lg { font-weight:900; font-size:26px; color:#1877f2; letter-spacing:-.01em; }
+#fa-top .ac { font-size:20px; color:#65676b; }
+#fa-top .pub { margin-left:auto; background:#1877f2; color:#fff; font-weight:700; font-size:20px; padding:12px 22px; border-radius:10px; }
+#fa-side { position:absolute; left:0; top:72px; bottom:0; width:230px; background:#fff; border-right:1px solid #e4e6eb; padding:18px 12px; }
+.si { display:flex; align-items:center; gap:14px; padding:14px 14px; border-radius:10px; font-size:20px; color:#444950; font-weight:600; }
+.si i { width:22px; height:22px; border-radius:6px; background:#bcc0c4; }
+.si.on { background:#e7f0fd; color:#1877f2; } .si.on i { background:#1877f2; }
+#fa-main { position:absolute; left:254px; top:96px; right:24px; bottom:24px; }
+#fa-h { font-size:30px; font-weight:800; } #fa-h small { font-size:20px; font-weight:500; color:#65676b; margin-left:12px; }
+#fa-kpis { display:flex; gap:18px; margin-top:18px; }
+.kp { flex:1; background:#fff; border-radius:14px; padding:18px 22px; box-shadow:0 1px 2px rgba(0,0,0,.06); border:1px solid #e4e6eb; }
+.kp small { font-size:19px; color:#65676b; font-weight:600; }
+.kp b { display:block; font-size:46px; font-weight:800; margin-top:4px; letter-spacing:-.02em; }
+.kp em { font-style:normal; font-size:18px; font-weight:700; color:#1f7a43; }
+#fa-mid { display:flex; gap:18px; margin-top:18px; height:300px; }
+#fa-chart { flex:2.2; background:#fff; border-radius:14px; border:1px solid #e4e6eb; padding:18px 22px; position:relative; }
+#fa-chart h4, #fa-aud h4 { font-size:20px; font-weight:700; }
+#fa-chart svg { position:absolute; left:22px; right:22px; bottom:18px; width:calc(100% - 44px); height:220px; }
+.gl { stroke:#eef0f3; stroke-width:2; }
+#fa-line { fill:none; stroke:#1877f2; stroke-width:6; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1500; stroke-dashoffset:1500; }
+#fa-area { fill:url(#fa-g); opacity:0; }
+#fa-aud { flex:1; background:#fff; border-radius:14px; border:1px solid #e4e6eb; padding:18px 22px; }
+.br { display:flex; align-items:center; gap:12px; margin-top:16px; font-size:18px; color:#444950; font-weight:600; }
+.br span { width:72px; } .br div { flex:1; height:18px; background:#eef0f3; border-radius:9px; overflow:hidden; }
+.br div i { display:block; height:100%; background:#1877f2; border-radius:9px; transform-origin:left; }
+.br b { width:56px; text-align:right; }
+#fa-tab { margin-top:18px; background:#fff; border-radius:14px; border:1px solid #e4e6eb; overflow:hidden; }
+.tr { display:flex; align-items:center; gap:22px; padding:16px 22px; border-bottom:1px solid #eef0f3; }
+.tg { width:58px; height:32px; border-radius:16px; background:#bcc0c4; position:relative; flex:none; }
+.tg i { position:absolute; left:4px; top:4px; width:24px; height:24px; border-radius:50%; background:#fff; }
+.cn { flex:1; } .cn b { font-size:21px; } .cn small { display:flex; align-items:center; gap:8px; font-size:17px; color:#65676b; margin-top:4px; }
+.dot { width:10px; height:10px; border-radius:50%; background:#bcc0c4; }
+.num { width:170px; text-align:right; } .num b { font-size:24px; } .num small { display:block; font-size:16px; color:#65676b; }
+#fa-cur { position:absolute; left:0; top:0; width:34px; height:34px; z-index:5; }
+#fa-badge { position:absolute; left:110px; top:20px; z-index:4; }
+</style>
+<div id="root" data-composition-id="ads" data-width="1920" data-height="1080" data-layout-allow-overflow>
+ <div id="fa-cam" data-layout-ignore>
+  <div id="fa-win">
+   <div id="fa-top"><span class="lg">Facebook Ads</span><span class="ac">Jesyonè piblisite · Atelye AI</span><span class="pub" id="fa-pub">+ Kreye</span></div>
+   <div id="fa-side"><div class="si"><i></i><span>Apèsi</span></div>
+<div class="si on"><i></i><span>Kanpay</span></div>
+<div class="si"><i></i><span>Odyans</span></div>
+<div class="si"><i></i><span>Rapò</span></div>
+<div class="si"><i></i><span>Bidjè</span></div>
+<div class="si"><i></i><span>Paramèt</span></div></div>
+   <div id="fa-main">
+     <div id="fa-h">Kanpay yo <small>7 dènye jou</small></div>
+     <div id="fa-kpis"><div class="kp" id="fa-k0"><small>Moun ki rive</small><b><span id="fa-kv0" data-v="48260">0</span></b><em id="fa-kd0">▲ 12%</em></div>
+<div class="kp" id="fa-k1"><small>Enpresyon</small><b><span id="fa-kv1" data-v="112540">0</span></b><em id="fa-kd1">▲ 19%</em></div>
+<div class="kp" id="fa-k2"><small>Klik sou lyen</small><b><span id="fa-kv2" data-v="3914">0</span></b><em id="fa-kd2">▲ 26%</em></div>
+<div class="kp" id="fa-k3"><small>CTR</small><b><span id="fa-kv3" data-v="3.48">0</span>%</b><em id="fa-kd3">▲ 33%</em></div></div>
+     <div id="fa-mid">
+       <div id="fa-chart"><h4>Rezilta pa jou</h4>
+         <svg viewBox="0 0 1000 220" preserveAspectRatio="none"><defs><linearGradient id="fa-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1877f2" stop-opacity=".28"/><stop offset="1" stop-color="#1877f2" stop-opacity="0"/></linearGradient></defs>
+         <line class="gl" x1="0" y1="55" x2="1000" y2="55"/><line class="gl" x1="0" y1="110" x2="1000" y2="110"/><line class="gl" x1="0" y1="165" x2="1000" y2="165"/>
+         <path id="fa-area" d="M0,200 L0,190 C120,185 160,170 250,160 S400,150 500,118 S680,95 760,70 S900,30 1000,18 L1000,220 L0,220 Z"/>
+         <path id="fa-line" d="M0,190 C120,185 160,170 250,160 S400,150 500,118 S680,95 760,70 S900,30 1000,18"/></svg></div>
+       <div id="fa-aud"><h4>Odyans</h4>
+         <div class="br"><span>18-24</span><div><i id="fa-a0" style="width:72%"></i></div><b>34%</b></div>
+         <div class="br"><span>25-34</span><div><i id="fa-a1" style="width:90%"></i></div><b>41%</b></div>
+         <div class="br"><span>35-44</span><div><i id="fa-a2" style="width:38%"></i></div><b>17%</b></div>
+         <div class="br"><span>45+</span><div><i id="fa-a3" style="width:18%"></i></div><b>8%</b></div>
+       </div>
+     </div>
+     <div id="fa-tab"><div class="tr" id="fa-r0"><div class="tg" id="fa-tg0"><i></i></div><div class="cn"><b>Atelye konferans · Leyogàn</b><small><span class="dot" id="fa-dot0"></span><span id="fa-st0">Pa aktif</span></small></div><div class="num"><b id="fa-res0" data-v="286">0</b><small>Enskripsyon</small></div><div class="num"><b>$0.31</b><small>Pri pa rezilta</small></div><div class="num"><b>$88.70</b><small>Depans</small></div></div>
+<div class="tr" id="fa-r1"><div class="tg" id="fa-tg1"><i></i></div><div class="cn"><b>Videyo Stickman · Remake</b><small><span class="dot" id="fa-dot1"></span><span id="fa-st1">Pa aktif</span></small></div><div class="num"><b id="fa-res1" data-v="1042">0</b><small>Klik</small></div><div class="num"><b>$0.05</b><small>Pri pa rezilta</small></div><div class="num"><b>$52.10</b><small>Depans</small></div></div>
+<div class="tr" id="fa-r2"><div class="tg" id="fa-tg2"><i></i></div><div class="cn"><b>Gid Facebook Ads · Ebook</b><small><span class="dot" id="fa-dot2"></span><span id="fa-st2">Pa aktif</span></small></div><div class="num"><b id="fa-res2" data-v="173">0</b><small>Acha</small></div><div class="num"><b>$0.42</b><small>Pri pa rezilta</small></div><div class="num"><b>$72.66</b><small>Depans</small></div></div></div>
+   </div>
+  </div>
+  <svg id="fa-cur" viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.4L20 11z" fill="#1c1e21" stroke="#fff" stroke-width="1.5"/></svg>
+ </div>
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+const fmt = (n, d) => d ? n.toFixed(2) : Math.round(n).toLocaleString("en-US").replace(/,/g, " ");
+tl.fromTo("#fa-win", { y: 60, opacity: 0, scale: 0.97 }, { y: 0, opacity: 1, scale: 1, duration: 0.7, ease: "power3.out" }, 0);
+tl.fromTo("#fa-cam", { scale: 1 }, { scale: 1.07, duration: 7.6, ease: "sine.inOut" }, 0.2);
+tl.fromTo(".kp", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out", stagger: 0.08 }, 0.4);
+tl.fromTo(".tr", { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out", stagger: 0.1 }, 0.6);
+// cursor turns each campaign on
+const path = [[1700, 160, 0.9], [362, 732, 1.5], [362, 818, 2.4], [362, 904, 3.1]];
+tl.fromTo("#fa-cur", { x: 1900, y: 1100 }, { x: path[1][0], y: path[1][1], duration: 0.6, ease: "power2.inOut" }, 0.9);
+[0, 1, 2].forEach((i) => {
+  const t = 1.5 + i * 0.75;
+  if (i > 0) tl.to("#fa-cur", { x: path[i + 1][0], y: path[i + 1][1], duration: 0.45, ease: "power2.inOut" }, t - 0.5);
+  tl.to("#fa-cur", { scale: 0.8, duration: 0.08, yoyo: true, repeat: 1 }, t);
+  tl.to("#fa-tg" + i, { backgroundColor: "#1877f2", duration: 0.15 }, t + 0.05);
+  tl.to("#fa-tg" + i + " i", { x: 26, duration: 0.18, ease: "power2.out" }, t + 0.05);
+  tl.to("#fa-dot" + i, { backgroundColor: "#31a24c", duration: 0.1 }, t + 0.1);
+  tl.call(() => {}, null, t);
+  tl.set("#fa-st" + i, { textContent: "Aktif" }, t + 0.1);
+  const el = document.querySelector("#fa-res" + i), v = +el.dataset.v, o = { n: 0 };
+  tl.to(o, { n: v, duration: 3.6 - i * 0.4, ease: "power2.out", onUpdate: () => { el.textContent = fmt(o.n); } }, t + 0.2);
+});
+tl.to("#fa-cur", { x: 1960, y: 1120, duration: 0.6, ease: "power2.in" }, 3.6);
+[0, 1, 2, 3].forEach((i) => {
+  const el = document.querySelector("#fa-kv" + i), v = +el.dataset.v, o = { n: 0 };
+  tl.to(o, { n: v, duration: 4.2, ease: "power2.out", onUpdate: () => { el.textContent = fmt(o.n, i === 3); } }, 1.6);
+});
+tl.fromTo(".kp em", { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.1 }, 4.6);
+tl.to("#fa-line", { strokeDashoffset: 0, duration: 3.6, ease: "power1.inOut" }, 1.8);
+tl.to("#fa-area", { opacity: 1, duration: 1.6 }, 3.2);
+tl.fromTo(".br i", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power3.out", stagger: 0.12 }, 2.0);
+tl.to("#fa-win", { opacity: 0, duration: 0.4 }, 7.55);
+window.__timelines["ads"] = tl;
+</script>
+</template>

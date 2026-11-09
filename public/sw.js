@@ -1,7 +1,7 @@
 // Atelye AI service worker: makes the site installable and opens fast on weak connections.
 // Pages: network first (always fresh), cached copy when offline. API calls are never cached.
-const KACH = "atelier-v2";
-const BAZ = ["/", "/espas", "/peye", "/style.css", "/enstale.js", "/logo.png", "/icon-192.png"];
+const KACH = "atelier-v3";
+const BAZ = ["/", "/espas", "/peye", "/style.css", "/enstale.js", "/logo.png", "/icon-192.png", "/sb.js", "/billet", "/skane", "/vendor/qrcode.js", "/vendor/jsQR.js"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(KACH).then((c) => c.addAll(BAZ)).then(() => self.skipWaiting()));
@@ -24,7 +24,7 @@ self.addEventListener("fetch", (e) => {
         if (r.ok) { const kopi = r.clone(); caches.open(KACH).then((c) => c.put(e.request, kopi)); }
         return r;
       })
-      .catch(() => caches.match(e.request, { ignoreSearch: true }).then((r) => r || caches.match("/espas"))),
+      .catch(() => caches.match(e.request, { ignoreSearch: true }).then((r) => r || caches.match(u.pathname.startsWith("/billet") ? "/billet" : u.pathname.startsWith("/skane") ? "/skane" : "/espas"))),
   );
 });
 

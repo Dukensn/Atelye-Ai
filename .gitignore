@@ -1,3 +1,7 @@
 node_modules
 .netlify
 .env
+motion-*/render.mp4
+motion-*/render.log
+motion-*/.hyperframes/
+motion-*/node_modules/
