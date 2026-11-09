@@ -6,6 +6,7 @@ const S = "/tmp/claude-0/-home-user/f3f252e9-ddde-5a6f-90c9-6cc21f0637e8/scratch
 const root = "/home/user/atelier-ai/public";
 const db = new Client({ host: "localhost", user: "postgres", password: "pw", database: "levve" });
 let file = Promise.resolve();   // one database connection: run calls one after another, like the real server would isolate them
+function dbq(sql, v) { const r = file.then(() => db.query(sql, v)); file = r.catch(() => {}); return r; }
 function rpc(fn, args) { const r = file.then(() => rpc1(fn, args)); file = r.catch(() => {}); return r; }
 async function rpc1(fn, args) {
   const ks = Object.keys(args || {}); const sql = `select public.${fn}(${ks.map((k, i) => `${k} => $${i + 1}`).join(", ")}) as r`;
@@ -143,6 +144,39 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await s.waitForSelector("#v .wl >> text=Fotograf"); ok((await s.locator("#v .wl", { hasText: "Fotograf" }).textContent()).includes("Eskane tikè"), "super admin creates a role with its access");
   await s.click("#tabs button[data-k=ekip]"); await s.waitForSelector("#v .ek select");
   ok((await s.locator("#v .ek select").first().locator("option").allTextContents()).includes("Fotograf"), "new role offered to team members");
+
+  // 8) WhatsApp assistant tab: settings (keys write-only), a conversation that needs a person, try the assistant
+  await dbq("update wa_konfig set sekre_hash = encode(extensions.digest('e2e-sekre','sha256'),'hex'), aktif = false");
+  await rpc("wa_sv_resevwa", { p_sekre: "e2e-sekre", p_tel: "50955550001", p_non: "Lina", p_wa_id: "e2e1", p_teks: "Mwen gen yon pwoblèm ak peman an", p_foto: null });
+  await dbq("update wa_konv set eta = 'moun', alet = true, rezon = 'Mo: pwoblèm' where telefon = '50955550001'");
+  await rpc("wa_sv_ekri", { p_sekre: "e2e-sekre", p_tel: "50955550001", p_sans: "bot", p_teks: "Yon moun nan ekip la ap reponn ou byento.", p_wa_id: "e2e2" });
+  const waCalls = [];
+  await s.route("**/api/wa", async (route) => { const d = JSON.parse(route.request().postData()); waCalls.push(d);
+    if (d.aksyon === "eseye") return route.fulfill({ contentType: "application/json", body: JSON.stringify({ teks: "Bonjou! Lève-bonè a 2 000 goud.", fe: [] }) });
+    if (d.aksyon === "voye") { await rpc("wa_sv_ekri", { p_sekre: "e2e-sekre", p_tel: d.tel, p_sans: "staf", p_teks: d.teks, p_wa_id: null }); return route.fulfill({ contentType: "application/json", body: '{"ok":true}' }); }
+    route.fulfill({ contentType: "application/json", body: '{"ok":false,"ere":"tès"}' }); });
+  await s.evaluate(() => localStorage.setItem("staf-kod", "sekre-admin-123")); await s.reload(); await s.waitForSelector("#tabs button[data-k=wa]");
+  ok((await s.locator("#tabs button[data-k=wa] .nb").textContent()) === "1", "WhatsApp tab shows 1 customer waiting for a person");
+  await s.click("#tabs button[data-k=wa]"); await s.waitForSelector("#v .wst");
+  ok((await s.locator("#v .wst").textContent()).includes("fèmen"), "assistant shown as off");
+  await s.click("#v .tabs3 button >> nth=2"); await s.waitForSelector("#v [name=gemini_kle]");
+  await s.fill("#v [name=gemini_kle]", "AIzaE2EKEY00000000000000000000wxyz"); await s.click("#v form.card button.full");
+  await s.waitForSelector("#v [name=gemini_kle][placeholder*='wxyz']");
+  const kv = (await dbq("select gemini_kle from wa_konfig")).rows[0].gemini_kle;
+  ok(kv === "AIzaE2EKEY00000000000000000000wxyz" && (await s.inputValue("#v [name=gemini_kle]")) === "", "Gemini key saved, never shown again (only its last 4)");
+  ok((await s.locator("#v .cp input").first().inputValue()).endsWith("/api/whatsapp"), "webhook address ready to copy");
+  await s.click("#v .wst button"); await s.waitForSelector("#v .wst >> text=poko konekte"); ok(true, "assistant switched on, says it is not connected yet");
+  await s.click("#v .tabs3 button >> nth=0"); await s.waitForSelector("#v .rw.kl");
+  ok((await s.locator("#v .rw.kl").first().textContent()).includes("Bezwen ou"), "conversation flagged « Bezwen ou »");
+  await s.click("#v .rw.kl >> nth=0"); await s.waitForSelector("#v .ch .bl.in");
+  ok((await s.locator("#v .alrt").textContent()).includes("pwoblèm"), "reason shown to the team");
+  await s.fill("#v .rp textarea", "Bonjou Lina, se Duke. Ki pwoblèm lan?"); await s.click("#v .rp button");
+  await s.waitForSelector("#v .ch .bl.staf"); ok(waCalls.some((x) => x.aksyon === "voye" && x.tel === "50955550001"), "team reply sent from the screen");
+  await s.screenshot({ path: S + "9-whatsapp.png", fullPage: true });
+  await s.click("text=Remèt li bay asistan an"); await s.waitForSelector("text=Mwen pran relè");
+  ok((await dbq("select eta, alet from wa_konv where telefon = '50955550001'")).rows[0].eta === "bot", "conversation given back to the assistant");
+  await s.click("#v .row2 button"); await s.click("#v .tabs3 button >> nth=1"); await s.fill("#v .rp textarea", "Konbyen tikè a ye?"); await s.click("#v .rp button");
+  await s.waitForSelector("#v .ch .bl.bot"); ok((await s.locator("#v .ch .bl.bot").textContent()).includes("2 000"), "try-the-assistant screen answers");
   console.log("page errors:", errs);
   await b.close(); srv.close(); await db.end();
 })().catch(async (e) => { console.error("ERROR", e.message); process.exit(1); });
