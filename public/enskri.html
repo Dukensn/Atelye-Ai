@@ -25,6 +25,13 @@
   .mt2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .mt2 label { margin: 0 !important; display: flex !important; gap: 10px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
   .mt2 label:has(input:checked) { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink) inset; }
+  /* payment buttons: the logo is the button; the radio stays for keyboards and screen readers */
+  .pm label { position: relative; padding: 0; border: 0; border-radius: 13px; overflow: visible; opacity: .55; filter: saturate(.7); transition: opacity .15s, transform .15s, filter .15s; }
+  .pm label input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .pm label img { display: block; width: 100%; height: auto; border-radius: 12px; }
+  .pm label:has(input:checked) { opacity: 1; filter: none; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); transform: translateY(-1px); }
+  .pm label:has(input:checked)::after { content: "✓"; position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 14px; font-weight: 800; display: grid; place-items: center; }
+  .pm label:has(input:focus-visible) { outline: 3px solid #3b82f6; outline-offset: 4px; }
   .pay { margin-top: 14px; padding: 14px; border-radius: 12px; background: var(--soft); font-size: 15px; }
   .pay b.nb { font-size: 22px; letter-spacing: .02em; }
   .pay .big { display: block; font-size: 30px; letter-spacing: -0.02em; }
@@ -66,7 +73,7 @@
       <select id="vle" name="vle"><option value="">Chwazi…</option><option>Facebook Ads</option><option>Vann pwodwi dijital</option><option>Kreye videyo ak AI</option><option>Tout bagay sa yo</option></select>
       <label for="vann">Kisa w ap vann, oswa w vle vann? <span class="mute">(si w vle)</span></label><input id="vann" name="vann" type="text" maxlength="140">
       <label>Ki jan w ap peye?</label>
-      <div class="mt2"><label><input type="radio" name="metod" value="moncash" checked> MonCash</label><label><input type="radio" name="metod" value="natcash"> NatCash</label></div>
+      <div class="mt2 pm"><label><input type="radio" name="metod" value="moncash" checked><img src="/art/peye-moncash.svg" alt="Peye ak MonCash" width="200" height="50"></label><label><input type="radio" name="metod" value="natcash"><img src="/art/natcash.svg" alt="Peye ak NatCash" width="200" height="50"></label></div>
       <div id="m1" class="msg hidden"></div>
       <button class="btn full" style="margin-top:18px">Kontinye</button>
     </form>
