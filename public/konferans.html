@@ -191,6 +191,12 @@
   .kd .ko .no, .kd .ko h3 { display: none; }
   .tk2 .nm { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
   @media (max-width: 820px) { .kd summary { flex-wrap: wrap; gap: 4px 12px; padding: 16px; } .kd summary .kt { min-width: 0; width: 100%; order: -1; } .kd .ko { padding: 0 16px 20px; } }
+  .enf-s { padding: 4px 0 0; }
+  .enf { border: 1px solid var(--line); border-radius: 12px; padding: 0 14px; font-size: 14px; }
+  .enf summary { padding: 11px 0; gap: 10px; align-items: center; }
+  .enf summary span { font-weight: 600; } .enf summary small { flex: 1; color: var(--mute); font-weight: 500; }
+  .enf ul { list-style: none; padding: 0 0 12px; margin: 0; display: grid; gap: 6px; color: var(--mute); }
+  .enf li b { color: var(--ink); margin-right: 8px; }
 </style>
 </head>
 <body>
@@ -229,32 +235,23 @@
 
 
 <!-- PRACTICAL -->
-<section id="enfo"><div class="wrap">
-  <div class="sec-head"><h2>Enfòmasyon pratik</h2></div>
-  <div class="grid3">
-    <div class="tile"><span class="ri">📍</span><h3>Kote</h3><p>Lise Anacaona, Leyogàn, Ayiti.</p></div>
-    <div class="tile"><span class="ri">🕙</span><h3>Lè</h3><p>Samdi 28 novanm. Akèy 9h30, kòmansman 10h00, fen 4h00.</p></div>
-    <div class="tile"><span class="ri">🎒</span><h3>Sa pou w pote</h3><p>Telefòn ou byen chaje, chajè a, ak kont Facebook ou (non itilizatè ak modpas).</p></div>
-  </div>
+<section id="enfo" class="enf-s"><div class="wrap">
+  <details class="enf"><summary><span>📍 Enfòmasyon pratik</span><small>Kote · Lè · Sa pou w pote</small></summary>
+    <ul>
+      <li><b>Kote</b>Lise Anacaona, Leyogàn, Ayiti.</li>
+      <li><b>Lè</b>Samdi 28 novanm. Akèy 9h30, kòmansman 10h00, fen 4h00.</li>
+      <li><b>Sa pou w pote</b>Telefòn ou byen chaje, chajè a, ak kont Facebook ou (non itilizatè ak modpas).</li>
+    </ul>
+  </details>
 </div></section>
 
 <!-- PROGRAM -->
 <section id="pwogram"><div class="wrap">
   <div class="kh"><h2>Pwogram jounen an</h2></div>
   <p class="mute" style="margin:6px 0 0">Samdi 28 novanm, 10h – 4h. Tout egzèsis yo fèt sou telefòn.</p>
-  <ol class="ore" style="margin-bottom:22px">
-    <li><b>9h30</b><span>Akèy ak enstalasyon</span></li>
-    <li><b>10h00</b><span>Kreye kat debi vityèl ou</span></li>
-    <li><b>10h45</b><span>Lwa vant dijital la ak Facebook Ads</span></li>
-    <li><b>12h30</b><span>Poz repa</span></li>
-    <li><b>13h15</b><span>Kreye ak vann pwodwi dijital</span></li>
-    <li><b>14h15</b><span>Kreye videyo ak AI</span></li>
-    <li><b>15h30</b><span>Kesyon, plan aksyon ak sètifika</span></li>
-  </ol>
 
   <div>
-    <details class="kd" id="k-kat"><summary><span class="kt">10h00 – 10h45</span><b>Kreye kat debi vityèl ou</b><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></summary>
-    <article class="ko">
+    <article class="ko" id="k-kat">
       <div class="sl">
         <div class="tr">
           <figure><img src="/art/kat.jpg" alt="Kat debi vityèl" loading="lazy"></figure>
@@ -273,10 +270,8 @@
         <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
       </div>
     </article>
-    </details>
 
-    <details class="kd" id="k-ads"><summary><span class="kt">10h45 – 12h30</span><b>Marketing dijital ak Facebook Ads</b><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></summary>
-    <article class="ko">
+    <article class="ko" id="k-ads">
       <div class="sl lt" data-auto aria-roledescription="carousel" aria-label="Marketing dijital ak Facebook Ads">
         <div class="tr">
           <figure><img src="/kouveti/slides/ads-3.jpg" alt="Tablo Facebook Ads: rezilta kanpay yo" loading="lazy"></figure>
@@ -298,10 +293,8 @@
         <a class="btn" href="/enskri">Rezève plas mwen</a>
       </div>
     </article>
-    </details>
 
-    <details class="kd" id="k-pwodwi"><summary><span class="kt">13h15 – 14h15</span><b>Kreye ak vann pwodwi dijital</b><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></summary>
-    <article class="ko">
+    <article class="ko" id="k-pwodwi">
       <div class="sl lt" data-auto aria-roledescription="carousel" aria-label="Kreye ak vann pwodwi dijital">
         <div class="tr">
           <figure><img src="/kouveti/slides/vant-3.jpg" alt="Ebook ak tablo vant" loading="lazy"></figure>
@@ -322,10 +315,8 @@
         <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
       </div>
     </article>
-    </details>
 
-    <details class="kd" id="k-videyo"><summary><span class="kt">14h15 – 15h30</span><b>Kreye videyo ak AI</b><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></summary>
-    <article class="ko">
+    <article class="ko" id="k-videyo">
       <div class="sl" data-auto aria-roledescription="carousel" aria-label="Egzanp videyo">
         <div class="tr">
           <figure><video src="/egzanp/myel-1.mp4" poster="/egzanp/myel-1.jpg" muted loop playsinline preload="none" aria-label="What if?: Pa gen myèl sou tè a"></video><div class="tt"><b>What if?</b><i></i><small>Pa gen myèl sou tè a</small></div></figure>
@@ -350,7 +341,6 @@
         <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
       </div>
     </article>
-    </details>
   </div>
 </div></section>
 
