@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eskanè · Atelye konferans</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0f0f0f">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.png">
+<link rel="stylesheet" href="/style.css">
+<script src="/enstale.js" defer></script>
+<style>
+  body { background: #0f0f0f; color: #fff; }
+  main { max-width: 520px; margin: 0 auto; padding: 14px 14px 40px; }
+  .top2 { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .cnt { font-size: 28px; font-weight: 800; } .cnt small { font-size: 13px; color: #aaa; font-weight: 600; }
+  .net { font-size: 12px; font-weight: 700; padding: 5px 9px; border-radius: 999px; background: #222; }
+  .net.on { color: #d7ff3a; } .net.off { color: #ffc83d; }
+  .cam { position: relative; margin-top: 12px; border-radius: 18px; overflow: hidden; background: #222; aspect-ratio: 1; }
+  .cam video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cam .frame { position: absolute; inset: 18%; border: 3px solid rgba(255,255,255,.7); border-radius: 18px; }
+  .res { margin-top: 12px; border-radius: 18px; padding: 18px; min-height: 120px; background: #222; }
+  .res.vert { background: #1f7a43; } .res.orange { background: #d97706; } .res.rouge { background: #b3261e; }
+  .res b { display: block; font-size: 30px; letter-spacing: -0.02em; } .res span { display: block; font-size: 18px; margin-top: 4px; }
+  .card { background: #1a1a1a; border: 0; color: #fff; }
+  input { background: #262626; color: #fff; }
+  .lis2 { margin-top: 10px; display: grid; gap: 8px; }
+  .lis2 .it { display: flex; justify-content: space-between; gap: 10px; align-items: center; background: #1a1a1a; border-radius: 12px; padding: 10px 12px; }
+  .lis2 .it small { color: #aaa; }
+  .btn.w { background: #fff; color: #111; }
+  .mute2 { color: #aaa; font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <form id="login" class="card" style="margin-top:40px">
+    <h2 style="margin-top:0;color:#fff">Eskanè pòt la</h2>
+    <p class="mute2">Mete kòd eskanè w la. Aparèy la ap telechaje lis tikè yo pou l ka mache san entènèt.</p>
+    <input id="kod" type="password" autocomplete="current-password" required>
+    <div id="ml" class="msg hidden"></div>
+    <button class="btn w full" style="margin-top:14px">Antre</button>
+  </form>
+
+  <div id="app" class="hidden">
+    <div class="top2">
+      <div class="cnt"><span id="antre">0</span> / <span id="tout">0</span> <small>antre</small></div>
+      <span class="net" id="net">—</span>
+    </div>
+    <div class="mute2" id="sync">—</div>
+    <div class="cam"><video id="vid" playsinline muted></video><div class="frame"></div></div>
+    <button class="btn w full" id="kamera" type="button" style="margin-top:10px">Louvri kamera a</button>
+    <div class="res" id="res"><b>Pare</b><span>Eskane yon tikè.</span></div>
+    <div class="card" style="margin-top:12px">
+      <input id="chache" placeholder="Chèche non, 4 dènye chif telefòn, oswa AT-…">
+      <div class="lis2" id="lis"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px"><button class="btn light sm" id="rechaje" type="button">Rechaje lis la</button><button class="btn light sm" id="soti" type="button">Soti</button></div>
+  </div>
+</main>
+<script src="/vendor/jsQR.js"></script>
+<script src="/sb.js"></script>
+<script>
+(() => {
+  const $ = (q) => document.querySelector(q);
+  const ST = {   // everything is kept on the device so the door keeps working without network
+    get: (k, d) => { try { return JSON.parse(localStorage.getItem("skane-" + k)) ?? d; } catch { return d; } },
+    set: (k, v) => { try { localStorage.setItem("skane-" + k, JSON.stringify(v)); } catch {} },
+  };
+  let KOD = ST.get("kod", ""), B = ST.get("billets", {}), Q = ST.get("queue", []), APP = ST.get("appareil", "");
+  if (!APP) { APP = "tel-" + Math.random().toString(36).slice(2, 7); ST.set("appareil", APP); }
+  const lè = (iso) => new Date(iso).toLocaleTimeString("fr-HT", { timeZone: "America/Port-au-Prince", hour: "2-digit", minute: "2-digit" });
+
+  function konte() {
+    const v = Object.values(B).filter((b) => b.statut !== "annule");
+    $("#antre").textContent = v.filter((b) => b.statut === "utilise").length; $("#tout").textContent = v.length;
+    $("#net").textContent = navigator.onLine ? "Sou entènèt" : "San entènèt"; $("#net").className = "net " + (navigator.onLine ? "on" : "off");
+    $("#sync").textContent = (Q.length ? `${Q.length} antre poko voye · ` : "Tout voye · ") + (ST.get("le") ? "lis: " + lè(ST.get("le")) : "");
+  }
+  async function telechaje() {
+    const r = await SB.rpc("skane_lis", { p_code: KOD });
+    const nouvo = {};
+    r.billets.forEach((b) => { const lokal = B[b.code]; nouvo[b.code] = lokal && lokal.statut === "utilise" && b.statut === "actif" ? lokal : b; });
+    B = nouvo; ST.set("billets", B); ST.set("le", r.le); konte();
+  }
+  async function voye() {
+    if (!Q.length || !navigator.onLine) return;
+    const pak = Q.slice(0, 50);
+    const r = await SB.rpc("skane_sync", { p_code: KOD, p_appareil: APP, p_scans: pak });
+    Q = Q.slice(pak.length); ST.set("queue", Q);
+    r.forEach((x) => { if (B[x.code]) { B[x.code].statut = x.statut; if (x.scanne_le) B[x.code].scanne_le = x.scanne_le; } });
+    ST.set("billets", B); konte();
+  }
+  setInterval(() => { voye().catch(() => {}); konte(); }, 10000);
+  setInterval(() => { if (navigator.onLine && KOD) telechaje().catch(() => {}); }, 120000);
+  addEventListener("online", () => { voye().catch(() => {}); konte(); }); addEventListener("offline", konte);
+
+  function rezilta(c, tit, det) {
+    const r = $("#res"); r.className = "res " + c; r.replaceChildren(Object.assign(document.createElement("b"), { textContent: tit }), Object.assign(document.createElement("span"), { textContent: det }));
+    if (navigator.vibrate) navigator.vibrate(c === "vert" ? 80 : [200, 80, 200]);
+  }
+  let dènye = "", dènyeLè = 0;
+  function tcheke(code, alamen) {
+    code = String(code || "").trim().toUpperCase();
+    const url = code.match(/BILLET\/([A-Z0-9]{12})/); if (url) code = url[1];
+    if (!alamen && code === dènye && Date.now() - dènyeLè < 3000) return;
+    dènye = code; dènyeLè = Date.now();
+    const b = B[code];
+    if (!b) return rezilta("rouge", "Enkoni", "Tikè sa a pa nan lis la.");
+    if (b.statut === "annule") return rezilta("rouge", "Anile", `${b.nom} · ${b.numero}`);
+    if (b.statut === "utilise") return rezilta("orange", "Deja itilize", `${b.nom} · antre a ${b.scanne_le ? lè(b.scanne_le) : "?"}`);
+    const le = new Date().toISOString();
+    b.statut = "utilise"; b.scanne_le = le; ST.set("billets", B);
+    Q.push({ code, le }); ST.set("queue", Q); konte(); voye().catch(() => {});
+    rezilta("vert", "Valid ✓", `${b.nom} · ${b.type} · ${b.numero}`);
+  }
+
+  // camera: native BarcodeDetector when the phone has it, jsQR otherwise
+  let flux = null, det = ("BarcodeDetector" in window) ? new BarcodeDetector({ formats: ["qr_code"] }) : null;
+  const cv = document.createElement("canvas"), g = cv.getContext("2d", { willReadFrequently: true });
+  async function boukle() {
+    const v = $("#vid");
+    if (!flux) return;
+    if (v.readyState >= 2) {
+      try {
+        if (det) { const c = await det.detect(v); if (c[0]) tcheke(c[0].rawValue); }
+        else { cv.width = 480; cv.height = Math.round(480 * v.videoHeight / v.videoWidth); g.drawImage(v, 0, 0, cv.width, cv.height);
+          const k = jsQR(g.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height, { inversionAttempts: "dontInvert" }); if (k) tcheke(k.data); }
+      } catch {}
+    }
+    setTimeout(boukle, 180);
+  }
+  $("#kamera").onclick = async () => {
+    try { flux = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false }); $("#vid").srcObject = flux; await $("#vid").play(); $("#kamera").classList.add("hidden"); boukle(); }
+    catch { rezilta("rouge", "Kamera a pa louvri", "Bay sit la otorizasyon kamera a, oswa chèche moun nan pa non."); }
+  };
+
+  $("#chache").oninput = () => {
+    const q = $("#chache").value.trim().toLowerCase(), box = $("#lis"); box.replaceChildren();
+    if (q.length < 2) return;
+    Object.values(B).filter((b) => [b.nom, b.tel, b.numero].some((x) => String(x || "").toLowerCase().includes(q))).slice(0, 20).forEach((b) => {
+      const it = document.createElement("div"); it.className = "it";
+      it.innerHTML = `<div><b></b><br><small></small></div>`; it.querySelector("b").textContent = b.nom;
+      it.querySelector("small").textContent = `${b.numero} · ${b.type} · ···${b.tel} · ${b.statut === "utilise" ? "antre " + (b.scanne_le ? lè(b.scanne_le) : "") : b.statut}`;
+      const k = Object.assign(document.createElement("button"), { type: "button", className: "btn sm w", textContent: "Kite l antre" });
+      k.onclick = () => { tcheke(b.code, true); $("#chache").oninput(); }; it.append(k); box.append(it);
+    });
+  };
+
+  async function antre() {
+    await telechaje(); ST.set("kod", KOD);
+    $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); konte(); voye().catch(() => {});
+  }
+  $("#login").onsubmit = (ev) => { ev.preventDefault(); KOD = $("#kod").value; antre().catch((e) => { $("#ml").className = "msg err"; $("#ml").textContent = e.message; }); };
+  $("#rechaje").onclick = () => telechaje().then(() => rezilta("", "Lis la mizajou", `${Object.keys(B).length} tikè`)).catch((e) => rezilta("rouge", "Pa ka rechaje", e.message));
+  $("#soti").onclick = () => { if (Q.length && !confirm(`${Q.length} antre poko voye. Soti kanmenm?`)) return; ["kod", "billets", "queue", "le"].forEach((k) => localStorage.removeItem("skane-" + k)); location.reload(); };
+  if (KOD && Object.keys(B).length) { $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); konte(); if (navigator.onLine) telechaje().catch(() => {}); }
+})();
+</script>
+</body>
+</html>

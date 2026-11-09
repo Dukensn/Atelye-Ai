@@ -3,7 +3,6 @@ import {
   aksepte, efase, ekri, fenmenTout, json, kalkileAfilye, kleTelefon, kontni, li, netwaye, paramet, seAdmin,
   telefonWhatsApp, toutEnskripsyon, toutRetre,
 } from "../lib/store.js";
-import { dbPare, konferans } from "../lib/db.js";
 
 const orijin = (req) => new URL(req.url).origin;
 const lyenAktive = (req, token) => `${orijin(req)}/espas?aktive=${token}`;
@@ -27,13 +26,6 @@ const waGen = (moun, montan, filye) =>
 const waPeye = (r) =>
   `https://wa.me/${telefonWhatsApp(r.telefon)}?text=${encodeURIComponent(
     `Bonjou ${r.non.split(" ")[0]}! Nou fèk voye ${r.montan} goud sou ${r.metod === "moncash" ? "MonCash" : "NatCash"} ${r.nimewo}. Mèsi paske w pataje Atelye AI! 🙏`,
-  )}`;
-
-const waKonferans = (x) =>
-  `https://wa.me/${telefonWhatsApp(x.telefon)}?text=${encodeURIComponent(
-    x.estati === "peye"
-      ? `Bonjou ${x.non.split(" ")[0]}! Nou resevwa peman w lan: plas ou konfime pou atelye konferans Atelye AI la, samdi 28 novanm, nan Lise Anacaona, Leyogàn. 🎉 Pote CIN oswa paspò ou. A byento!`
-      : `Bonjou ${x.non.split(" ")[0]}! Se Atelye AI. Nou resevwa enskripsyon w pou atelye konferans 28 novanm lan.`,
   )}`;
 
 export async function GET(req) {
@@ -61,9 +53,7 @@ export async function GET(req) {
   const retreFinal = retre
     .sort((a, b) => b.kreye.localeCompare(a.kreye))
     .map((r) => ({ ...r, whatsapp: waPeye(r) }));
-  let konf = null;
-  if (dbPare()) konf = await konferans.lis().then((l) => l.map((x) => ({ ...x, whatsapp: waKonferans(x) }))).catch((err) => ({ ere: String(err.message || err).slice(0, 200) }));
-  return json({ konferans: konf, lis: lisFinal, kontni: k, paramet: p, afilye, retre: retreFinal, kobara: !!(process.env.KOBARA_SECRET_KEY && process.env.KOBARA_WEBHOOK_SECRET) });
+  return json({ lis: lisFinal, kontni: k, paramet: p, afilye, retre: retreFinal, kobara: !!(process.env.KOBARA_SECRET_KEY && process.env.KOBARA_WEBHOOK_SECRET) });
 }
 
 export async function POST(req) {
@@ -119,26 +109,15 @@ export async function POST(req) {
     return json({ ok: true, kontni: nouvo });
   }
 
-  if (b.aksyon === "konferans_peye" || b.aksyon === "konferans_refize") {
-    if (!dbPare()) return json({ ere: "Supabase poko konfigire." }, 503);
-    const kid = netwaye(b.id, 40);
-    if (!/^[0-9a-f-]{36}$/.test(kid)) return json({ ere: "Enskripsyon sa a pa egziste." }, 404);
-    const x = await konferans.chanje(kid, { estati: b.aksyon === "konferans_peye" ? "peye" : "refize", dat_desizyon: new Date().toISOString() });
-    if (!x) return json({ ere: "Enskripsyon sa a pa egziste." }, 404);
-    return json({ ok: true, whatsapp: x.estati === "peye" ? waKonferans(x) : null });
-  }
-
   if (b.aksyon === "paramet") {
     const pri = Math.round(Number(b.pri)), komisyon = Math.round(Number(b.komisyon));
-    const pk = String(b.pri_konferans ?? "").trim(), pri_konferans = pk === "" ? null : Math.round(Number(pk));
-    if (pri_konferans !== null && !(pri_konferans >= 100 && pri_konferans <= 1000000)) return json({ ere: "Pri atelye a pa bon." }, 400);
     const manyel = b.manyel === true, tradui = b.tradui === true, otomatik = b.otomatik === true;
     const lyen_peman = netwaye(b.lyen_peman, 500);
     if (!(pri >= 100 && pri <= 1000000)) return json({ ere: "Pri a pa bon." }, 400);
     if (!(komisyon >= 0 && komisyon < pri)) return json({ ere: "Komisyon an dwe pi piti pase pri a." }, 400);
     if (lyen_peman && !/^https:\/\/[^\s]+$/.test(lyen_peman)) return json({ ere: "Lyen peman an dwe kòmanse ak https://" }, 400);
     if (!lyen_peman && !manyel) return json({ ere: "Mete yon lyen peman oswa kite peman alamen aktive." }, 400);
-    const nouvo = { pri_konferans, pri, komisyon, lyen_peman, tradui, manyel, otomatik, moncash: false };
+    const nouvo = { pri, komisyon, lyen_peman, tradui, manyel, otomatik, moncash: false };
     await ekri("paramet.json", nouvo);
     return json({ ok: true, paramet: nouvo });
   }
