@@ -41,12 +41,13 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
 
   // 1) register
   await p.goto("http://localhost:5174/konferans");
-  await p.waitForFunction(() => document.querySelectorAll("#tkg .tk2").length === 2); ok((await p.locator(".pmin").first().textContent()).includes("15"), "hero price from the database"); ok((await p.locator("#tkg .tk2 .tkm").count()) === 2, "ticket cards with sample tickets shown");
+  await p.waitForFunction(() => document.querySelectorAll("#tkg .tk2").length === 2); ok((await p.locator(".pmin").first().textContent()).includes("15"), "hero price from the database"); ok((await p.locator("#tkg .tk2").count()) === 2 && (await p.locator("#tkg .tkm, #tkg ul").count()) === 0, "simple ticket cards, no samples or lists");
+  ok((await p.locator("#tkg .tk2").first().textContent()).includes("Rabè"), "early-bird card shows the discount");
   ok((await p.locator("#enskri").count()) === 0, "no form on the workshop page");
   const href = await p.locator("#tkg .tk2 .btn").nth(1).getAttribute("href"); ok(/^\/enskri\?tip=/.test(href), "ticket button opens /enskri with the ticket");
   await p.goto("http://localhost:5174" + href); await p.waitForSelector("#tip .tp");
   ok((await p.locator("#tip .tp").count()) === 2, "two ticket types shown with prices");
-  ok(await p.locator("#tip input").nth(1).isChecked(), "chosen ticket preselected"); ok((await p.locator("#modl .tkm").count()) === 1, "sample of the chosen ticket shown");
+  ok(await p.locator("#tip input").nth(1).isChecked(), "chosen ticket preselected");
   await p.locator("#tip .tp").first().click();
   await p.locator("#enskri").scrollIntoViewIfNeeded(); await p.screenshot({ path: S + "1-form.png" });
   await p.fill("#non", "Roselande Pierre"); await p.fill("#telefon", "3864 1234"); await p.selectOption("#nivo", { index: 1 }); await p.selectOption("#vle", { index: 1 });

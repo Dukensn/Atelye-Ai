@@ -55,8 +55,7 @@
       <h1 style="margin:0 0 6px;font-size:30px;letter-spacing:-0.02em">Rezève plas ou</h1>
       <p class="mute" style="margin:0 0 10px">Atelye konferans · Samdi 28 novanm · Lise Anacaona, Leyogàn</p>
       <p class="mute small" style="margin-top:-6px"><a href="/billet">Ou enskri deja? Jwenn tikè w la.</a></p>
-      <div id="modl" style="margin:14px 0 4px"></div>
-      <label>Ki tikè?</label>
+            <label>Ki tikè?</label>
       <div id="tip" class="tip"><p class="mute">Chajman…</p></div>
       <label for="non">Non konplè ou</label><input id="non" name="non" type="text" autocomplete="name" maxlength="80" required>
       <label for="telefon">Nimewo WhatsApp</label><input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX" maxlength="20" required>
@@ -100,9 +99,7 @@
 </div></section>
 </main>
 <footer><div class="wrap"><span>© Atelye AI</span><a href="/billet">Jwenn tikè mwen</a></div></footer>
-<script src="/vendor/qrcode.js"></script>
 <script src="/sb.js"></script>
-<script src="/tike.js"></script>
 <script>
 // Seats, ticket types and payment, all through Supabase server functions (sb.js).
 (() => {
@@ -128,15 +125,6 @@
     const vle = new URLSearchParams(location.search).get("tip");
     const chwa = (vle && box.querySelector(`input[value="${CSS.escape(vle)}"]:not([disabled])`)) || box.querySelector("input:not([disabled])");
     if (chwa) chwa.checked = true;
-    box.addEventListener("change", montreModèl);
-  }
-  // the chosen ticket, drawn as it will look
-  function montreModèl() {
-    const r = document.querySelector("input[name=tip]:checked"), m = $("#modl");
-    const t = r && EVT && EVT.types.find((x) => String(x.id) === r.value);
-    if (!t) { m.replaceChildren(); return; }
-    const p = document.createElement("p"); p.className = "mute small"; p.style.margin = "0 0 8px"; p.textContent = "Tikè w ap resevwa a ap sanble ak sa a:";
-    m.replaceChildren(p, TIKE.modèl(t, EVT));
   }
   function montrePeman() {
     $("#p-amt").textContent = SB.goud(I.montant) + (I.prix_usd ? ` (${SB.dola(I.prix_usd)})` : "");
@@ -148,7 +136,7 @@
   const sere = () => { try { localStorage.setItem("konf-enskri", JSON.stringify(I)); } catch {} };
 
   Promise.all([SB.rpc("evenement_public").catch(() => null), fetch("/api/konfig").then((r) => r.json()).catch(() => ({}))]).then(([e, k]) => {
-    EVT = e; K = k; montreTip(); montreModèl();
+    EVT = e; K = k; montreTip();
     if (I && I.fini) { $("#p3-kod").textContent = I.code_court; etap(3); }
     else if (I && I.id) { montrePeman(); etap(2); }
   });

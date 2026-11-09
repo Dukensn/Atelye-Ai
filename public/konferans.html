@@ -164,7 +164,9 @@
   .ri { font-size: 26px; line-height: 1; }
   .ore { list-style: none; padding: 0; margin: 18px 0 8px; border-left: 3px solid #ffc83d; }
   .ore li { display: flex; gap: 14px; padding: 8px 0 8px 16px; font-size: 15px; } .ore b { width: 54px; flex: none; }
-  .tkg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+  .tkg { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; align-items: stretch; max-width: 760px; }
+  .tk2 .px s { font-size: 18px; color: var(--mute); font-weight: 600; }
+  .tk2 .left { margin-top: 10px; }
   .tk2 { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; }
   .tk2.vip { background: var(--ink); color: #fff; border-color: var(--ink); }
   .tk2.vip .mute, .tk2.vip li { color: #cfcfcf; }
@@ -187,7 +189,6 @@
   .kd summary svg { flex: none; transition: rotate .2s; } .kd[open] summary svg { rotate: 180deg; }
   .kd .ko { padding: 4px 20px 24px; border: 0; }
   .kd .ko .no, .kd .ko h3 { display: none; }
-  .tk2 .tkm { margin-bottom: 18px; }
   .tk2 .nm { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
   @media (max-width: 820px) { .kd summary { flex-wrap: wrap; gap: 4px 12px; padding: 16px; } .kd summary .kt { min-width: 0; width: 100%; order: -1; } .kd .ko { padding: 0 16px 20px; } }
 </style>
@@ -355,7 +356,7 @@
 
 <!-- TICKETS -->
 <section id="tike"><div class="wrap">
-  <div class="sec-head"><h2>Chwazi tikè ou</h2><p class="mute"><b class="rest">100</b> plas an tout. Lè yo fini, enskripsyon yo fèmen.</p></div>
+  <div class="sec-head"><h2>Chwazi tikè ou</h2><p class="mute">Menm aksè pou tout moun. Premye moun ki enskri yo peye mwens. <b class="rest">100</b> plas an tout.</p></div>
   <div class="tkg" id="tkg"><p class="mute">Chajman…</p></div>
 </div></section>
 
@@ -381,7 +382,7 @@
   <details><summary>Èske m ka ranbouse?</summary><p>Si atelye a anile oswa ranvwaye, nou ranbouse w nèt. Pou lòt ka, ekri nou sou WhatsApp: n ap gade chak demann.</p></details>
   <details><summary>Ki nivo mwen bezwen?</summary><p>Okenn. Nou kòmanse depi nan baz la, an kreyòl. Si w konn sèvi ak WhatsApp ak Facebook, sa ase.</p></details>
   <details><summary>Èske m bezwen yon òdinatè?</summary><p>Non. Tout egzèsis yo fèt sou telefòn. Pote l byen chaje ak chajè l.</p></details>
-  <details><summary>Ki diferans ant tikè yo?</summary><p>Lève-bonè a menm jan ak Estanda a, men pi bon mache pou premye moun yo. VIP la ajoute premye ranje yo, repa ak entèvenan yo ak sipò pèsonèl, pou yon ti gwoup sèlman.</p></details>
+  <details><summary>Ki diferans ant tikè yo?</summary><p>Okenn diferans nan sa w ap aprann: tout moun gen menm aksè. Sèl diferans lan se pri a. Premye moun ki enskri yo jwenn yon rabè.</p></details>
   <details><summary>Kijan bonis Claude la mache?</summary><p>100 premye moun ki enskri yo resevwa yon lyen pou aktive 7 jou Claude Pro gratis, ansanm ak zouti, skill, modèl ak prompt Atelye AI yo gratis.</p></details>
 </div></section>
 <!-- LAST CALL -->
@@ -397,9 +398,7 @@
 </main>
 
 <footer><div class="wrap"><span>© Atelye AI</span><a href="/enskri">Rezève</a></div></footer>
-<script src="/vendor/qrcode.js"></script>
 <script src="/sb.js"></script>
-<script src="/tike.js"></script>
 <script>
 // Ticket types and seats from Supabase (sb.js); sign-up itself is on /enskri.
 (() => {
@@ -409,23 +408,20 @@
   function montreTike() {
     const box = $("#tkg"); if (!box) return;
     if (!EVT || !EVT.types.length) { box.innerHTML = '<p class="mute">Tikè yo ap disponib byento.</p>'; return; }
-    box.replaceChildren(...EVT.types.map((t) => {
-      const T = TIKE.tem(t.nom), plen = t.restants <= 0;
-      const d = document.createElement("div"); d.className = `tk2 ${T.k === "std" ? "" : T.k}${plen ? " off" : ""}`;
-      d.append(TIKE.modèl(t, EVT));
-      const r = document.createElement("div");
-      r.innerHTML = `<span class="tg"></span><div class="nm"><h3></h3><div class="px"></div></div><ul></ul><div class="left"></div><a class="btn full"></a>`;
-      r.querySelector(".tg").textContent = T.k === "vip" ? "Plas limite" : T.k === "lb" ? "Pou premye yo" : "Pi popilè";
-      r.querySelector("h3").textContent = t.nom;
-      r.querySelector(".px").innerHTML = `${t.prix_usd ? SB.dola(t.prix_usd) : SB.goud(t.prix_htg)} <small></small>`;
-      r.querySelector(".px small").textContent = t.prix_usd ? `· ${SB.goud(t.prix_htg)}` : "";
-      r.querySelector("ul").innerHTML = (t.avantaj || []).map(() => `<li>${ck}<span></span></li>`).join("");
-      r.querySelectorAll("li span").forEach((x, i) => (x.textContent = t.avantaj[i]));
-      const l = r.querySelector(".left"); l.textContent = plen ? "Plen" : `${t.restants} plas ki rete` + (t.date_fin_vente ? ` · jiska ${SB.dat(t.date_fin_vente, { day: "numeric", month: "long" })}` : "");
+    const max = Math.max(...EVT.types.map((t) => +t.prix_usd || 0));
+    box.replaceChildren(...EVT.types.map((t, i) => {
+      const plen = t.restants <= 0, rabè = +t.prix_usd && +t.prix_usd < max;
+      const d = document.createElement("div"); d.className = `tk2${rabè ? " lb" : ""}${plen ? " off" : ""}`;
+      d.innerHTML = `<span class="tg"></span><h3></h3><div class="px"></div><div class="left"></div><a class="btn full"></a>`;
+      d.querySelector(".tg").textContent = rabè ? `Rabè ${SB.dola(max - t.prix_usd)}` : "Pri nòmal";
+      d.querySelector("h3").textContent = t.nom;
+      d.querySelector(".px").innerHTML = `${t.prix_usd ? SB.dola(t.prix_usd) : SB.goud(t.prix_htg)} <s></s> <small></small>`;
+      d.querySelector(".px s").textContent = rabè ? SB.dola(max) : "";
+      d.querySelector(".px small").textContent = t.prix_usd ? `· ${SB.goud(t.prix_htg)}` : "";
+      const l = d.querySelector(".left"); l.textContent = plen ? "Plen" : `${t.restants} plas ki rete` + (t.date_fin_vente ? ` · jiska ${SB.dat(t.date_fin_vente, { day: "numeric", month: "long" })}` : "");
       if (!plen && t.restants <= 10) l.classList.add("lo");
-      const b = r.querySelector(".btn"); b.textContent = plen ? "Plen" : "Mwen chwazi tikè sa a";
-      if (!plen) b.href = "/enskri?tip=" + encodeURIComponent(t.id);
-      d.append(...r.childNodes);
+      const btn = d.querySelector(".btn"); btn.textContent = plen ? "Plen" : "Mwen chwazi tikè sa a";
+      if (!plen) btn.href = "/enskri?tip=" + encodeURIComponent(t.id);
       return d;
     }));
   }
