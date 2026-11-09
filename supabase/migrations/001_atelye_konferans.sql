@@ -157,6 +157,18 @@ create or replace function public._evt(p_evenement uuid) returns public.evenemen
   order by date limit 1
 $$;
 
+-- A dearer ticket opens only once every cheaper one (early bird) is sold out or past its end date.
+create or replace function public._bloke(p_type uuid) returns boolean language sql stable set search_path = public as $$
+  select exists (select 1 from public.types_billets t join public.types_billets c on c.evenement_id = t.evenement_id and c.id <> t.id
+    where t.id = p_type and c.prix_htg is not null and c.prix_htg < t.prix_htg
+      and (c.date_fin_vente is null or c.date_fin_vente > now()) and public._restants_type(c.id) > 0)
+$$;
+create or replace function public._ouvre_le(p_type uuid) returns timestamptz language sql stable set search_path = public as $$
+  select max(c.date_fin_vente) from public.types_billets t join public.types_billets c on c.evenement_id = t.evenement_id and c.id <> t.id
+    where t.id = p_type and c.prix_htg is not null and c.prix_htg < t.prix_htg
+      and (c.date_fin_vente is null or c.date_fin_vente > now()) and public._restants_type(c.id) > 0
+$$;
+
 -- ---------------------------------------------------------------- public functions
 create or replace function public.evenement_public(p_evenement uuid default null) returns jsonb language plpgsql stable
 security definer set search_path = public as $$
@@ -169,7 +181,7 @@ begin
     'capacite', e.capacite, 'restants', greatest(coalesce(e.capacite, 0) - pris, 0), 'statut', e.statut,
     'types', coalesce((select jsonb_agg(jsonb_build_object('id', t.id, 'nom', t.nom, 'prix_usd', t.prix_usd, 'prix_htg', t.prix_htg,
         'date_fin_vente', t.date_fin_vente, 'quota', t.quota, 'avantaj', coalesce(t.avantaj, '[]'::jsonb),
-        'restants', greatest(public._restants_type(t.id), 0)) order by t.ordre, t.prix_htg)
+        'restants', greatest(public._restants_type(t.id), 0), 'bloke', public._bloke(t.id), 'ouvre_le', public._ouvre_le(t.id)) order by t.ordre, t.prix_htg)
       from public.types_billets t where t.evenement_id = e.id and t.prix_htg is not null
         and (t.date_fin_vente is null or t.date_fin_vente > now())), '[]'::jsonb));
 end $$;
@@ -185,6 +197,7 @@ begin
   if t.id is null or e.statut <> 'ouvert' or t.prix_htg is null or (t.date_fin_vente is not null and t.date_fin_vente <= now())
     then raise exception 'Tikè sa a pa disponib ankò.'; end if;
   if public._restants_type(t.id) <= 0 then raise exception 'Pa gen plas ankò pou tikè sa a.'; end if;
+  if public._bloke(t.id) then raise exception 'Tikè sa a poko disponib: pran tikè Lève-bonè a pandan l la.'; end if;
   if length(v_nom) < 2 or length(v_nom) > 80 then raise exception 'Ekri non w.'; end if;
   if length(cle) < 11 or length(cle) > 15 then raise exception 'Nimewo WhatsApp la pa bon.'; end if;
   if em is not null and (length(em) > 120 or em !~ '^[^@\s]+@[^@\s]+\.[^@\s]+$') then raise exception 'Imèl la pa bon.'; end if;

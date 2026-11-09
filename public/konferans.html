@@ -205,6 +205,9 @@
   .tk2.lb .br i { background: #9ccc00; }
   .tk2 .cd { font-size: 13px; color: var(--mute); } .tk2 .cd b { color: var(--ink); font-variant-numeric: tabular-nums; font-size: 15px; }
   .tk2 .left.lo .ct span:first-child b { color: var(--bad); }
+  .tk2.bl { background: var(--soft); }
+  .tk2.bl .tg { background: #111; color: #fff; }
+  .tk2.bl .btn { background: #d9d9d9; color: #777; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -356,7 +359,7 @@
 
 <!-- TICKETS -->
 <section id="tike"><div class="wrap">
-  <div class="sec-head"><h2>Chwazi tikè ou</h2><p class="mute">Menm aksè pou tout moun. Premye moun ki enskri yo peye mwens. <b class="rest">100</b> plas an tout.</p></div>
+  <div class="sec-head"><h2>Chwazi tikè ou</h2><p class="mute">Menm aksè pou tout moun. Tikè Lève-bonè a vann an premye; tikè Estanda a louvri lè l fini. <b class="rest">100</b> plas an tout.</p></div>
   <div class="tkg" id="tkg"><p class="mute">Chajman…</p></div>
 </div></section>
 
@@ -410,10 +413,10 @@
     if (!EVT || !EVT.types.length) { box.innerHTML = '<p class="mute">Tikè yo ap disponib byento.</p>'; return; }
     const max = Math.max(...EVT.types.map((t) => +t.prix_usd || 0));
     box.replaceChildren(...EVT.types.map((t, i) => {
-      const plen = t.restants <= 0, rabè = +t.prix_usd && +t.prix_usd < max;
-      const d = document.createElement("div"); d.className = `tk2${rabè ? " lb" : ""}${plen ? " off" : ""}`;
+      const plen = t.restants <= 0, bloke = !plen && t.bloke, rabè = +t.prix_usd && +t.prix_usd < max;
+      const d = document.createElement("div"); d.className = `tk2${rabè ? " lb" : ""}${plen ? " off" : ""}${bloke ? " bl" : ""}`;
       d.innerHTML = `<span class="tg"></span><h3></h3><div class="px"></div><div class="left"></div><a class="btn full"></a>`;
-      d.querySelector(".tg").textContent = rabè ? `Rabè ${SB.dola(max - t.prix_usd)}` : "Pri nòmal";
+      d.querySelector(".tg").textContent = bloke ? "Poko disponib" : rabè ? `Rabè ${SB.dola(max - t.prix_usd)}` : "Pri nòmal";
       d.querySelector("h3").textContent = t.nom;
       d.querySelector(".px").innerHTML = `${t.prix_usd ? SB.dola(t.prix_usd) : SB.goud(t.prix_htg)} <s></s> <small></small>`;
       d.querySelector(".px s").textContent = rabè ? SB.dola(max) : "";
@@ -426,11 +429,13 @@
       l.querySelector(".br i").style.width = (kota ? Math.round(pran / kota * 100) : 0) + "%";
       const cd = l.querySelector(".cd");
       if (plen) cd.textContent = "Tikè sa a fini";
+      else if (bloke && t.ouvre_le) { cd.dataset.fen = t.ouvre_le; cd.dataset.pre = "Disponib nan"; cd.dataset.fini = "1"; }
+      else if (bloke) cd.textContent = "Ap louvri lè plas Lève-bonè yo fini";
       else if (t.date_fin_vente) { cd.dataset.fen = t.date_fin_vente; cd.dataset.pre = "Rabè a fini nan"; }
       else if (EVT.date) { cd.dataset.fen = EVT.date; cd.dataset.pre = "Atelye a kòmanse nan"; }
       if (!plen && t.restants <= 10) l.classList.add("lo");
-      const btn = d.querySelector(".btn"); btn.textContent = plen ? "Plen" : "Mwen chwazi tikè sa a";
-      if (!plen) btn.href = "/enskri?tip=" + encodeURIComponent(t.id);
+      const btn = d.querySelector(".btn"); btn.textContent = plen ? "Plen" : bloke ? "Poko disponib" : "Mwen chwazi tikè sa a";
+      if (!plen && !bloke) btn.href = "/enskri?tip=" + encodeURIComponent(t.id);
       return d;
     }));
   }
@@ -445,11 +450,13 @@
   function konte() {
     document.querySelectorAll(".cd[data-fen]").forEach((x) => {
       let r = Math.floor((new Date(x.dataset.fen) - Date.now()) / 1000);
-      if (r <= 0) { x.textContent = "Tikè sa a pa disponib ankò"; x.removeAttribute("data-fen"); return; }
+      if (r <= 0) { x.removeAttribute("data-fen"); x.textContent = x.dataset.fini ? "Disponib kounye a" : "Tikè sa a pa disponib ankò"; rechaje(); return; }
       const j = Math.floor(r / 86400); r %= 86400;
       x.innerHTML = `${x.dataset.pre} <b>${j ? j + "j " : ""}${de(Math.floor(r / 3600))}:${de(Math.floor(r % 3600 / 60))}:${de(r % 60)}</b>`;
     });
   }
+  let t8 = null;
+  const rechaje = () => { clearTimeout(t8); t8 = setTimeout(() => SB.rpc("evenement_public").then((e) => { if (e) { EVT = e; montrePri(); montreTike(); } }).catch(() => {}), 1500); };
   SB.rpc("evenement_public").catch(() => null).then((e) => { EVT = e; montrePri(); montreTike(); konte(); setInterval(konte, 1000); });
 })();
 

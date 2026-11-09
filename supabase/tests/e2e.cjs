@@ -27,6 +27,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   const e = (await rpc("evenement_public", {}))[1];
   await rpc("staf_evenement", { p_code: "sekre-admin-123", p_evenement: { id: e.id, nom: e.nom, date: "2026-11-28T10:00:00-05:00", lieu: "Lise Anacaona", adresse: "Leyogàn", capacite: 100, statut: "ouvert" },
     p_types: [{ nom: "Lève-bonè", prix_usd: "15", prix_htg: "2000", quota: 30, date_fin_vente: "2026-11-20T23:59:00-05:00", ordre: 0 }, { nom: "Estanda", prix_usd: "20", prix_htg: "2600", quota: 70, ordre: 1 }] });
+  const e2 = (await rpc("evenement_public", {}))[1];
   await rpc("staf_kreye", { p_code: "sekre-admin-123", p_non: "Mika", p_role: "scanneur", p_nouvo_code: "skane-kod-456" });
   const b = await chromium.launch();
   const ctx = await b.newContext({ ...devices["iPhone 13"] });
@@ -44,10 +45,13 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await p.waitForFunction(() => document.querySelectorAll("#tkg .tk2").length === 2); ok((await p.locator(".pmin").first().textContent()).includes("15"), "hero price from the database"); ok((await p.locator("#tkg .tk2").count()) === 2 && (await p.locator("#tkg .tkm, #tkg ul").count()) === 0, "simple ticket cards, no samples or lists");
   ok((await p.locator("#tkg .tk2").first().textContent()).includes("Rabè"), "early-bird card shows the discount");
   ok((await p.locator("#enskri").count()) === 0, "no form on the workshop page");
-  const href = await p.locator("#tkg .tk2 .btn").nth(1).getAttribute("href"); ok(/^\/enskri\?tip=/.test(href), "ticket button opens /enskri with the ticket");
+  ok((await p.locator("#tkg .tk2.bl").count()) === 1 && (await p.locator("#tkg .tk2 .btn").nth(1).getAttribute("href")) === null, "standard ticket locked while early bird is on");
+  const lock = await rpc("inscrire", { p_type: e2.types[1].id, p_nom: "Tès Estanda", p_telephone: "37000000", p_email: null, p_reponses: {}, p_moyen: "moncash" });
+  ok(lock[0] === 400 && /poko disponib/.test(lock[1].message), "server refuses standard while early bird is on");
+  const href = await p.locator("#tkg .tk2 .btn").nth(0).getAttribute("href"); ok(/^\/enskri\?tip=/.test(href), "ticket button opens /enskri with the ticket");
   await p.goto("http://localhost:5174" + href); await p.waitForSelector("#tip .tp");
   ok((await p.locator("#tip .tp").count()) === 2, "two ticket types shown with prices");
-  ok(await p.locator("#tip input").nth(1).isChecked(), "chosen ticket preselected");
+  ok(await p.locator("#tip input").nth(0).isChecked() && await p.locator("#tip input").nth(1).isDisabled(), "early bird preselected, standard disabled");
   await p.locator("#tip .tp").first().click();
   await p.locator("#enskri").scrollIntoViewIfNeeded(); await p.screenshot({ path: S + "1-form.png" });
   await p.fill("#non", "Roselande Pierre"); await p.fill("#telefon", "3864 1234"); await p.selectOption("#nivo", { index: 1 }); await p.selectOption("#vle", { index: 1 });
