@@ -43,6 +43,10 @@
   const id = (c) => String(c || "").replace(/(.{4})(?=.)/g, "$1-");
   const depi = (d) => d && window.SB ? SB.dat(d, { month: "short", year: "numeric" }) : "";
   const kle = (b) => (b.role in KOU ? b.role : "asistan");
+  // role colour and name come from the role itself (roles are defined in /staf → Wòl)
+  const klè = (h) => { const n = parseInt(String(h).slice(1), 16); return (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) > 160; };
+  const kou = (b) => { const bg = /^#[0-9a-f]{6}$/i.test(b.koule || "") ? b.koule : KOU[kle(b)][0]; return [bg, klè(bg) ? "#111" : "#fff"]; };
+  const rnon = (b) => b.role_non || ROL[kle(b)];
 
   function qr(c, txt) {
     const q = qrcode(0, "M"); q.addData(txt); q.make();
@@ -54,7 +58,7 @@
   // b: { non, role, fonksyon, foto, badj, depi }   o: "v" (portrait) | "h" (landscape)
   function rann(b, o = "v") {
     if (!stil) { stil = true; const s = document.createElement("style"); s.textContent = css; document.head.append(s); }
-    const k = kle(b), [bg, fg] = KOU[k], d = document.createElement("div"); d.className = "bj2" + (o === "h" ? " h" : "");
+    const [bg, fg] = kou(b), d = document.createElement("div"); d.className = "bj2" + (o === "h" ? " h" : "");
     const kò = `<div class="nm"></div><div class="fn"></div>
       <div class="mi"><canvas width="240" height="240" aria-label="Kòd QR badj la"></canvas>
         <div class="if"><span>ID <b class="i1"></b></span><span class="i2"></span><span>${SIT}</span><div class="sg">Kreye. Vann. <i>Otomatize.</i></div></div></div>`;
@@ -67,7 +71,7 @@
     d.querySelector(".fn").textContent = b.fonksyon || "Ekip Atelye AI";
     d.querySelector(".i1").textContent = id(b.badj);
     d.querySelector(".i2").textContent = b.depi ? "Manm depi " + depi(b.depi) : "";
-    const rl = d.querySelector(".rl"); rl.textContent = ROL[k]; rl.style.background = bg; rl.style.color = fg;
+    const rl = d.querySelector(".rl"); rl.textContent = rnon(b); rl.style.background = bg; rl.style.color = fg;
     if (b.badj) qr(d.querySelector("canvas"), `${location.origin}/badj/${b.badj}`);
     return d;
   }
@@ -76,7 +80,7 @@
   async function imaj(b, o = "v") {
     const H0 = o === "h", W = H0 ? 1083 : 680, H = H0 ? 680 : 1083, u = W / 100, c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
     const img = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; });
-    const k = kle(b), [bg, fg] = KOU[k], F = (w, px) => `${w} ${px}px Inter, system-ui, sans-serif`;
+    const [bg, fg] = kou(b), F = (w, px) => `${w} ${px}px Inter, system-ui, sans-serif`;
     const sp = (t) => String(t).split("").join(String.fromCharCode(8202));
     g.save(); g.beginPath(); g.roundRect(0, 0, W, H, (H0 ? 4.4 : 7) * u); g.clip(); g.fillStyle = "#fff"; g.fillRect(0, 0, W, H);
     // header
@@ -115,7 +119,7 @@
     SLOGAN.forEach((s, i) => { g.fillStyle = i === 2 ? "#f97316" : "#111"; g.fillText(s, sx, iy); sx += g.measureText(s + " ").width; });
     // role band
     g.fillStyle = bg; g.fillRect(0, by, W, H - by); g.fillStyle = fg; g.textAlign = "center"; g.font = F(800, (H0 ? 4 : 6.4) * u);
-    g.fillText(sp(ROL[k].toUpperCase()), W / 2, by + (H - by) / 2 + (H0 ? 1.4 : 2.2) * u);
+    g.fillText(sp(rnon(b).toUpperCase()), W / 2, by + (H - by) / 2 + (H0 ? 1.4 : 2.2) * u);
     g.restore();
     return c;
   }
