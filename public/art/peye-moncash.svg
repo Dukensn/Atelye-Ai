@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50" role="img" aria-label="Peye ak MonCash">
+  <defs>
+    <linearGradient id="mcr" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8242b"/>
+      <stop offset=".55" stop-color="#c8141a"/>
+      <stop offset="1" stop-color="#9c0b10"/>
+    </linearGradient>
+    <linearGradient id="mcg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="50" rx="11" fill="url(#mcr)"/>
+  <rect x="2" y="2" width="196" height="22" rx="10" fill="url(#mcg)"/>
+  <text x="58" y="33.5" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#fff">Peye</text>
+  <rect x="112" y="8" width="2" height="34" rx="1" fill="#fff" opacity=".9"/>
+  <path d="M131 9 L174 25 L131 41 Z" fill="#fff" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
+  <rect x="129" y="17.5" width="30" height="12" rx="2" fill="#d0161c"/>
+  <text x="144" y="27.4" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="800" fill="#fff" letter-spacing=".3">MON</text>
+  <text x="170" y="45" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-style="italic" fill="#fff">Cash</text>
+</svg>
