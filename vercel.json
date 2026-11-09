@@ -49,7 +49,7 @@
   "rewrites": [
     {
       "source": "/billet/:code",
-      "destination": "/billet.html"
+      "destination": "/billet"
     }
   ]
 }
