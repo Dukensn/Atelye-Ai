@@ -58,7 +58,11 @@
     <div class="act">
       <button class="btn full" id="sove" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="vertical-align:-3px;margin-right:6px"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Telechaje tikè a</button>
       <p class="mute small" style="text-align:center;margin:0">Montre kòd QR sa a nan pòt la. Li mache menm san entènèt.</p>
+      <button class="btn light full" id="wbj" type="button">🪪 Wè badj patisipan mwen</button>
     </div>
+    <div id="bjz" class="hidden" style="margin-top:18px"><div id="bjv"></div>
+      <button class="btn full" id="tbj" type="button" style="margin-top:14px">Telechaje badj la</button>
+      <p class="mute small" style="text-align:center">Enprime l oswa kenbe l nan telefòn ou: kòd QR li se menm ak tikè a.</p></div>
   </div>
 
   <div id="jwenn" class="card find hidden">
@@ -75,9 +79,11 @@
 <script src="/vendor/qrcode.js"></script>
 <script src="/sb.js"></script>
 <script src="/tike.js"></script>
+<script src="/badj.js"></script>
 <script>
 (() => {
   const $ = (q) => document.querySelector(q);
+  let BJ = null;   // attendee badge data, filled when the ticket is shown
   const code = (location.pathname.split("/")[2] || new URLSearchParams(location.search).get("k") || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
   function qr(c, txt) {
@@ -103,6 +109,8 @@
     ban.className = "ban " + (b.statut === "actif" ? "hidden" : b.statut);
     ban.textContent = b.statut === "annule" ? "Tikè sa a anile." : b.statut === "utilise" ? "Tikè sa a deja itilize nan pòt la." : "";
     $("#tikè").classList.remove("hidden");
+    BJ = { kind: "patisipan", non: b.nom, code: b.code, numero: b.numero, tip: b.type, evenement: b.evenement };
+    if (!$("#bjz").classList.contains("hidden")) $("#bjv").replaceChildren(BADJ.rann(BJ));
     document.title = `Tikè ${b.numero} · Atelye AI`;
   }
 
@@ -127,6 +135,10 @@
         : r.statut === "rembourse" ? "Enskripsyon sa a te ranbouse." : "Peman w lan ap verifye. W ap resevwa tikè a sou WhatsApp nan 24 è.";
     } catch (err) { m.className = "msg err"; m.textContent = err.message; }
   });
+
+  // attendee badge: name, ticket type, same QR as the ticket
+  $("#wbj").addEventListener("click", () => { if (!BJ) return; $("#bjv").replaceChildren(BADJ.rann(BJ)); $("#bjz").classList.remove("hidden"); $("#bjz").scrollIntoView({ behavior: "smooth" }); });
+  $("#tbj").addEventListener("click", async () => { const c = await BADJ.imaj(BJ); const a = document.createElement("a"); a.download = `badj-${BJ.numero}.png`; a.href = c.toDataURL("image/png"); a.click(); });
 
   // one image with the QR, number and details, to keep in the phone's gallery
   $("#sove").addEventListener("click", () => {
