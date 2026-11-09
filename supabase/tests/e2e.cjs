@@ -128,7 +128,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await s.click("#tabs button[data-k=ekip]"); await s.waitForSelector("#v .ek");
   const kat = s.locator("#v .ek", { hasText: "Nadège" }); await kat.locator("select").selectOption("vandeur");
   await kat.locator("[name=f]").fill("Responsab enskripsyon Leyogàn"); await kat.locator("textarea").fill("Vann tikè nan lekòl yo\nRevoye tikè pèdi");
-  await kat.locator("button", { hasText: "Valide kont lan" }).click(); await s.waitForSelector("#v .ek .bad.valide >> nth=1"); ok(true, "super admin approves with role, job and tasks");
+  await kat.locator("button", { hasText: "Valide kont lan" }).click(); await s.locator("#v .ek", { hasText: "Nadège" }).locator(".bad.valide").waitFor(); ok(true, "super admin approves with role, job and tasks");
   await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#tabs button[data-k=mwen]"); await u.click("#tabs button[data-k=mwen]"); await u.waitForSelector("#v .bj2");
   ok((await u.textContent("#v")).includes("Responsab enskripsyon Leyogàn") && (await u.textContent("#v")).includes("Revoye tikè pèdi"), "member sees job, tasks and access");
   ok((await u.locator("#tabs button").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Badj mwen", "member sees only the tabs of the role");
