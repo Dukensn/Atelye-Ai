@@ -144,7 +144,7 @@
 (() => {
   const $ = (q) => document.querySelector(q);
   const el = (t, p = {}, ...c) => { const e = Object.assign(document.createElement(t), p); e.append(...c.filter((x) => x != null)); return e; };
-  let KOD = "", D = null, ME = null, TAB = "file", FILT = "", VI = false;
+  let KOD = "", D = null, ME = null, TAB = "file", FILT = "", VI = false, PREMYE = true;
   try { KOD = localStorage.getItem("staf-kod") || sessionStorage.getItem("staf-kod") || ""; } catch {}
   const site = location.origin;
   const tel = (t) => { const d = String(t || "").replace(/\D/g, ""); return d.length === 8 ? "509" + d : d; };
@@ -201,7 +201,9 @@
     $("#bon").textContent = "Bonjou, " + premye(ME.non);
     const av = $("#av2"); av.style.setProperty("--rk", ME.koule || "#ddd");
     if (ME.foto) { av.style.backgroundImage = `url(data:image/jpeg;base64,${ME.foto})`; av.textContent = ""; } else av.textContent = (ME.non || "?")[0];
-    afiche();
+    // redraw only screens without forms, so a refresh never wipes what someone is typing
+    if (PREMYE || ["tablo", "file", "lis"].includes(TAB)) afiche();
+    PREMYE = false;
   }
   async function antre(k) {
     KOD = k; await SB.rpc("staf_konekte", { p_code: KOD });
