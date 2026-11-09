@@ -151,7 +151,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await dbq("update wa_konv set eta = 'moun', alet = true, rezon = 'Mo: pwoblèm' where telefon = '50955550001'");
   await rpc("wa_sv_ekri", { p_sekre: "e2e-sekre", p_tel: "50955550001", p_sans: "bot", p_teks: "Yon moun nan ekip la ap reponn ou byento.", p_wa_id: "e2e2" });
   const waCalls = [];
-  await s.route("**/api/wa", async (route) => { const d = JSON.parse(route.request().postData()); waCalls.push(d);
+  await s.route("**/api/whatsapp?ekip=1", async (route) => { const d = JSON.parse(route.request().postData()); waCalls.push(d);
     if (d.aksyon === "eseye") return route.fulfill({ contentType: "application/json", body: JSON.stringify({ teks: "Bonjou! Lève-bonè a 2 000 goud.", fe: [] }) });
     if (d.aksyon === "voye") { await rpc("wa_sv_ekri", { p_sekre: "e2e-sekre", p_tel: d.tel, p_sans: "staf", p_teks: d.teks, p_wa_id: null }); return route.fulfill({ contentType: "application/json", body: '{"ok":true}' }); }
     route.fulfill({ contentType: "application/json", body: '{"ok":false,"ere":"tès"}' }); });
