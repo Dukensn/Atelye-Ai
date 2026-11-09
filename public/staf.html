@@ -73,9 +73,11 @@
     $("#moun").textContent = `${D.non} · ${D.role}`;
     $("#mizajou").textContent = "Mizajou " + new Date().toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
     const T = D.role === "admin"
-      ? [["file", `Validasyon (${D.file.length})`], ["tablo", "Chif"], ["lis", "Enskripsyon"], ["kach", "Kach"], ["rapel", "Rapèl"], ["param", "Paramèt"]]
+      ? [["file", `Validasyon (${D.file.length})`], ["tablo", "Chif"], ["lis", "Enskripsyon"], ["kach", "Enskri yon moun"], ["rapel", "Rapèl"], ["param", "Paramèt"]]
+      : D.role === "vandeur" ? [["kach", "Enskri yon moun"], ["lis", "Jwenn yon tikè"]]
       : [["file", `Validasyon (${D.file.length})`]];
-    $("#tabs").replaceChildren(...T.map(([k, t]) => { const b = el("button", { type: "button", textContent: t }); b.setAttribute("aria-selected", String(k === TAB)); b.onclick = () => { TAB = k; afiche(); chaje().catch(() => {}); }; return b; }));
+    if (!T.some(([k]) => k === TAB)) TAB = T[0][0];
+    $("#tabs").replaceChildren(...T.map(([k, t]) => { const b = el("button", { type: "button", textContent: t }); b.dataset.k = k; b.setAttribute("aria-selected", String(k === TAB)); b.onclick = () => { TAB = k; afiche(); chaje().catch(() => {}); }; return b; }));
     afiche();
   }
   async function antre(k) {
@@ -93,7 +95,7 @@
   const lyen = (t, href) => el("a", { className: "btn sm light", href, target: "_blank", rel: "noopener", textContent: t });
 
   function afiche() {
-    document.querySelectorAll("#tabs button").forEach((b, i) => b.setAttribute("aria-selected", String(b.textContent.startsWith({ file: "Validasyon", tablo: "Chif", lis: "Enskripsyon", kach: "Kach", rapel: "Rapèl", param: "Paramèt" }[TAB]))));
+    document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.k === TAB)));
     const v = $("#v"); v.replaceChildren();
     if (!D.evenement) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
     ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam }[TAB] || vFile)(v);
@@ -141,6 +143,7 @@
 
   // ---- full list, search, resend / cancel / refund, CSV
   function vLis(v) {
+    v.append(el("p", { className: "mute small", style: "margin:0 0 8px", textContent: "Yon moun pèdi tikè l? Chèche non l, nimewo WhatsApp li oswa kòd AT-… li, epi klike « Revoye tikè a »: li resevwa l dirèkteman sou WhatsApp." }));
     const s = el("input", { className: "srch", placeholder: "Chèche non, telefòn oswa kòd…", value: FILT }); v.append(s);
     const box = el("div"); v.append(box);
     const rann = () => {
@@ -148,21 +151,21 @@
       const L = D.lis.filter((x) => !q || [x.nom, x.telephone, x.code_court, x.reference].some((y) => String(y || "").toLowerCase().includes(q)));
       box.replaceChildren(el("p", { className: "mute small", textContent: `${L.length} moun` }), ...L.slice(0, 200).map((x) => {
         const kv = el("dl", { className: "kv2" });
-        [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Peman", x.reference ? `${(x.moyen || "").toUpperCase()} · ${x.reference}` : "—"], ["Motif", x.motif], ["Antre", x.scanne_le && SB.dat(x.scanne_le, { timeStyle: "short" })]]
+        [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Peman", x.reference ? `${(x.moyen || "").toUpperCase()} · ${x.reference}` : "—"], ["Pa", x.valide_par], ["Motif", x.motif], ["Antre", x.scanne_le && SB.dat(x.scanne_le, { timeStyle: "short" })]]
           .forEach(([k, val]) => val && kv.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
         const st = x.billet_statut && x.statut === "valide" ? x.billet_statut : x.statut;
         const a = el("div", { className: "act2" });
         if (x.billet && x.billet_statut !== "annule") {
           a.append(lyen("Revoye tikè a", wa(x.telephone, msgTike(x, x.billet))), lyen("Wè tikè a", `/billet/${x.billet}`));
           if (x.email) a.append(lyen("Imèl", `mailto:${x.email}?subject=${encodeURIComponent("Tikè Atelye AI " + x.code_court)}&body=${encodeURIComponent(msgTike(x, x.billet))}`));
-          a.append(bouton("Anile tikè a", async () => { if (!confirm(`Anile tikè ${x.code_court}?`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: false }); await chaje(); }, true));
-          a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); await chaje(); }, true));
+          if (D.role === "admin") a.append(bouton("Anile tikè a", async () => { if (!confirm(`Anile tikè ${x.code_court}?`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: false }); await chaje(); }, true));
+          if (D.role === "admin") a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); await chaje(); }, true));
         }
         return el("div", { className: "card" }, el("div", { className: "row2" }, el("h3", { style: "margin:0", textContent: x.nom }), el("span", { className: "bad " + st, textContent: st.replace("_", " ") })), kv, a);
       }));
     };
     s.oninput = () => { FILT = s.value; rann(); }; rann();
-    v.prepend(el("div", { className: "act2", style: "margin:0 0 12px" }, bouton("Ekspòte CSV", async () => {
+    if (D.role === "admin") v.prepend(el("div", { className: "act2", style: "margin:0 0 12px" }, bouton("Ekspòte CSV", async () => {
       const k = ["code_court", "nom", "telephone", "email", "type", "montant", "moyen", "reference", "statut", "motif", "billet", "billet_statut", "scanne_le", "cree_le", "valide_le", "valide_par"];
       const esc = (x) => `"${String(x ?? "").replace(/"/g, '""')}"`;
       const csv = [k.join(","), ...D.lis.map((x) => k.map((c) => esc(x[c])).join(",") + "," + esc(JSON.stringify(x.reponses || {})))].join("\n");
@@ -173,15 +176,19 @@
   // ---- cash payment
   function vKach(v) {
     const f = el("form", { className: "card" });
-    f.innerHTML = `<h3 style="margin-top:0">Peman an kach</h3><p class="mute small">Moun nan peye w dirèkteman: kreye enskripsyon an epi tikè a ap fèt touswit.</p>
+    f.innerHTML = `<h3 style="margin-top:0">Enskri yon moun sou plas</h3><p class="mute small">Pou yon pwen enskripsyon oswa yon moun ki peye w dirèkteman (kach): antre enfòmasyon l, tikè a fèt touswit, epi voye l ba li sou WhatsApp.</p>
       <label class="l">Tikè</label><select name="t"></select><label class="l">Non</label><input name="n" required><label class="l">WhatsApp</label><input name="p" type="tel" required><label class="l">Imèl (si w vle)</label><input name="e" type="email">
       <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Kreye ak valide</button>`;
-    D.types.forEach((t) => f.t.append(el("option", { value: t.id, textContent: `${t.nom} · ${SB.goud(t.prix_htg || 0)} · ${Math.max(t.restants, 0)} plas` })));
+    D.types.filter((t) => t.prix_htg != null).forEach((t) => f.t.append(el("option", { value: t.id, disabled: !!t.bloke || t.restants <= 0, textContent: `${t.nom} · ${SB.goud(t.prix_htg || 0)} · ${t.bloke ? "poko disponib" : Math.max(t.restants, 0) + " plas"}` })));
+    const ok = el("div", { className: "card hidden", style: "margin-top:12px" });
     f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden";
       try { const r = await SB.rpc("staf_kach", { p_code: KOD, p_type: f.t.value, p_nom: f.n.value, p_telephone: f.p.value, p_email: f.e.value || null });
-        window.open(wa(r.telephone, msgTike(r, r.billet)), "_blank"); m.className = "msg ok"; m.textContent = `Tikè ${r.code_court} kreye ✓`; f.reset(); await chaje(); TAB = "kach"; }
+        m.className = "msg ok"; m.textContent = `Tikè ${r.code_court} kreye pou ${r.nom} ✓`; f.reset();
+        ok.replaceChildren(el("p", { style: "margin:0 0 10px;font-weight:600", textContent: `Voye tikè a bay ${r.nom} kounye a:` }),
+          el("div", { className: "act2" }, el("a", { className: "btn", href: wa(r.telephone, msgTike(r, r.billet)), target: "_blank", rel: "noopener", textContent: "Voye sou WhatsApp" }), lyen("Wè tikè a", `/billet/${r.billet}`)));
+        ok.classList.remove("hidden"); D = await SB.rpc("staf_tablo", { p_code: KOD }); }
       catch (e) { m.className = "msg err"; m.textContent = e.message; } };
-    v.append(f);
+    v.append(f, ok);
   }
 
   // ---- reminders J-7, J-1, morning (sent by hand from WhatsApp)
@@ -231,7 +238,7 @@
     v.append(f);
     const g = el("form", { className: "card" });
     g.innerHTML = `<h3 style="margin-top:0">Ajoute yon moun nan ekip la</h3><p class="mute small">Validatè: valide peman sèlman. Eskanè: pòt la jou J sèlman. Bay chak moun pwòp kòd li (omwen 10 karaktè).</p>
-      <label class="l">Non</label><input name="n" required><label class="l">Wòl</label><select name="r"><option value="validateur">Validatè</option><option value="scanneur">Eskanè</option><option value="admin">Admin</option></select>
+      <label class="l">Non</label><input name="n" required><label class="l">Wòl</label><select name="r"><option value="vandeur">Vandè (enskri moun sou plas, revoye tikè)</option><option value="validateur">Validatè (valide peman)</option><option value="scanneur">Eskanè (pòt la)</option><option value="admin">Admin</option></select>
       <label class="l">Kòd</label><input name="k" minlength="10" required><div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Kreye kòd la</button>`;
     g.onsubmit = async (ev) => { ev.preventDefault(); const m = g.querySelector(".msg");
       try { await SB.rpc("staf_kreye", { p_code: KOD, p_non: g.n.value, p_role: g.r.value, p_nouvo_code: g.k.value }); m.className = "msg ok"; m.textContent = "Kòd la kreye ✓ Voye l bay moun nan an prive."; g.reset(); }
