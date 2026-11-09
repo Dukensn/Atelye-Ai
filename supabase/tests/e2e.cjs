@@ -32,7 +32,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await rpc("staf_kreye", { p_code: "sekre-admin-123", p_non: "Mika", p_role: "scanneur", p_nouvo_code: "skane-kod-456" });
   const b = await chromium.launch();
   const ctx = await b.newContext({ ...devices["iPhone 13"] });
-  await ctx.route("https://ojbbempzypxmhkpmyseo.supabase.co/rest/v1/rpc/*", async (route) => {
+  await ctx.route("https://mfxyzjelxpziptlshkfv.supabase.co/rest/v1/rpc/*", async (route) => {
     const fn = route.request().url().split("/rpc/")[1]; const [st, body] = await rpc(fn, JSON.parse(route.request().postData() || "{}"));
     route.fulfill({ status: st, contentType: "application/json", body: JSON.stringify(body) });
   });

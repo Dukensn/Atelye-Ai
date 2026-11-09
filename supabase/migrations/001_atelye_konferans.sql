@@ -1,5 +1,5 @@
 -- Atelye konferans: registrations, manual payment validation, QR tickets, offline scanner.
--- Run once in Supabase → SQL Editor (project "Levve dijital"). Safe to run again.
+-- Run once in Supabase → SQL Editor (project "Atelye AI"). Safe to run again.
 --
 -- Security model
 --   * RLS is ON for every table and there is NO policy: the public key cannot read or write any table directly.
@@ -198,7 +198,7 @@ begin
       moyen_paiement = p_moyen, reference_paiement = null, montant = t.prix_htg, statut = 'en_attente', motif_refus = null,
       jeton = j, soumis_le = null, cree_le = now()
       where id = deja.id returning * into r;
-    delete from public.captures where inscription_id = r.id;
+    update public.captures set image = null where inscription_id = r.id;
   else
     loop
       v_code := 'AT-' || lpad((1000 + floor(random() * 9000))::int::text, 4, '0');
@@ -327,7 +327,7 @@ begin
       from public.inscriptions where evenement_id = e.id),
     'file', coalesce((select jsonb_agg(jsonb_build_object('id', i.id, 'code_court', i.code_court, 'nom', i.nom, 'telephone', i.telephone,
         'type', t.nom, 'montant', i.montant, 'moyen', i.moyen_paiement, 'reference', i.reference_paiement, 'soumis_le', i.soumis_le,
-        'capture', exists (select 1 from public.captures c where c.inscription_id = i.id)) order by i.soumis_le)
+        'capture', exists (select 1 from public.captures c where c.inscription_id = i.id and c.image is not null)) order by i.soumis_le)
       from public.inscriptions i join public.types_billets t on t.id = i.type_billet_id
       where i.evenement_id = e.id and i.statut = 'en_attente' and i.reference_paiement is not null), '[]'));
   if s.role = 'admin' then
@@ -351,7 +351,7 @@ create or replace function public.staf_kapti(p_code text, p_id uuid) returns jso
 security definer set search_path = public, extensions as $$
 declare s public.staf := public._staf(p_code, array['admin','validateur']); c public.captures;
 begin
-  select * into c from public.captures where inscription_id = p_id;
+  select * into c from public.captures where inscription_id = p_id and image is not null;
   if c.inscription_id is null then return null; end if;
   return jsonb_build_object('type', c.type, 'data', encode(c.image, 'base64'));
 end $$;

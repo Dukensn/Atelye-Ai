@@ -1,8 +1,8 @@
-// Supabase "Levve dijital": the site only calls server functions (RPC) with the public key.
+// Supabase "Atelye AI": the site only calls server functions (RPC) with the public key.
 // Tables are private (RLS on, no policy); validation and tickets are created server-side only.
 window.SB = (() => {
-  const URL_ = "https://ojbbempzypxmhkpmyseo.supabase.co";
-  const KLE = "sb_publishable_Vg6ndCnLHvya5ytT5lIyKw_YyRoe2f0";
+  const URL_ = "https://mfxyzjelxpziptlshkfv.supabase.co";
+  const KLE = "sb_publishable_b1ed3iovvTdxVm0fyZ4FBw_PN8CrRlS";
   async function rpc(fn, args = {}) {
     let r;
     try {
