@@ -1,5 +1,26 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { ekri, hashModpas, json, kleTelefon, kodBon, li, modpasValab, netwaye } from "../lib/store.js";
+import { dbPare, konferans } from "../lib/db.js";
+
+// Workshop seat (manual payment): name, WhatsApp, MonCash/NatCash transaction number. Stored in Supabase.
+async function enskriKonferans(b) {
+  if (!dbPare()) return json({ ere: "Enskripsyon an poko louvri. Eseye ankò pita." }, 503);
+  const non = netwaye(b.non, 80), telefon = netwaye(b.telefon, 20), tranzaksyon = netwaye(b.tranzaksyon, 40);
+  const metod = b.metod === "natcash" ? "natcash" : "moncash";
+  if (non.length < 2) return json({ ere: "Ekri non w." }, 400);
+  if (telefon.replace(/\D/g, "").length < 8) return json({ ere: "Nimewo WhatsApp la pa bon." }, 400);
+  if (tranzaksyon.length < 4) return json({ ere: "Ekri nimewo tranzaksyon an." }, 400);
+  const telefon_kle = kleTelefon(telefon);
+  if ((await konferans.paTelefon(telefon_kle)).some((x) => x.estati !== "refize"))
+    return json({ ere: "Nimewo sa a enskri deja. N ap kontakte w sou WhatsApp." }, 409);
+  try {
+    const x = await konferans.mete({ non, telefon, telefon_kle, metod, tranzaksyon });
+    return json({ ok: true, id: x.id });
+  } catch (err) {
+    if (/23505|duplicate/.test(String(err))) return json({ ere: "Nimewo sa a enskri deja. N ap kontakte w sou WhatsApp." }, 409);
+    throw err;
+  }
+}
 
 // Step 1: name, WhatsApp and a password. The payment proof comes in step 2 (api/prev.js).
 export async function POST(req) {
@@ -9,6 +30,7 @@ export async function POST(req) {
   } catch {
     return json({ ere: "Done yo pa bon." }, 400);
   }
+  if (b?.tip === "konferans") return enskriKonferans(b);
   const non = netwaye(b.non, 80);
   const telefon = netwaye(b.telefon, 20);
   if (non.length < 2) return json({ ere: "Ekri non w." }, 400);

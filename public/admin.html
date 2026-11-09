@@ -39,6 +39,7 @@
       <button role="tab" data-t="refize" aria-selected="false">Refize</button>
       <button role="tab" data-t="afilye" aria-selected="false">Afilye</button>
       <button role="tab" data-t="retre" aria-selected="false">Retrè <span id="c-retre"></span></button>
+      <button role="tab" data-t="konferans" aria-selected="false">Konferans <span id="c-konferans"></span></button>
       <button role="tab" data-t="kontni" aria-selected="false">Paramèt</button>
     </div>
     <div id="not" class="card hidden" style="border-color:var(--ink);margin-bottom:12px"></div>
@@ -48,6 +49,7 @@
       <h2 style="font-size:20px">Pri ak komisyon</h2>
       <p class="mute small">Pri fòmasyon an parèt sou sit la lamenm. Komisyon an se sa yon elèv genyen chak fwa yon moun li envite peye epi w aksepte l.</p>
       <label>Pri fòmasyon an (goud)</label><input name="pri" type="number" inputmode="numeric" min="100">
+      <label>Pri atelye konferans lan (goud) · vid = « Pri a ap anonse »</label><input name="pri_konferans" type="number" inputmode="numeric" min="100">
       <label>Komisyon afilye (goud pa enskripsyon)</label><input name="komisyon" type="number" inputmode="numeric" min="0">
       <h2 style="font-size:20px;margin-top:22px">Metòd peman</h2>
       <label>Lyen peman (MonCash · NatCash)</label><input name="lyen_peman" type="url" placeholder="https://pay.kobara.app/…">
@@ -215,10 +217,25 @@ function katRetre(r) {
   return el("div", { className: "card" }, el("div", { className: "row" }, el("h3", { textContent: r.non, style: "margin:0" }), el("span", { className: "badge " + badge[0], textContent: badge[1] })), kv, a);
 }
 
+function katKonferans(x) {
+  const kv = el("dl", { className: "kv" });
+  const ajoute = (k, v) => v && kv.append(el("dt", { textContent: k }), el("dd", { textContent: v }));
+  ajoute("WhatsApp", x.telefon); ajoute("Enskri", lè(x.kreye));
+  ajoute("Peman", `${x.metod === "natcash" ? "NatCash" : "MonCash"} · ${x.tranzaksyon || "—"}`);
+  const a = el("div", { className: "actions" });
+  const bouton = (tèks, aksyon, light) => { const b = el("button", { type: "button", className: "btn sm" + (light ? " light" : ""), textContent: tèks });
+    b.onclick = async () => { b.disabled = true; try { const r = await api("POST", { aksyon, id: x.id }); if (r.whatsapp) window.open(r.whatsapp, "_blank"); await rechaje(); } catch (err) { alert(err.message); b.disabled = false; } }; return b; };
+  if (x.estati === "atann") a.append(bouton("Peman an rive — Konfime", "konferans_peye"), bouton("Refize", "konferans_refize", true));
+  a.append(el("a", { className: "btn sm light", href: x.whatsapp, target: "_blank", rel: "noopener", textContent: "WhatsApp" }));
+  const badge = { atann: ["atann", "An atant"], peye: ["aksepte", "Peye"], refize: ["refize", "Refize"] }[x.estati] || ["atann", x.estati];
+  return el("div", { className: "card" }, el("div", { className: "row" }, el("h3", { textContent: x.non, style: "margin:0" }), el("span", { className: "badge " + badge[0], textContent: badge[1] })), kv, a);
+}
+
 function afiche() {
   document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === tab)));
   const n = (s) => done.lis.filter((e) => e.estati === s).length;
   $("#c-atann").textContent = `(${n("atann")})`; $("#c-aksepte").textContent = `(${n("aksepte")})`; $("#c-san_prev").textContent = `(${n("san_prev")})`;
+  $("#c-konferans").textContent = Array.isArray(done.konferans) ? `(${done.konferans.filter((x) => x.estati === "atann").length})` : "";
   $("#c-retre").textContent = `(${done.retre.filter((r) => r.estati === "atann").length})`;
   $("#kontni").classList.toggle("hidden", tab !== "kontni");
   $("#paramet").classList.toggle("hidden", tab !== "kontni");
@@ -227,6 +244,14 @@ function afiche() {
   if (tab === "afilye") {
     const tot = done.afilye.reduce((s, a) => s + a.gen, 0);
     lis.append(el("p", { className: "mute", textContent: done.afilye.length ? `${done.afilye.length} afilye · ${goud(tot)} komisyon an tout` : "Pa gen afilye ankò." }), ...done.afilye.map(katAfilye));
+    return;
+  }
+  if (tab === "konferans") {
+    const K = done.konferans;
+    if (!K) { lis.append(el("p", { className: "mute", textContent: "Supabase poko konfigire (SUPABASE_URL ak SUPABASE_SERVICE_ROLE_KEY nan Vercel)." })); return; }
+    if (K.ere) { lis.append(el("p", { className: "msg err", textContent: "Supabase: " + K.ere })); return; }
+    const peye = K.filter((x) => x.estati === "peye").length;
+    lis.append(el("p", { className: "mute", textContent: `${K.length} enskripsyon · ${peye} peye` }), ...K.map(katKonferans));
     return;
   }
   if (tab === "retre") {
@@ -316,7 +341,7 @@ function ranpliKontni(k) {
 async function rechaje() {
   done = await api("GET");
   ranpliKontni(done.kontni);
-  $("#paramet").pri.value = done.paramet.pri; $("#paramet").komisyon.value = done.paramet.komisyon; $("#paramet").lyen_peman.value = done.paramet.lyen_peman || ""; $("#paramet").tradui.checked = !!done.paramet.tradui; $("#paramet").manyel.checked = done.paramet.manyel !== false; $("#paramet").otomatik.checked = done.paramet.otomatik !== false;
+  $("#paramet").pri.value = done.paramet.pri; $("#paramet").pri_konferans.value = done.paramet.pri_konferans ?? ""; $("#paramet").komisyon.value = done.paramet.komisyon; $("#paramet").lyen_peman.value = done.paramet.lyen_peman || ""; $("#paramet").tradui.checked = !!done.paramet.tradui; $("#paramet").manyel.checked = done.paramet.manyel !== false; $("#paramet").otomatik.checked = done.paramet.otomatik !== false;
   if (!done.kobara) $("#kobara-eta").textContent = "Kle Kobara yo poko mete nan Vercel (KOBARA_SECRET_KEY, KOBARA_WEBHOOK_SECRET). Jiskaprezan, se lyen an ak foto resi a k ap sèvi.";
   afiche();
 }
@@ -349,7 +374,7 @@ $("#kontni").addEventListener("submit", async (ev) => {
 $("#paramet").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const f = ev.target, m = $("#p-msg");
-  try { await api("POST", { aksyon: "paramet", pri: f.pri.value, komisyon: f.komisyon.value, lyen_peman: f.lyen_peman.value, tradui: f.tradui.checked, manyel: f.manyel.checked, otomatik: f.otomatik.checked }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
+  try { await api("POST", { aksyon: "paramet", pri: f.pri.value, pri_konferans: f.pri_konferans.value, komisyon: f.komisyon.value, lyen_peman: f.lyen_peman.value, tradui: f.tradui.checked, manyel: f.manyel.checked, otomatik: f.otomatik.checked }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await rechaje(); }
   catch (e) { m.className = "msg err"; m.textContent = e.message; }
 });
 
