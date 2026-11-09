@@ -149,6 +149,25 @@
   @keyframes liy { to { width: 120px; } }
   @keyframes paret { to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .sl .tt b { clip-path: none; } .sl .tt i { width: 120px; } .sl .tt small { opacity: 1; } .sl figure.on .tt * { animation: none; } }
+  .rzg { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .rz h3 { font-size: 16px; margin: 10px 0 6px; } .rz p { margin: 0; font-size: 14px; color: var(--mute); }
+  .ri { font-size: 26px; line-height: 1; }
+  .ore { list-style: none; padding: 0; margin: 18px 0 8px; border-left: 3px solid #ffc83d; }
+  .ore li { display: flex; gap: 14px; padding: 8px 0 8px 16px; font-size: 15px; } .ore b { width: 54px; flex: none; }
+  .tkg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+  .tk2 { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; }
+  .tk2.vip { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .tk2.vip .mute, .tk2.vip li { color: #cfcfcf; }
+  .tk2 .tg { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; background: var(--soft); color: var(--ink); align-self: flex-start; }
+  .tk2.lb .tg { background: #d7ff3a; } .tk2.vip .tg { background: #ffc83d; }
+  .tk2 h3 { font-size: 22px; margin: 12px 0 4px; }
+  .tk2 .px { font-size: 40px; font-weight: 800; letter-spacing: -0.03em; } .tk2 .px small { font-size: 15px; font-weight: 600; color: var(--mute); }
+  .tk2 ul { list-style: none; padding: 0; margin: 16px 0; display: grid; gap: 8px; flex: 1; }
+  .tk2 li { display: flex; gap: 8px; font-size: 14px; } .tk2 li svg { flex: none; margin-top: 2px; }
+  .tk2 .left { font-size: 14px; font-weight: 700; margin-bottom: 12px; } .tk2 .left.lo { color: var(--bad); }
+  .tk2.vip .btn { background: #fff; color: var(--ink); }
+  .tk2.off { opacity: .5; }
+  @media (max-width: 900px) { .rzg { grid-template-columns: 1fr 1fr; } .tkg { grid-template-columns: 1fr; } }
   /* ----- seat form (same look as /peye) ----- */
   #enskri .card { max-width: 560px; margin: 0 auto; }
   #enskri label { display: block; font-weight: 600; font-size: 14px; margin: 14px 0 6px; }
@@ -189,34 +208,61 @@
 <section class="lh"><div class="wrap g">
   <div>
     <div class="eyebrow tr8"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>Atelye konferans an pèsòn · Leyogàn</div>
-    <h1>Aprann fè piblisite, vann ak kreye videyo ak AI.</h1>
-    <p class="lead">Yon jounen pratik ak Atelye AI, samdi 28 novanm nan Lise Anacaona, Leyogàn. Facebook Ads, pwodwi dijital ak videyo AI, an kreyòl, ak telefòn ou.</p>
+    <h1>An yon jounen, aprann fè piblisite ki vann epi lanse pwodwi dijital ou ak AI.</h1>
+    <p class="lead">Atelye konferans pratik ak Atelye AI, an kreyòl, ak telefòn ou. Ou soti ak kanpay Facebook ou, pwodwi dijital ou ak premye videyo AI ou.</p>
     <div class="cta">
-      <a class="btn" href="#enskri">Rezève plas mwen<span class="pk"></span></a>
+      <a class="btn" href="#tike">Mwen rezève plas mwen</a>
       <a class="btn light" href="#pwogram">Gade pwogram nan</a>
     </div>
-    <div class="pills"><span>28 novanm</span><span>An pèsòn</span><span>100 plas</span></div>
-    <a class="bonus" href="#enskri"><span class="gi"><img src="/claude.svg" alt="Claude" width="30" height="30"></span><span><small>Pou 100 premye yo sèlman</small><b>7 jou Claude Pro gratis</b><em>+ zouti ak skill Atelye AI gratis.</em></span></a>
+    <div class="pills"><span>📅 Samdi 28 novanm · 10h – 4h</span><span>📍 Lise Anacaona, Leyogàn</span><span>💵 A pati de <b class="pmin">35 $</b></span></div>
+    <a class="bonus" href="#tike"><span class="gi"><img src="/claude.svg" alt="Claude" width="30" height="30"></span><span><small>Pou 100 premye yo sèlman</small><b>7 jou Claude Pro gratis</b><em>+ zouti ak skill Atelye AI gratis.</em></span></a>
   </div>
   <div class="sl"><div class="tr"><figure><video src="/egzanp/atelye-loop.mp4" poster="/egzanp/atelye-loop.jpg" muted loop playsinline autoplay preload="auto" aria-label="Sa n ap fè: videyo ak AI, Facebook Ads, pwodwi dijital, bonis Claude"></video></figure></div></div>
 </div></section>
 
-<div class="wrap">
-  <div class="stats">
-    <div><b>28 nov.</b><span>samdi, 10h – 4h</span></div>
-    <div><b class="rest">100</b><span>plas ki rete</span></div>
-    <div><b class="pkb">Leyogàn</b><span class="pks">Lise Anacaona</span></div>
-  </div>
-</div>
+
+<!-- RESULTS -->
+<section id="rezilta"><div class="wrap">
+  <div class="sec-head"><h2>Sa w ap genyen nan fen jounen an</h2><p class="mute">Pa sèlman teyori: ou soti ak bagay ki pare.</p></div>
+  <div class="rzg"><div class="tile rz"><span class="ri">📣</span><h3>Premye kanpay Facebook Ads ou</h3><p>Kreye, sib ak bidjè: pare pou lanse.</p></div><div class="tile rz"><span class="ri">💳</span><h3>Kat debi vityèl ou</h3><p>Kreye nan atelye a pou peye piblisite ak zouti.</p></div><div class="tile rz"><span class="ri">📘</span><h3>Yon pwodwi dijital</h3><p>Ebook oswa kou ou kreye ak AI, ak paj vant li.</p></div><div class="tile rz"><span class="ri">🎬</span><h3>Premye videyo AI ou</h3><p>Animasyon oswa reklam pou rezo sosyal ou.</p></div><div class="tile rz"><span class="ri">🧰</span><h3>Zouti ak kominote</h3><p>Skill, modèl ak gwoup WhatsApp pou kontinye.</p></div></div>
+</div></section>
 
 <!-- PROGRAM -->
 <section id="pwogram"><div class="wrap">
-  <div class="kh"><h2>Pwogram nan</h2></div>
-  <p class="mute" style="margin:6px 0 0">Tout sa ki nan fòmasyon Atelye AI a, an pèsòn, plis de nouvo pati: marketing dijital ak pwodwi dijital, epi kat debi vityèl ou.</p>
-  <p class="mute small" style="margin:4px 0 0">Pote telefòn ou: tout egzèsis yo fèt sou telefòn.</p>
-  <nav class="tabs2" aria-label="Pwogram"><a href="#k-ads">Facebook Ads</a><a href="#k-pwodwi">Pwodwi dijital</a><a href="#k-videyo">Videyo ak AI</a><a href="#k-kat">Kat debi vityèl</a></nav>
+  <div class="kh"><h2>Pwogram jounen an</h2></div>
+  <p class="mute" style="margin:6px 0 0">Samdi 28 novanm, 10h – 4h. Tout egzèsis yo fèt sou telefòn.</p>
+  <ol class="ore">
+    <li><b>9h30</b><span>Akèy ak enstalasyon</span></li>
+    <li><b>10h00</b><span>Kreye kat debi vityèl ou</span></li>
+    <li><b>10h45</b><span>Lwa vant dijital la ak Facebook Ads</span></li>
+    <li><b>12h30</b><span>Poz repa</span></li>
+    <li><b>13h15</b><span>Kreye ak vann pwodwi dijital</span></li>
+    <li><b>14h15</b><span>Kreye videyo ak AI</span></li>
+    <li><b>15h30</b><span>Kesyon, plan aksyon ak sètifika</span></li>
+  </ol>
+  <nav class="tabs2" aria-label="Pwogram"><a href="#k-kat">Kat debi vityèl</a><a href="#k-ads">Facebook Ads</a><a href="#k-pwodwi">Pwodwi dijital</a><a href="#k-videyo">Videyo ak AI</a></nav>
 
   <div>
+    <article class="ko" id="k-kat">
+      <div class="sl">
+        <div class="tr">
+          <figure><img src="/art/kat.jpg" alt="Kat debi vityèl" loading="lazy"></figure>
+        </div>
+      </div>
+      <div>
+        <div class="no">10h00 – 10h45</div>
+        <h3>Kreye kat debi vityèl ou</h3>
+        <p>Yon kat ki egziste nan telefòn ou, pou peye piblisite Facebook, zouti AI ak tout sa w achte sou entènèt. Nou kreye l ansanm nan atelye a.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kisa yon kat vityèl ye, epi ki jan l mache</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kreye kat ou etap pa etap</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Mete kòb sou li epi peye an sekirite</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Konekte l ak kont piblisite ou</li>
+        </ul>
+        <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
+      </div>
+    </article>
+
     <article class="ko" id="k-ads">
       <div class="sl lt" data-auto aria-roledescription="carousel" aria-label="Marketing dijital ak Facebook Ads">
         <div class="tr">
@@ -226,7 +272,7 @@
         </div>
       </div>
       <div>
-        <div class="no">Pati 1 <span class="st">NOUVO</span></div>
+        <div class="no">10h45 – 12h30 <span class="st">NOUVO</span></div>
         <h3>Marketing dijital ak Facebook Ads</h3>
         <p>Fè piblisite ki jwenn bon moun yo: kreye kanpay ou, chwazi odyans lan, mete bidjè a, epi li rezilta yo nan tablo Facebook la.</p>
         <ul>
@@ -249,7 +295,7 @@
         </div>
       </div>
       <div>
-        <div class="no">Pati 2 <span class="st">NOUVO</span></div>
+        <div class="no">13h15 – 14h15 <span class="st">NOUVO</span></div>
         <h3>Kreye ak vann pwodwi dijital</h3>
         <p>Ebook, kou videyo, modèl: yon pwodwi ou kreye yon sèl fwa epi ou vann li san rete, san stòk, san livrezon.</p>
         <ul>
@@ -275,7 +321,7 @@
         </div>
       </div>
       <div>
-        <div class="no">Pati 3</div>
+        <div class="no">14h15 – 15h30</div>
         <h3>Kreye videyo ak AI</h3>
         <p>Videyo animasyon, motion design, videyo AI ak Higgsfield, reklam: Claude ekri, desine ak monte; ou menm, ou se reyalizatè a. Pou YouTube, rezo sosyal ak piblisite ou yo.</p>
         <ul>
@@ -287,39 +333,13 @@
         <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
       </div>
     </article>
-
-    <article class="ko" id="k-kat">
-      <div class="sl">
-        <div class="tr">
-          <figure><img src="/art/kat.jpg" alt="Kat debi vityèl" loading="lazy"></figure>
-        </div>
-      </div>
-      <div>
-        <div class="no">Pati 4</div>
-        <h3>Kreye kat debi vityèl ou</h3>
-        <p>Yon kat ki egziste nan telefòn ou, pou peye piblisite Facebook, zouti AI ak tout sa w achte sou entènèt. Nou kreye l ansanm nan atelye a.</p>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kisa yon kat vityèl ye, epi ki jan l mache</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kreye kat ou etap pa etap</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Mete kòb sou li epi peye an sekirite</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Konekte l ak kont piblisite ou</li>
-        </ul>
-        <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
-      </div>
-    </article>
   </div>
 </div></section>
 
-<!-- SEATS -->
-<section style="padding-top:8px"><div class="wrap">
-  <div class="earn">
-    <div>
-      <h2>100 plas sèlman</h2>
-      <p>Sal la limite. Lè 100 moun enskri, enskripsyon yo fèmen. Rezève pa w kounye a epi n ap konfime l sou WhatsApp.</p>
-      <a class="btn" href="#enskri" style="margin-top:18px">Rezève plas mwen</a>
-    </div>
-    <img class="dots" src="/art/plas.jpg" alt="100 plas, kèk ki rete" loading="lazy">
-  </div>
+<!-- TICKETS -->
+<section id="tike"><div class="wrap">
+  <div class="sec-head"><h2>Chwazi tikè ou</h2><p class="mute"><b class="rest">100</b> plas an tout. Lè yo fini, enskripsyon yo fèmen.</p></div>
+  <div class="tkg" id="tkg"><p class="mute">Chajman…</p></div>
 </div></section>
 
 <!-- HOW -->
@@ -331,25 +351,17 @@
   <div class="grid3">
     <div class="tile step"><img class="stp" src="/art/e1.jpg" alt="" width="96" height="96" loading="lazy"><div class="num">ETAP 1</div><h3>Ou enskri epi ou peye</h3><p>Non w, nimewo WhatsApp ou, epi nimewo tranzaksyon MonCash oswa NatCash la.</p></div>
     <div class="tile step"><img class="stp" src="/art/e2.jpg" alt="" width="96" height="96" loading="lazy"><div class="num">ETAP 2</div><h3>Nou konfime plas ou</h3><p>Nou verifye peman an alamen, epi nou ekri w sou WhatsApp pou konfime plas ou.</p></div>
-    <div class="tile step"><img class="stp" src="/art/e3.jpg" alt="" width="96" height="96" loading="lazy"><div class="num">ETAP 3</div><h3>Ou vini 28 novanm</h3><p>Pote telefòn ou ak CIN oswa paspò ou: n ap kreye kat debi vityèl ou ansanm.</p></div>
+    <div class="tile step"><img class="stp" src="/art/e3.jpg" alt="" width="96" height="96" loading="lazy"><div class="num">ETAP 3</div><h3>Ou vini 28 novanm</h3><p>Pote telefòn ou chaje ak kont Facebook ou: n ap travay sou yo pandan tout jounen an.</p></div>
   </div>
 </div></section>
 
-<!-- PRICE -->
-<section><div class="wrap">
-  <div class="price">
-    <div>
-      <div class="mute small" style="color:#aaa">Atelye konferans · 28 novanm</div>
-      <div class="amount"><span class="pri">—</span> <small class="pri-u">goud</small></div>
-      <ul>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Yon jounen konplè an pèsòn, an kreyòl</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Facebook Ads, pwodwi dijital ak videyo AI</li>
-        <li class="hl"><img class="cl" src="/claude.svg" alt="Claude" width="18" height="18"><b>100 premye yo: 7 jou Claude Pro gratis + zouti ak skill Atelye AI gratis</b></li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Dokiman, resous gratis ak sètifika</li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kominote WhatsApp pou swivi</li>
-      </ul>
-    </div>
-    <a class="btn" href="#enskri">Rezève plas mwen</a>
+<!-- PRACTICAL -->
+<section id="enfo"><div class="wrap">
+  <div class="sec-head"><h2>Enfòmasyon pratik</h2></div>
+  <div class="grid3">
+    <div class="tile"><span class="ri">📍</span><h3>Kote</h3><p>Lise Anacaona, Leyogàn, Ayiti.</p></div>
+    <div class="tile"><span class="ri">🕙</span><h3>Lè</h3><p>Samdi 28 novanm. Akèy 9h30, kòmansman 10h00, fen 4h00.</p></div>
+    <div class="tile"><span class="ri">🎒</span><h3>Sa pou w pote</h3><p>Telefòn ou byen chaje, chajè a, ak kont Facebook ou (non itilizatè ak modpas).</p></div>
   </div>
 </div></section>
 
@@ -406,12 +418,22 @@
 <!-- FAQ -->
 <section class="soft" id="kesyon"><div class="wrap faq">
   <h2 style="margin-bottom:16px">Kesyon moun poze</h2>
-  <details><summary>Èske m bezwen yon òdinatè?</summary><p>Non. Pote telefòn ou ak chajè l. Tout egzèsis yo fèt sou telefòn.</p></details>
-  <details><summary>Èske m bezwen konn anyen davans?</summary><p>Non. Nou kòmanse depi nan baz la, an kreyòl.</p></details>
-  <details><summary>Kisa pou m pote?</summary><p>Telefòn ou, chajè l, ak yon pyès idantite valid (CIN oswa paspò) pou n kreye kat debi vityèl ou.</p></details>
-  <details><summary>Kijan bonis Claude la mache?</summary><p>100 premye moun ki enskri yo resevwa yon lyen pou aktive 7 jou Claude Pro gratis, ansanm ak zouti, skill, modèl ak prompt Atelye AI yo gratis. Apre 7 jou yo, zouti yo rete pou ou; pou w kontinye ak Claude Pro, se pou w pran yon abònman.</p></details>
-  <details><summary>Kijan m konnen plas mwen konfime?</summary><p>Nou verifye chak peman alamen. Depi peman an verifye, nou ekri w sou WhatsApp.</p></details>
-  <details><summary>Èske se menm bagay ak fòmasyon an liy lan?</summary><p>Se menm fòmasyon Atelye AI a, men an pèsòn, avèk de nouvo pati: Facebook Ads ak pwodwi dijital.</p></details>
+  <details><summary>Kijan pou m peye?</summary><p>Ak MonCash oswa NatCash. Apre fòmilè a, sit la montre w nimewo a, montan egzak la ak yon kòd (egz. AT-0427) pou w mete nan nòt transfè a. Ou voye nimewo tranzaksyon an, epi nou konfime sou WhatsApp nan 24 è.</p></details>
+  <details><summary>Èske m ka ranbouse?</summary><p>Si atelye a anile oswa ranvwaye, nou ranbouse w nèt. Pou lòt ka, ekri nou sou WhatsApp: n ap gade chak demann.</p></details>
+  <details><summary>Ki nivo mwen bezwen?</summary><p>Okenn. Nou kòmanse depi nan baz la, an kreyòl. Si w konn sèvi ak WhatsApp ak Facebook, sa ase.</p></details>
+  <details><summary>Èske m bezwen yon òdinatè?</summary><p>Non. Tout egzèsis yo fèt sou telefòn. Pote l byen chaje ak chajè l.</p></details>
+  <details><summary>Ki diferans ant tikè yo?</summary><p>Lève-bonè a menm jan ak Estanda a, men pi bon mache pou premye moun yo. VIP la ajoute premye ranje yo, repa ak entèvenan yo ak sipò pèsonèl, pou yon ti gwoup sèlman.</p></details>
+  <details><summary>Kijan bonis Claude la mache?</summary><p>100 premye moun ki enskri yo resevwa yon lyen pou aktive 7 jou Claude Pro gratis, ansanm ak zouti, skill, modèl ak prompt Atelye AI yo gratis.</p></details>
+</div></section>
+<!-- LAST CALL -->
+<section><div class="wrap">
+  <div class="earn">
+    <div>
+      <h2>Samdi 28 novanm, ou ka soti ak premye kanpay ou ak premye pwodwi ou.</h2>
+      <p>Lise Anacaona, Leyogàn · <b class="rest">100</b> plas ki rete · a pati de <b class="pmin">35 $</b></p>
+    </div>
+    <a class="btn" href="#tike">Mwen rezève plas mwen</a>
+  </div>
 </div></section>
 </main>
 
@@ -441,6 +463,27 @@
     }));
     const premye = box.querySelector("input:not([disabled])"); if (premye) premye.checked = true;
   }
+  function montreTike() {
+    const box = $("#tkg"); if (!box) return;
+    if (!EVT || !EVT.types.length) { box.innerHTML = '<p class="mute">Tikè yo ap disponib byento.</p>'; return; }
+    box.replaceChildren(...EVT.types.map((t) => {
+      const k = /vip/i.test(t.nom) ? "vip" : /lève|leve|bon/i.test(t.nom) ? "lb" : "", plen = t.restants <= 0;
+      const d = document.createElement("div"); d.className = `tk2 ${k}${plen ? " off" : ""}`;
+      d.innerHTML = `<span class="tg"></span><h3></h3><div class="px"></div><ul></ul><div class="left"></div><a class="btn full" href="#enskri"></a>`;
+      d.querySelector(".tg").textContent = k === "vip" ? "Plas limite" : k === "lb" ? "Pou premye yo" : "Pi popilè";
+      d.querySelector("h3").textContent = t.nom;
+      d.querySelector(".px").innerHTML = `${t.prix_usd ? SB.dola(t.prix_usd) : SB.goud(t.prix_htg)} <small></small>`;
+      d.querySelector(".px small").textContent = t.prix_usd ? `· ${SB.goud(t.prix_htg)}` : "";
+      d.querySelector("ul").innerHTML = (t.avantaj || []).map(() => `<li>${'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>'}<span></span></li>`).join("");
+      d.querySelectorAll("li span").forEach((x, i) => (x.textContent = t.avantaj[i]));
+      const l = d.querySelector(".left"); l.textContent = plen ? "Plen" : `${t.restants} plas ki rete` + (t.date_fin_vente ? ` · jiska ${SB.dat(t.date_fin_vente, { day: "numeric", month: "long" })}` : "");
+      if (!plen && t.restants <= 10) l.classList.add("lo");
+      const b = d.querySelector(".btn"); b.textContent = plen ? "Plen" : "Mwen chwazi tikè sa a";
+      if (!plen) b.onclick = () => { const r = document.querySelector(`input[name=tip][value="${t.id}"]`); if (r) r.checked = true; };
+      else b.removeAttribute("href");
+      return d;
+    }));
+  }
   function montrePri() {
     const ok = EVT && EVT.types.filter((t) => t.restants > 0);
     if (!ok || !ok.length) { document.querySelectorAll(".pri").forEach((x) => (x.textContent = EVT && EVT.types.length ? "Plen" : "Byento")); document.querySelectorAll(".pri-u").forEach((x) => (x.textContent = "")); return; }
@@ -450,6 +493,8 @@
     document.querySelectorAll(".pri-u").forEach((x) => (x.textContent = "goud" + (t.prix_usd ? ` · ${SB.dola(t.prix_usd)}` : "")));
     document.querySelectorAll(".pk").forEach((x) => (x.textContent = " — " + p + " goud"));
     document.querySelectorAll(".rest").forEach((x) => (x.textContent = EVT.restants));
+    const usd = ok.filter((x) => x.prix_usd).map((x) => +x.prix_usd);
+    if (usd.length) document.querySelectorAll(".pmin").forEach((x) => (x.textContent = SB.dola(Math.min(...usd))));
   }
   function montrePeman() {
     $("#p-amt").textContent = SB.goud(I.montant) + (I.prix_usd ? ` (${SB.dola(I.prix_usd)})` : "");
@@ -461,7 +506,7 @@
   const sere = () => { try { localStorage.setItem("konf-enskri", JSON.stringify(I)); } catch {} };
 
   Promise.all([SB.rpc("evenement_public").catch(() => null), fetch("/api/konfig").then((r) => r.json()).catch(() => ({}))]).then(([e, k]) => {
-    EVT = e; K = k; montreTip(); montrePri();
+    EVT = e; K = k; montreTip(); montrePri(); montreTike();
     if (I && I.fini) { $("#p3-kod").textContent = I.code_court; etap(3); }
     else if (I && I.id) { montrePeman(); etap(2); }
   });

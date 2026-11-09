@@ -29,7 +29,9 @@
   label.l { display: block; font-weight: 600; font-size: 14px; margin: 12px 0 6px; }
   select { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 0; border-radius: 10px; background: var(--soft); }
   .tp2 { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.6fr; gap: 6px; margin-bottom: 8px; }
-  .tp2 input { padding: 10px; font-size: 14px; }
+  .tp2 input, .tp2 textarea { padding: 10px; font-size: 14px; }
+  .tp2 textarea { grid-column: 1 / -1; width: 100%; font: inherit; border: 0; border-radius: 10px; background: var(--soft); }
+  .tp2 { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
   @media (max-width: 700px) { .tp2 { grid-template-columns: 1fr 1fr; } }
   .srch { margin-bottom: 10px; }
   .done { white-space: pre-wrap; font-size: 14px; background: var(--soft); border-radius: 10px; padding: 10px; }
@@ -209,21 +211,21 @@
       <label class="l">Non</label><input name="nom"><label class="l">Dat ak lè (lè Ayiti)</label><input name="date" type="datetime-local">
       <label class="l">Kote</label><input name="lieu"><label class="l">Adrès</label><input name="adresse"><label class="l">Kapasite (plas an tout)</label><input name="capacite" type="number" min="1">
       <label class="l">Estati</label><select name="statut"><option value="ouvert">Louvri</option><option value="ferme">Fèmen</option></select>
-      <h3>Tikè yo</h3><p class="mute small">Non · pri $ · pri goud · kota · dènye dat vant (vid = pa gen limit). Tikè lève-bonè a disparèt pou kont li apre dat la.</p><div id="tps"></div>
+      <h3>Tikè yo</h3><p class="mute small">Non · pri $ · pri goud · kota (kantite plas) · dènye dat vant (vid = pa gen limit), epi sa tikè a gen ladan l. Tikè lève-bonè a disparèt pou kont li apre dat la.</p><div id="tps"></div>
       <button type="button" class="btn sm light" id="tp-plis">+ Yon tip tikè</button>
       <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Anrejistre</button>`;
     f.nom.value = e.nom || "Atelye konferans Atelye AI"; f.date.value = loc(e.date); f.lieu.value = e.lieu || ""; f.adresse.value = e.adresse || ""; f.capacite.value = e.capacite || 100; f.statut.value = e.statut || "ouvert";
     const tps = f.querySelector("#tps");
     const liy = (t = {}) => { const r = el("div", { className: "tp2" });
-      r.innerHTML = `<input placeholder="Non" name="n"><input placeholder="$" name="u" inputmode="decimal"><input placeholder="Goud" name="h" inputmode="numeric"><input placeholder="Kota" name="q" inputmode="numeric"><input type="datetime-local" name="d">`;
-      r.dataset.id = t.id || ""; r.querySelector("[name=n]").value = t.nom || ""; r.querySelector("[name=u]").value = t.prix_usd ?? ""; r.querySelector("[name=h]").value = t.prix_htg ?? ""; r.querySelector("[name=q]").value = t.quota ?? ""; r.querySelector("[name=d]").value = loc(t.date_fin_vente);
+      r.innerHTML = `<input placeholder="Non" name="n"><input placeholder="$" name="u" inputmode="decimal"><input placeholder="Goud" name="h" inputmode="numeric"><input placeholder="Kota" name="q" inputmode="numeric"><input type="datetime-local" name="d"><textarea name="a" rows="4" placeholder="Sa tikè a gen ladan l (yon liy pou chak avantaj)"></textarea>`;
+      r.dataset.id = t.id || ""; r.querySelector("[name=n]").value = t.nom || ""; r.querySelector("[name=u]").value = t.prix_usd ?? ""; r.querySelector("[name=h]").value = t.prix_htg ?? ""; r.querySelector("[name=q]").value = t.quota ?? ""; r.querySelector("[name=d]").value = loc(t.date_fin_vente); r.querySelector("[name=a]").value = (t.avantaj || []).join("\n");
       tps.append(r); };
     (D.types.length ? D.types : [{ nom: "Lève-bonè" }, { nom: "Estanda" }]).forEach(liy);
     f.querySelector("#tp-plis").onclick = () => liy();
     const iso = (s) => s ? s + ":00-05:00" : "";
     f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden";
       try {
-        const types = [...tps.children].map((r, i) => ({ id: r.dataset.id, nom: r.querySelector("[name=n]").value.trim(), prix_usd: r.querySelector("[name=u]").value, prix_htg: r.querySelector("[name=h]").value, quota: Number(r.querySelector("[name=q]").value || 0), date_fin_vente: iso(r.querySelector("[name=d]").value), ordre: i })).filter((t) => t.nom);
+        const types = [...tps.children].map((r, i) => ({ id: r.dataset.id, nom: r.querySelector("[name=n]").value.trim(), prix_usd: r.querySelector("[name=u]").value, prix_htg: r.querySelector("[name=h]").value, quota: Number(r.querySelector("[name=q]").value || 0), date_fin_vente: iso(r.querySelector("[name=d]").value), ordre: i, avantaj: r.querySelector("[name=a]").value.split("\n").map((x) => x.trim()).filter(Boolean).slice(0, 12) })).filter((t) => t.nom);
         await SB.rpc("staf_evenement", { p_code: KOD, p_evenement: { id: e.id || "", nom: f.nom.value, date: iso(f.date.value), lieu: f.lieu.value, adresse: f.adresse.value, capacite: Number(f.capacite.value), statut: f.statut.value }, p_types: types });
         m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await chaje(); TAB = "param";
       } catch (er) { m.className = "msg err"; m.textContent = er.message; } };
