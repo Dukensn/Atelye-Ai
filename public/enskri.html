@@ -114,11 +114,11 @@
     const box = $("#tip");
     if (!EVT || !EVT.types.length) { box.innerHTML = '<p class="mute">Enskripsyon yo poko louvri. Tounen byento.</p>'; return; }
     box.replaceChildren(...EVT.types.map((t, i) => {
-      const plen = t.restants <= 0;
-      const l = document.createElement("label"); l.className = "tp" + (plen ? " off" : "");
-      l.innerHTML = `<input type="radio" name="tip" value="${t.id}" ${plen ? "disabled" : ""}> <span><b></b><small></small></span><em></em>`;
+      const plen = t.restants <= 0, bloke = !plen && t.bloke;
+      const l = document.createElement("label"); l.className = "tp" + (plen || bloke ? " off" : "");
+      l.innerHTML = `<input type="radio" name="tip" value="${t.id}" ${plen || bloke ? "disabled" : ""}> <span><b></b><small></small></span><em></em>`;
       l.querySelector("b").textContent = t.nom;
-      l.querySelector("small").textContent = plen ? "Plen" : `${t.restants} plas ki rete` + (t.date_fin_vente ? ` · jiska ${SB.dat(t.date_fin_vente, { day: "numeric", month: "long" })}` : "");
+      l.querySelector("small").textContent = plen ? "Plen" : bloke ? "Poko disponib · ap louvri " + (t.ouvre_le ? SB.dat(t.ouvre_le, { day: "numeric", month: "long" }) : "lè Lève-bonè a fini") : `${t.restants} plas ki rete` + (t.date_fin_vente ? ` · jiska ${SB.dat(t.date_fin_vente, { day: "numeric", month: "long" })}` : "");
       l.querySelector("em").textContent = SB.goud(t.prix_htg) + (t.prix_usd ? ` · ${SB.dola(t.prix_usd)}` : "");
       return l;
     }));
