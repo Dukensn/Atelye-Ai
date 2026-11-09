@@ -99,9 +99,9 @@ exception when duplicate_object then null; end $$;
 do $$ begin
   alter table public.billets add constraint billets_statut_ck check (statut in ('actif','utilise','annule'));
 exception when duplicate_object then null; end $$;
-do $$ begin
-  alter table public.staf add constraint staf_role_ck check (role in ('admin','validateur','scanneur'));
-exception when duplicate_object then null; end $$;
+-- vandeur: sells tickets on site and resends lost tickets, nothing else
+alter table public.staf drop constraint if exists staf_role_ck;
+alter table public.staf add constraint staf_role_ck check (role in ('admin','validateur','scanneur','vandeur'));
 
 create unique index if not exists inscriptions_tel_evt_uq on public.inscriptions (evenement_id, telephone_cle);
 create unique index if not exists inscriptions_code_evt_uq on public.inscriptions (evenement_id, code_court);
@@ -279,7 +279,7 @@ end $$;
 
 create or replace function public.staf_konekte(p_code text) returns jsonb language plpgsql stable
 security definer set search_path = public, extensions as $$
-declare s public.staf := public._staf(p_code, array['admin','validateur','scanneur']);
+declare s public.staf := public._staf(p_code, array['admin','validateur','scanneur','vandeur']);
 begin
   return jsonb_build_object('non', s.non, 'role', s.role, 'evenement', public.evenement_public(null));
 end $$;
@@ -288,7 +288,7 @@ create or replace function public.staf_kreye(p_code text, p_non text, p_role tex
 security definer set search_path = public, extensions as $$
 declare s public.staf := public._staf(p_code, array['admin']);
 begin
-  if p_role not in ('admin','validateur','scanneur') then raise exception 'Wòl la pa bon.'; end if;
+  if p_role not in ('admin','validateur','scanneur','vandeur') then raise exception 'Wòl la pa bon.'; end if;
   if length(coalesce(p_nouvo_code, '')) < 10 then raise exception 'Kòd la dwe gen omwen 10 karaktè.'; end if;
   insert into public.staf (non, role, code_hash) values (btrim(p_non), p_role, crypt(p_nouvo_code, gen_salt('bf', 10)));
   return jsonb_build_object('ok', true);
@@ -325,13 +325,13 @@ end $$;
 
 create or replace function public.staf_tablo(p_code text, p_evenement uuid default null) returns jsonb language plpgsql stable
 security definer set search_path = public, extensions as $$
-declare s public.staf := public._staf(p_code, array['admin','validateur']); e public.evenements := public._evt(p_evenement); res jsonb;
+declare s public.staf := public._staf(p_code, array['admin','validateur','vandeur']); e public.evenements := public._evt(p_evenement); res jsonb;
 begin
   if e.id is null then return jsonb_build_object('role', s.role, 'evenement', null); end if;
   res := jsonb_build_object('role', s.role, 'non', s.non,
     'evenement', to_jsonb(e),
     'types', coalesce((select jsonb_agg(jsonb_build_object('id', t.id, 'nom', t.nom, 'prix_usd', t.prix_usd, 'prix_htg', t.prix_htg, 'quota', t.quota,
-        'date_fin_vente', t.date_fin_vente, 'ordre', t.ordre, 'avantaj', coalesce(t.avantaj, '[]'::jsonb), 'restants', public._restants_type(t.id)) order by t.ordre, t.prix_htg)
+        'date_fin_vente', t.date_fin_vente, 'ordre', t.ordre, 'avantaj', coalesce(t.avantaj, '[]'::jsonb), 'restants', public._restants_type(t.id), 'bloke', public._bloke(t.id)) order by t.ordre, t.prix_htg)
       from public.types_billets t where t.evenement_id = e.id), '[]'),
     'chif', (select jsonb_build_object(
         'inscrits', count(*) filter (where statut <> 'refuse'),
@@ -359,6 +359,13 @@ begin
         where i.evenement_id = e.id), '[]'),
       'jour_j', (select jsonb_build_object('entres', count(*) filter (where b.statut = 'utilise'), 'attendus', count(*) filter (where b.statut <> 'annule'))
         from public.billets b join public.inscriptions i on i.id = b.inscription_id where i.evenement_id = e.id));
+  elsif s.role = 'vandeur' then
+    -- a seller only needs to find people with a ticket to resend it, and nothing from the payment queue
+    res := res || jsonb_build_object('file', '[]'::jsonb,
+      'lis', coalesce((select jsonb_agg(jsonb_build_object('id', i.id, 'code_court', i.code_court, 'nom', i.nom, 'telephone', i.telephone,
+          'type', t.nom, 'statut', i.statut, 'valide_par', i.valide_par, 'billet', b.code, 'billet_statut', b.statut, 'scanne_le', b.scanne_le) order by i.cree_le desc)
+        from public.inscriptions i join public.types_billets t on t.id = i.type_billet_id left join public.billets b on b.inscription_id = i.id
+        where i.evenement_id = e.id and i.statut = 'valide'), '[]'));
   end if;
   return res;
 end $$;
@@ -386,10 +393,11 @@ end $$;
 
 create or replace function public.staf_valide(p_code text, p_id uuid) returns jsonb language plpgsql volatile
 security definer set search_path = public, extensions as $$
-declare s public.staf := public._staf(p_code, array['admin','validateur']); r public.inscriptions; t public.types_billets; v_code text;
+declare s public.staf := public._staf(p_code, array['admin','validateur','vandeur']); r public.inscriptions; t public.types_billets; v_code text;
 begin
   select * into r from public.inscriptions where id = p_id for update;
   if r.id is null then raise exception 'Enskripsyon sa a pa egziste.'; end if;
+  if s.role = 'vandeur' and r.moyen_paiement <> 'especes' then raise exception 'Ou pa gen aksè.' using errcode = '28000'; end if;
   if r.statut <> 'en_attente' then raise exception 'Enskripsyon sa a deja trete (%).', r.statut; end if;
   if r.reference_paiement is null then raise exception 'Moun nan poko voye nimewo tranzaksyon an.'; end if;
   select * into t from public.types_billets where id = r.type_billet_id for update;   -- serialises validations per ticket type
@@ -422,10 +430,10 @@ begin
   return jsonb_build_object('ok', true);
 end $$;
 
--- Cash payment: the admin creates and validates the registration in one step.
+-- Sale on site (cash): an admin or a seller creates and validates the registration in one step.
 create or replace function public.staf_kach(p_code text, p_type uuid, p_nom text, p_telephone text, p_email text default null) returns jsonb language plpgsql volatile
 security definer set search_path = public, extensions as $$
-declare s public.staf := public._staf(p_code, array['admin']); r jsonb; v jsonb;
+declare s public.staf := public._staf(p_code, array['admin','vandeur']); r jsonb; v jsonb;
 begin
   r := public.inscrire(p_type, p_nom, p_telephone, p_email, '{}'::jsonb, 'moncash');
   update public.inscriptions set moyen_paiement = 'especes', reference_paiement = 'KACH-' || (r->>'code_court'), soumis_le = now()
