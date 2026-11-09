@@ -63,7 +63,7 @@
   const tel = (t) => { const d = String(t || "").replace(/\D/g, ""); return d.length === 8 ? "509" + d : d; };
   const wa = (t, msg) => `https://wa.me/${tel(t)}?text=${encodeURIComponent(msg)}`;
   const premye = (n) => String(n || "").split(" ")[0];
-  const msgTike = (x, code) => `Bonjou ${premye(x.nom)}! 🎉 Peman w lan valide. Men tikè w pou atelye konferans Atelye AI a (${x.code_court}):\n${site}/billet/${code}\n\nSamdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Montre kòd QR a nan pòt la. Pote telefòn ou ak CIN ou.`;
+  const msgTike = (x, code) => `Bonjou ${premye(x.nom)}! 🎉 Peman w lan valide. Men tikè w pou atelye konferans Atelye AI a (${x.code_court}):\n${site}/billet/${code}\n\nSamdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Montre kòd QR a nan pòt la.`;
   const msgRefi = (x, motif) => `Bonjou ${premye(x.nom)}. Se Atelye AI. Nou pa t ka valide peman pou enskripsyon ${x.code_court}: ${motif}. Reponn mesaj sa a pou n regle sa ansanm.`;
 
   async function chaje() {
@@ -187,7 +187,7 @@
   function vRapel(v) {
     const M = {
       "J-7": (x) => `Bonjou ${premye(x.nom)}! Rete 7 jou pou atelye konferans Atelye AI a: samdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Men tikè w: ${site}/billet/${x.billet}`,
-      "J-1": (x) => `${premye(x.nom)}, se demen! 📅 Samdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Pote telefòn ou (chaje), chajè a ak CIN ou. Tikè w: ${site}/billet/${x.billet}`,
+      "J-1": (x) => `${premye(x.nom)}, se demen! 📅 Samdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Pote telefòn ou (chaje) ak chajè a. Tikè w: ${site}/billet/${x.billet}`,
       "Maten": (x) => `Bonjou ${premye(x.nom)}! N ap tann ou jodi a a 10h nan Lise Anacaona, Leyogàn. Prepare tikè w la pou pòt la: ${site}/billet/${x.billet}`,
     };
     const L = D.lis.filter((x) => x.statut === "valide" && x.billet && x.billet_statut !== "annule");
