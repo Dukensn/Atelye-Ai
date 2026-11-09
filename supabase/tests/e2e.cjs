@@ -133,6 +133,14 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   const bj = await rpc("staf_mwen", { p_code: await u.evaluate(() => localStorage.getItem("staf-kod")) });
   await u.screenshot({ path: S + "7-badj.png", fullPage: true });
   await u.goto("http://localhost:5174/badj/" + bj[1].badj); await u.waitForSelector(".ver.ok"); ok(true, "badge QR page says valid");
+  // 7) custom role: the (only) super admin proposes it, so it applies at once; then it can be given to a member
+  s.on("dialog", (d) => d.accept());
+  await s.click("#tabs button[data-k=wol]"); await s.waitForSelector("#v .wl");
+  const fw = s.locator("#v form.card").last(); await fw.locator("[name=n]").fill("Fotograf"); await fw.locator("[name=d]").fill("Pran foto ak videyo jou atelye a");
+  await fw.locator(".ak input[value=eskane]").check(); await fw.locator("button").click();
+  await s.waitForSelector("#v .wl >> text=Fotograf"); ok((await s.locator("#v .wl", { hasText: "Fotograf" }).textContent()).includes("Eskane tikè"), "super admin creates a role with its access");
+  await s.click("#tabs button[data-k=ekip]"); await s.waitForSelector("#v .ek select");
+  ok((await s.locator("#v .ek select").first().locator("option").allTextContents()).includes("Fotograf"), "new role offered to team members");
   console.log("page errors:", errs);
   await b.close(); srv.close(); await db.end();
 })().catch(async (e) => { console.error("ERROR", e.message); process.exit(1); });
