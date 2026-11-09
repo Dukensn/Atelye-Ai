@@ -531,7 +531,7 @@
   // ---------------------------------------------------------------- WhatsApp assistant
   const WA = { sub: "konv", tel: null, test: [] };
   async function waApi(aksyon, o = {}) {
-    const r = await fetch("/api/wa", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ aksyon, kod: KOD, ...o }) });
+    const r = await fetch("/api/whatsapp?ekip=1", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ aksyon, kod: KOD, ...o }) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(d.ere || "Gen yon pwoblèm. Eseye ankò.");
     return d;

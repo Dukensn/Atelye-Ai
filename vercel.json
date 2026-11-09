@@ -48,6 +48,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/konfig",
+      "destination": "/api/estati?konfig=1"
+    },
+    {
       "source": "/billet/:code",
       "destination": "/billet"
     },
