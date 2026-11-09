@@ -34,7 +34,8 @@ alter table public.types_billets
   add column if not exists prix_htg numeric(12,2),
   add column if not exists quota int,
   add column if not exists date_fin_vente timestamptz,
-  add column if not exists ordre int default 0;
+  add column if not exists ordre int default 0,
+  add column if not exists avantaj jsonb default '[]'::jsonb;
 
 create table if not exists public.inscriptions (id uuid primary key default gen_random_uuid());
 alter table public.inscriptions
@@ -167,7 +168,8 @@ begin
   return jsonb_build_object('id', e.id, 'nom', e.nom, 'date', e.date, 'lieu', e.lieu, 'adresse', e.adresse,
     'capacite', e.capacite, 'restants', greatest(coalesce(e.capacite, 0) - pris, 0), 'statut', e.statut,
     'types', coalesce((select jsonb_agg(jsonb_build_object('id', t.id, 'nom', t.nom, 'prix_usd', t.prix_usd, 'prix_htg', t.prix_htg,
-        'date_fin_vente', t.date_fin_vente, 'restants', greatest(public._restants_type(t.id), 0)) order by t.ordre, t.prix_htg)
+        'date_fin_vente', t.date_fin_vente, 'quota', t.quota, 'avantaj', coalesce(t.avantaj, '[]'::jsonb),
+        'restants', greatest(public._restants_type(t.id), 0)) order by t.ordre, t.prix_htg)
       from public.types_billets t where t.evenement_id = e.id and t.prix_htg is not null
         and (t.date_fin_vente is null or t.date_fin_vente > now())), '[]'::jsonb));
 end $$;
@@ -295,12 +297,13 @@ begin
   end if;
   for t in select * from jsonb_array_elements(coalesce(p_types, '[]'::jsonb)) loop
     if nullif(t->>'id', '') is null then
-      insert into public.types_billets (evenement_id, nom, prix_usd, prix_htg, quota, date_fin_vente, ordre) values
+      insert into public.types_billets (evenement_id, nom, prix_usd, prix_htg, quota, date_fin_vente, ordre, avantaj) values
         (eid, t->>'nom', nullif(t->>'prix_usd', '')::numeric, nullif(t->>'prix_htg', '')::numeric, (t->>'quota')::int,
-         nullif(t->>'date_fin_vente', '')::timestamptz, coalesce((t->>'ordre')::int, 0));
+         nullif(t->>'date_fin_vente', '')::timestamptz, coalesce((t->>'ordre')::int, 0), coalesce(t->'avantaj', '[]'::jsonb));
     else
       update public.types_billets set nom = t->>'nom', prix_usd = nullif(t->>'prix_usd', '')::numeric, prix_htg = nullif(t->>'prix_htg', '')::numeric,
-        quota = (t->>'quota')::int, date_fin_vente = nullif(t->>'date_fin_vente', '')::timestamptz, ordre = coalesce((t->>'ordre')::int, 0)
+        quota = (t->>'quota')::int, date_fin_vente = nullif(t->>'date_fin_vente', '')::timestamptz, ordre = coalesce((t->>'ordre')::int, 0),
+        avantaj = coalesce(t->'avantaj', avantaj)
         where id = (t->>'id')::uuid and evenement_id = eid;
     end if;
   end loop;
@@ -315,7 +318,7 @@ begin
   res := jsonb_build_object('role', s.role, 'non', s.non,
     'evenement', to_jsonb(e),
     'types', coalesce((select jsonb_agg(jsonb_build_object('id', t.id, 'nom', t.nom, 'prix_usd', t.prix_usd, 'prix_htg', t.prix_htg, 'quota', t.quota,
-        'date_fin_vente', t.date_fin_vente, 'ordre', t.ordre, 'restants', public._restants_type(t.id)) order by t.ordre, t.prix_htg)
+        'date_fin_vente', t.date_fin_vente, 'ordre', t.ordre, 'avantaj', coalesce(t.avantaj, '[]'::jsonb), 'restants', public._restants_type(t.id)) order by t.ordre, t.prix_htg)
       from public.types_billets t where t.evenement_id = e.id), '[]'),
     'chif', (select jsonb_build_object(
         'inscrits', count(*) filter (where statut <> 'refuse'),

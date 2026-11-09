@@ -1,10 +1,8 @@
-// Run: local Postgres 16 with roles anon/authenticated, the migration applied, an admin "sekre-admin-123";
-// npm i pg playwright; node supabase/tests/e2e.cjs
 // End-to-end: real pages + local Postgres behind a PostgREST-like RPC mock (as role anon).
-
+module.paths.push("/tmp/claude-0/-home-user/f3f252e9-ddde-5a6f-90c9-6cc21f0637e8/scratchpad/vend/node_modules");
 const { chromium, devices } = require("playwright"); const { Client } = require("pg");
 const http = require("http"), fs = require("fs"), path = require("path");
-const S = require("os").tmpdir() + "/atelye-e2e/"; fs.mkdirSync(S, { recursive: true });
+const S = "/tmp/claude-0/-home-user/f3f252e9-ddde-5a6f-90c9-6cc21f0637e8/scratchpad/e2e/"; fs.mkdirSync(S, { recursive: true });
 const root = "/home/user/atelier-ai/public";
 const db = new Client({ host: "localhost", user: "postgres", password: "pw", database: "levve" });
 async function rpc(fn, args) {
@@ -44,7 +42,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   // 1) register
   await p.goto("http://localhost:5174/konferans"); await p.waitForSelector("#tip .tp");
   ok((await p.locator("#tip .tp").count()) === 2, "two ticket types shown with prices");
-  ok((await p.locator(".pri").first().textContent()).includes("2"), "hero price from the database");
+  await p.waitForFunction(() => document.querySelectorAll("#tkg .tk2").length === 2); ok((await p.locator(".pmin").first().textContent()).includes("15"), "hero price from the database"); ok((await p.locator("#tkg .tk2").count()) === 2, "ticket cards shown");
   await p.locator("#enskri").scrollIntoViewIfNeeded(); await p.screenshot({ path: S + "1-form.png" });
   await p.fill("#non", "Roselande Pierre"); await p.fill("#telefon", "3864 1234"); await p.selectOption("#nivo", { index: 1 }); await p.selectOption("#vle", { index: 1 });
   await p.click("#f1 button"); await p.waitForSelector("#f2:not(.hidden)");
