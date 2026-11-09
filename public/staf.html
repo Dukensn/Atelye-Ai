@@ -102,6 +102,20 @@
   .ck input { width: auto; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; } .chips span { font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; background: var(--soft); }
   .done { white-space: pre-wrap; font-size: 14px; background: var(--soft); border-radius: 10px; padding: 10px; }
+  /* WhatsApp assistant */
+  .wst { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px; margin-bottom: 12px; }
+  .wst .dt { width: 12px; height: 12px; border-radius: 50%; background: #d1d5db; box-shadow: 0 0 0 4px #f1f2f4; } .wst .dt.on { background: #22c55e; box-shadow: 0 0 0 4px #dcfce7; }
+  .wst b { font-size: 16px; } .wst .sp { flex: 1; }
+  .ch { display: flex; flex-direction: column; gap: 6px; max-height: 58vh; overflow-y: auto; background: #efeae2; border-radius: 14px; padding: 12px; }
+  .bl { max-width: 82%; padding: 8px 12px 6px; border-radius: 14px; white-space: pre-wrap; word-break: break-word; font-size: 15px; line-height: 1.35; box-shadow: 0 1px 1px rgba(0,0,0,.06); }
+  .bl small { display: block; font-size: 11px; opacity: .6; margin-top: 3px; text-align: right; }
+  .bl.in { align-self: flex-start; background: #fff; border-top-left-radius: 4px; }
+  .bl.bot { align-self: flex-end; background: #d9fdd3; border-top-right-radius: 4px; } .bl.staf { align-self: flex-end; background: #1f2937; color: #fff; border-top-right-radius: 4px; }
+  .bl.zt { align-self: center; background: #fff8e1; color: #8a5a00; font-size: 12px; font-weight: 700; }
+  .rp { display: flex; gap: 8px; margin-top: 10px; } .rp textarea { flex: 1; font: inherit; font-size: 16px; border: 0; border-radius: 12px; background: #fff; padding: 10px 12px; min-height: 46px; resize: vertical; }
+  .rw.kl { cursor: pointer; } .rw .nl { flex: none; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: #22c55e; color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+  .cp { display: flex; gap: 8px; } .cp input { flex: 1; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+  .gid { font-size: 14px; color: var(--mu2); margin: 4px 0 0; padding-left: 18px; } .gid li { margin: 4px 0; }
 </style>
 </head>
 <body>
@@ -160,9 +174,10 @@
     kach: sv("M15 19a6 6 0 0 0-12 0M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM19 8v6M22 11h-6"), lis: sv("M21 21l-4.3-4.3M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z"),
     rapel: sv("M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0"), ekip: sv("M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"),
     wol: sv("M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"), param: sv("M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"),
+    wa: sv("M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 1 1 21 11.5z"),
     mwen: sv("M4 4h16v16H4zM12 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM7.5 17c.8-2.4 8.2-2.4 9 0") };
   // notifications: a new payment to check or a new sign-up since the last refresh
-  let VI2 = null, NEK = 0;
+  let VI2 = null, NEK = 0, NWA = 0;
   function tost(ik, tit, det) {
     const t = el("div", {}, el("i", { textContent: ik }), el("span", {}, el("b", { textContent: tit }), el("small", { textContent: det })));
     $("#tst").append(t); if (navigator.vibrate) navigator.vibrate(60); setTimeout(() => t.remove(), 6000);
@@ -186,17 +201,20 @@
     $("#mizajou").textContent = "Mizajou " + new Date().toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
     // tabs follow the access rights of the member's role
     const T = [
-      AK("chif") && ["tablo", "Akèy"], AK("valide_peman") && ["file", "Peman"],
+      AK("chif") && ["tablo", "Akèy"], AK("valide_peman") && ["file", "Peman"], AK("whatsapp") && ["wa", "WhatsApp"],
       AK("enskri_sou_plas") && ["kach", "Enskri yon moun"],
       (AK("lis_enskripsyon") || AK("jwenn_tike")) && ["lis", AK("lis_enskripsyon") ? "Enskripsyon" : "Jwenn yon tikè"], AK("rapel") && ["rapel", "Rapèl"],
       AK("jere_ekip") && ["ekip", "Ekip"], AK("jere_ekip") && ["wol", "Wòl"], AK("pri_evenman") && ["param", "Paramèt"], ["mwen", "Badj mwen"]].filter(Boolean);
+    const nwa = AK("whatsapp") ? ((await SB.rpc("staf_wa_konfig", { p_code: KOD }).catch(() => null)) || {}).alet || 0 : 0;
+    if (nwa > NWA && !PREMYE) tost("!", "Yon kliyan WhatsApp bezwen ou", "Asistan an pase w relè. Gade nan WhatsApp.");
+    NWA = nwa;
     NEK = AK("jere_ekip") ? (await SB.rpc("staf_ekip", { p_code: KOD }).catch(() => [])).filter((x) => x.statut === "en_attente").length : 0;
     nouvo();
     if (!ME.foto && !VI) TAB = "mwen";   // first screen asks for the badge photo
     VI = true;
     if (!T.some(([k]) => k === TAB)) TAB = T[0][0];
     $("#tabs").replaceChildren(...T.map(([k, t]) => { const b = el("button", { type: "button", innerHTML: IK[k] || "" }); b.append(el("span", { textContent: t }));
-      const n = { file: D.file.length, ekip: NEK }[k]; if (n) b.append(el("span", { className: "nb", textContent: n }));
+      const n = { file: D.file.length, ekip: NEK, wa: NWA }[k]; if (n) b.append(el("span", { className: "nb", textContent: n }));
       b.dataset.k = k; b.setAttribute("aria-selected", String(k === TAB)); b.onclick = () => { TAB = k; afiche(); scrollTo(0, 0); chaje().catch(() => {}); }; return b; }));
     $("#bon").textContent = "Bonjou, " + premye(ME.non);
     const av = $("#av2"); av.style.setProperty("--rk", ME.koule || "#ddd");
@@ -242,8 +260,8 @@
   function afiche() {
     document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.k === TAB)));
     const v = el("div"); $("#v").replaceChildren(v);   // a fresh box each time, so a slower earlier render cannot add a second copy
-    if (!D.evenement && !["mwen", "ekip", "wol"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
-    ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, wol: vWol, mwen: vMwen }[TAB] || vMwen)(v);
+    if (!D.evenement && !["mwen", "ekip", "wol", "wa"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
+    ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, wol: vWol, wa: vWa, mwen: vMwen }[TAB] || vMwen)(v);
   }
 
   // ---- payments to check: oldest first, one clear card each
@@ -510,6 +528,120 @@
   }
 
   // ---- event, ticket types (prices, quotas, early-bird date)
+  // ---------------------------------------------------------------- WhatsApp assistant
+  const WA = { sub: "konv", tel: null, test: [] };
+  async function waApi(aksyon, o = {}) {
+    const r = await fetch("/api/wa", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ aksyon, kod: KOD, ...o }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.ere || "Gen yon pwoblèm. Eseye ankò.");
+    return d;
+  }
+  const lè = (iso) => new Date(iso).toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit", timeZone: "America/Port-au-Prince" });
+  const jou = (iso) => { const d = new Date(iso), t = new Date(); return d.toDateString() === t.toDateString() ? lè(iso) : SB.dat(iso, { day: true }); };
+  const bul = (m) => el("div", { className: "bl " + m.sans }, m.sans === "bot" ? "🤖 " : "", m.sans === "staf" ? el("b", { textContent: "Ekip · " }) : "", m.teks || "", m.kreye_le ? el("small", { textContent: lè(m.kreye_le) }) : null);
+
+  async function vWa(v) {
+    const K = await SB.rpc("staf_wa_konfig", { p_code: KOD });
+    const pare = K.gemini && K.wa_token && K.wa_phone_id && K.app_secret && K.sevè;
+    const st = el("div", { className: "card wst" }, el("span", { className: "dt" + (K.aktif && pare ? " on" : "") }),
+      el("div", {}, el("b", { textContent: !K.aktif ? "Asistan an fèmen" : pare ? "Asistan an ap reponn" : "Asistan an limen, men l poko konekte" }),
+        el("div", { className: "mute small", textContent: pare ? "Tout kle yo la ✓" : "Kle ki manke: " + [!K.gemini && "Gemini", !K.wa_token && "token WhatsApp", !K.wa_phone_id && "Phone number ID", !K.app_secret && "App secret", !K.sevè && "sekrè sèvè a"].filter(Boolean).join(", ") })),
+      el("span", { className: "sp" }),
+      bouton(K.aktif ? "Fèmen l" : "Limen l", async () => { if (!K.aktif && !K.gemini) throw new Error("Mete kle Gemini an anvan (Paramèt)."); await SB.rpc("staf_wa_konfig_mete", { p_code: KOD, p: { aktif: !K.aktif } }); afiche(); }, K.aktif));
+    const tb = el("nav", { className: "tabs3" }, ...[["konv", `Konvèsasyon${K.alet ? ` (${K.alet} bezwen ou)` : ""}`], ["eseye", "Eseye asistan an"], ["param", "Paramèt"]].map(([k, t]) => {
+      const b = el("button", { type: "button", textContent: t }); b.setAttribute("aria-selected", String(WA.sub === k)); b.onclick = () => { WA.sub = k; WA.tel = null; afiche(); }; return b; }));
+    v.append(st, tb);
+    if (WA.sub === "param") return waParam(v, K);
+    if (WA.sub === "eseye") return waEseye(v, K);
+    if (WA.tel) return waKonv(v, WA.tel);
+    const L = await SB.rpc("staf_wa_konv", { p_code: KOD });
+    const bx = el("div", { className: "bx" });
+    bx.append(el("h4", {}, "Moun ki ekri yo", el("small", { textContent: L.length + " konvèsasyon" })));
+    if (!L.length) bx.append(el("p", { className: "mute", textContent: "Poko gen mesaj. Lè yon moun ekri nimewo WhatsApp la, l ap parèt la a." }));
+    L.forEach((c) => {
+      const pl = [];
+      if (c.alet) pl.push(el("span", { className: "pl ko", textContent: "Bezwen ou" }));
+      else if (c.eta === "moun") pl.push(el("span", { className: "pl at", textContent: "Ou pran relè" }));
+      else if (c.poze_jiska && new Date(c.poze_jiska) > new Date()) pl.push(el("span", { className: "pl at", textContent: "Asistan an poz" }));
+      if (c.code_court) pl.push(el("span", { className: "pl " + (c.statut === "valide" ? "ok" : "at"), textContent: `${c.code_court} · ${c.statut === "valide" ? "peye" : c.peye ? "peman voye" : "rezève"}` }), " ");
+      const r = el("div", { className: "rw kl" }, ai(c.non || c.telefon),
+        el("div", { className: "tx" }, el("b", { textContent: c.non || "+" + c.telefon }),
+          el("small", { textContent: c.dènye ? (c.dènye.sans === "in" ? "" : c.dènye.sans === "bot" ? "🤖 " : "Ekip: ") + c.dènye.teks : "" }), el("div", {}, ...pl)),
+        el("div", { className: "mt" }, el("small", { className: "mute", textContent: jou(c.denye) }), c.pa_li ? el("span", { className: "nl", textContent: c.pa_li }) : null));
+      r.onclick = () => { WA.tel = c.telefon; afiche(); scrollTo(0, 0); };
+      bx.append(r);
+    });
+    v.append(el("div", { className: "act2", style: "margin:0 0 10px" }, bouton("↻ Mete ajou", () => afiche(), true)), bx);
+  }
+
+  async function waKonv(v, tel) {
+    const L = await SB.rpc("staf_wa_konv", { p_code: KOD }), c = L.find((x) => x.telefon === tel) || { telefon: tel };
+    const ch = el("div", { className: "ch" });
+    const ranpli = async () => { const M = await SB.rpc("staf_wa_mesaj", { p_code: KOD, p_tel: tel }); ch.replaceChildren(...M.map(bul)); ch.scrollTop = ch.scrollHeight; };
+    const tèt = el("div", { className: "row2", style: "align-items:center;margin-bottom:10px" },
+      el("div", { style: "display:flex;gap:10px;align-items:center" }, bouton("←", () => { WA.tel = null; afiche(); }, true),
+        el("div", {}, el("b", { textContent: c.non || "+" + tel }), el("div", { className: "mute small", textContent: "+" + tel + (c.code_court ? ` · ${c.code_court}` : "") }))),
+      lyen("Louvri nan WhatsApp", `https://wa.me/${tel}`));
+    const ak = el("div", { className: "act2", style: "margin:10px 0 0" },
+      c.eta === "moun" ? bouton("🤖 Remèt li bay asistan an", async () => { await SB.rpc("staf_wa_eta", { p_code: KOD, p_tel: tel, p_eta: "bot" }); afiche(); })
+        : bouton("✋ Mwen pran relè", async () => { await SB.rpc("staf_wa_eta", { p_code: KOD, p_tel: tel, p_eta: "moun" }); afiche(); }, true));
+    const ta = el("textarea", { placeholder: "Ekri repons ou…", rows: 2 });
+    const rp = el("div", { className: "rp" }, ta, bouton("Voye", async () => { const t = ta.value.trim(); if (!t) return; await waApi("voye", { tel, teks: t }); ta.value = ""; await ranpli(); }));
+    const bx = el("div", { className: "bx" }, tèt);
+    if (c.alet) bx.append(el("div", { className: "alrt", textContent: "⚠ " + (c.rezon || "Kliyan sa a bezwen yon moun.") + " Asistan an rete trankil jiskaske w remèt li." }));
+    bx.append(ch, rp, el("p", { className: "mute small", style: "margin:6px 0 0", textContent: "Lè w reponn isit la (oswa nan aplikasyon WhatsApp Business la), asistan an rete trankil 24 è nan konvèsasyon sa a." }), ak);
+    v.append(bx);
+    await ranpli();
+    const t = setInterval(() => { if (!ch.isConnected) return clearInterval(t); if (document.activeElement !== ta || !ta.value) ranpli().catch(() => {}); }, 15000);
+  }
+
+  function waEseye(v, K) {
+    const ch = el("div", { className: "ch" });
+    const montre = () => { ch.replaceChildren(...(WA.test.length ? WA.test.map(bul) : [el("div", { className: "bl zt", textContent: "Ekri tankou yon kliyan pou wè sa asistan an ta reponn. Anyen pa voye sou WhatsApp, e pa gen rezèvasyon ki kreye." })])); ch.scrollTop = ch.scrollHeight; };
+    const ta = el("textarea", { placeholder: "Egz.: Bonjou, konbyen tikè a ye?", rows: 2 });
+    const voye = bouton("Voye", async () => { const t = ta.value.trim(); if (!t) return;
+      WA.test.push({ sans: "in", teks: t }); ta.value = ""; montre();
+      try { const r = await waApi("eseye", { istwa: WA.test.filter((m) => m.sans !== "zt") });
+        (r.fe || []).forEach((f) => WA.test.push({ sans: "zt", teks: `🛠 ${f.zouti} (tès)` }));
+        WA.test.push({ sans: "bot", teks: r.teks || "(pa gen repons)" }); }
+      catch (e) { WA.test.push({ sans: "zt", teks: "⚠ " + e.message }); }
+      montre(); });
+    v.append(el("div", { className: "bx" }, el("h4", {}, "Eseye asistan an", el("small", { textContent: K.gemini_model })), ch, el("div", { className: "rp" }, ta, voye),
+      el("div", { className: "act2" }, bouton("Rekòmanse", () => { WA.test = []; montre(); }, true))));
+    montre();
+  }
+
+  function waParam(v, K) {
+    const hook = location.origin + "/api/whatsapp";
+    const kopi = (val) => { const i = el("input", { value: val, readOnly: true }); return el("div", { className: "cp" }, i, bouton("Kopye", async () => { await navigator.clipboard.writeText(val).catch(() => { i.select(); document.execCommand("copy"); }); })); };
+    const f = el("form", { className: "card", style: "padding:18px" });
+    f.innerHTML = `<h3 style="margin-top:0">Sèvo asistan an: Gemini</h3>
+      <label class="l">Kle API Gemini</label><input name="gemini_kle" type="password" autocomplete="off" placeholder="${K.gemini ? "•••• " + K.gemini_fen + " (kite vid pou kenbe l)" : "AIza…"}">
+      <p class="mute small" style="margin:4px 0 0">Jwenn li sou aistudio.google.com → Get API key. Li rete sou sèvè a; pèsonn pa ka li l ankò, menm isit la.</p>
+      <label class="l">Modèl</label><input name="gemini_model">
+      <h3>WhatsApp (Meta)</h3>
+      <label class="l">Phone number ID</label><input name="wa_phone_id" inputmode="numeric" placeholder="egz. 1234567890123">
+      <label class="l">Access token (pèmanan)</label><input name="wa_token" type="password" autocomplete="off" placeholder="${K.wa_token ? "•••• anrejistre (kite vid pou kenbe l)" : "EAAG…"}">
+      <label class="l">App secret</label><input name="app_secret" type="password" autocomplete="off" placeholder="${K.app_secret ? "•••• anrejistre (kite vid pou kenbe l)" : "32 karaktè"}">
+      <h3>Konpòtman</h3>
+      <label class="l">Enstriksyon an plis (ton, sa pou l di, sa pou l pa janm di)</label><textarea name="enstriksyon" rows="4" style="width:100%;font:inherit;border:0;border-radius:10px;background:var(--soft);padding:10px" placeholder="Egz.: Toujou mansyone bonis Claude Pro a. Pa janm pale de ranbousman."></textarea>
+      <label class="l">Mo ki fè l pase relè bay yon moun (separe ak vigil)</label><input name="mo_relais">
+      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Anrejistre</button>`;
+    f.gemini_model.value = K.gemini_model || ""; f.wa_phone_id.value = K.wa_phone_id || ""; f.enstriksyon.value = K.enstriksyon || ""; f.mo_relais.value = K.mo_relais || "";
+    f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden";
+      try { await SB.rpc("staf_wa_konfig_mete", { p_code: KOD, p: { gemini_kle: f.gemini_kle.value, gemini_model: f.gemini_model.value.trim(), wa_phone_id: f.wa_phone_id.value, wa_token: f.wa_token.value, app_secret: f.app_secret.value, enstriksyon: f.enstriksyon.value, mo_relais: f.mo_relais.value } });
+        m.className = "msg ok"; m.textContent = "Anrejistre ✓"; setTimeout(() => afiche(), 900); } catch (e) { m.className = "msg err"; m.textContent = e.message; } };
+    const res = el("div", { className: "mute small" });
+    const kon = el("div", { className: "card", style: "padding:18px;margin-top:12px" }, el("h3", { style: "margin-top:0", textContent: "Konekte Meta" }),
+      el("ol", { className: "gid" }, el("li", { textContent: "developers.facebook.com → app Atelye AI → WhatsApp → Configuration." }),
+        el("li", { textContent: "Callback URL: kole adrès sa a:" }), kopi(hook),
+        el("li", { textContent: "Verify token: kole kòd sa a:" }), kopi(K.verify_token),
+        el("li", { textContent: "Webhook fields: koche « messages » (ak « smb_message_echoes » si w kenbe aplikasyon WhatsApp Business la)." })),
+      el("div", { className: "act2" }, bouton("Teste koneksyon WhatsApp", async () => { const r = await waApi("tcheke");
+        res.textContent = r.ok ? `✓ Konekte: ${r.non || ""} ${r.nimewo || ""}${r.kalite ? " · kalite " + r.kalite : ""}` : "✗ " + r.ere; }, true)), res);
+    v.append(f, kon);
+  }
+
   function vParam(v) {
     const e = D.evenement || {}, f = el("form", { className: "card" });
     const loc = (iso) => iso ? new Date(new Date(iso).getTime() - 5 * 3600e3).toISOString().slice(0, 16) : "";
