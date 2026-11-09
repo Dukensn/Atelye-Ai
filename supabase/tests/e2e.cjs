@@ -17,6 +17,7 @@ const srv = http.createServer((q, r) => {
   let u = q.url.split("?")[0];
   if (u === "/api/konfig") { r.setHeader("content-type", "application/json"); return r.end(JSON.stringify({ moncash: "3864 9724", natcash: "3582 8339", benefisye: "Dukens Mathieu" })); }
   if (u.startsWith("/billet/")) u = "/billet.html";
+  if (u.startsWith("/badj/")) u = "/badj.html";
   let f = path.join(root, u === "/" ? "index.html" : u); if (!path.extname(f)) f += ".html";
   fs.readFile(f, (e, d) => { if (e) { r.statusCode = 404; return r.end(); } r.setHeader("content-type", types[path.extname(f)] || "application/octet-stream"); r.end(d); });
 });
@@ -76,7 +77,8 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   ok((await p2.textContent("#mj")).includes("verifye"), "pending ticket message");
 
   // 4) staff validates
-  const s = await ctx.newPage(); await s.goto("http://localhost:5174/staf"); await s.fill("#kod", "sekre-admin-123"); await s.click("#login button"); await s.waitForSelector("#v .card");
+  const s = await ctx.newPage(); await s.goto("http://localhost:5174/staf"); await s.click("#akod"); await s.fill("#kod", "sekre-admin-123"); await s.click("#fkod button"); await s.waitForSelector("#tabs button[data-k=file]");
+  await s.click("#tabs button[data-k=file]"); await s.waitForTimeout(1500); await s.waitForSelector("#v .card");
   await s.click("text=Wè kapti a"); await s.waitForSelector("img.kapti"); ok(true, "payment screenshot visible to staff");
   await s.screenshot({ path: S + "4-queue.png", fullPage: true });
   await s.click("text=Peman an rive — Valide"); await s.waitForSelector("text=Pa gen peman k ap tann");
@@ -114,6 +116,23 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   const t = (await rpc("staf_tablo", { p_code: "sekre-admin-123" }))[1]; ok(t.jour_j.entres === 1, "server counts 1 entry after sync");
   // unknown code typed by hand → red
   await k.evaluate(() => window.dispatchEvent(new Event("x"))); 
+  // 6) team accounts: sign up with a photo, super admin approves, member sees role + badge, badge page checks it
+  const u = await ctx.newPage(); await u.goto("http://localhost:5174/staf"); await u.evaluate(() => localStorage.removeItem("staf-kod")); await u.reload(); await u.click("#lt button[data-m=e]");
+  await u.fill("#en", "Nadège Pòl"); await u.fill("#ei", "nadege@gmail.com"); await u.fill("#em", "modpas-nadege");
+  await u.setInputFiles("#ef", root + "/art/e1.jpg"); await u.waitForFunction(() => document.querySelector("#fp").style.backgroundImage.includes("base64"));
+  await u.click("#fe button"); await u.waitForSelector("#fe .msg.ok"); ok(true, "team member signs up with a photo");
+  await u.click("#lt button[data-m=k]"); await u.fill("#li", "nadege@gmail.com"); await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#fk .msg.err");
+  ok((await u.textContent("#fk .msg")).includes("poko valide"), "pending account cannot log in");
+  await s.click("#tabs button[data-k=ekip]"); await s.waitForSelector("#v .ek");
+  const kat = s.locator("#v .ek", { hasText: "Nadège" }); await kat.locator("select").selectOption("vandeur");
+  await kat.locator("[name=f]").fill("Responsab enskripsyon Leyogàn"); await kat.locator("textarea").fill("Vann tikè nan lekòl yo\nRevoye tikè pèdi");
+  await kat.locator("button", { hasText: "Valide kont lan" }).click(); await s.waitForSelector("#v .ek .bad.valide >> nth=1"); ok(true, "super admin approves with role, job and tasks");
+  await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#tabs button[data-k=mwen]"); await u.click("#tabs button[data-k=mwen]"); await u.waitForSelector("#v .bj");
+  ok((await u.textContent("#v")).includes("Responsab enskripsyon Leyogàn") && (await u.textContent("#v")).includes("Revoye tikè pèdi"), "member sees job, tasks and access");
+  ok((await u.locator("#tabs button").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Espas mwen", "member sees only the tabs of the role");
+  const bj = await rpc("staf_mwen", { p_code: await u.evaluate(() => localStorage.getItem("staf-kod")) });
+  await u.screenshot({ path: S + "7-badj.png", fullPage: true });
+  await u.goto("http://localhost:5174/badj/" + bj[1].badj); await u.waitForSelector(".ver.ok"); ok(true, "badge QR page says valid");
   console.log("page errors:", errs);
   await b.close(); srv.close(); await db.end();
 })().catch(async (e) => { console.error("ERROR", e.message); process.exit(1); });

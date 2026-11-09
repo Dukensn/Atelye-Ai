@@ -155,6 +155,7 @@
   $("#rechaje").onclick = () => telechaje().then(() => rezilta("", "Lis la mizajou", `${Object.keys(B).length} tikè`)).catch((e) => rezilta("rouge", "Pa ka rechaje", e.message));
   $("#soti").onclick = () => { if (Q.length && !confirm(`${Q.length} antre poko voye. Soti kanmenm?`)) return; ["kod", "billets", "queue", "le"].forEach((k) => localStorage.removeItem("skane-" + k)); location.reload(); };
   if (KOD && Object.keys(B).length) { $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); konte(); if (navigator.onLine) telechaje().catch(() => {}); }
+  else if (KOD) antre().catch((e) => { $("#ml").className = "msg err"; $("#ml").textContent = e.message; });   // opened from the team space
 })();
 </script>
 </body>
