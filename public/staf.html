@@ -150,7 +150,7 @@
   const tel = (t) => { const d = String(t || "").replace(/\D/g, ""); return d.length === 8 ? "509" + d : d; };
   const wa = (t, msg) => `https://wa.me/${tel(t)}?text=${encodeURIComponent(msg)}`;
   const premye = (n) => String(n || "").split(" ")[0];
-  const msgTike = (x, code) => `Bonjou ${premye(x.nom)}! 🎉 Peman w lan valide. Men tikè w pou atelye konferans Atelye AI a (${x.code_court}):\n${site}/billet/${code}\n\nSamdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Montre kòd QR a nan pòt la.`;
+  const msgTike = (x, code) => `Bonjou ${premye(x.nom)}! 🎉 Peman w lan valide. Men tikè w pou atelye konferans Atelye AI a (${x.code_court}):\n${site}/billet/${code}\n\nSamdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Montre kòd QR a nan pòt la.${D.evenement && D.evenement.lyen_gwoup ? `\n\n👥 Rejwenn gwoup WhatsApp moun ki rezève yo, se la n ap voye tout enfòmasyon yo:\n${D.evenement.lyen_gwoup}` : ""}`;
   const msgRefi = (x, motif) => `Bonjou ${premye(x.nom)}. Se Atelye AI. Nou pa t ka valide peman pou enskripsyon ${x.code_court}: ${motif}. Reponn mesaj sa a pou n regle sa ansanm.`;
 
   const AK = (k) => !!(ME && (ME.akse_kle || []).includes(k));
@@ -516,11 +516,12 @@
     f.innerHTML = `<h3 style="margin-top:0">Evènman an</h3>
       <label class="l">Non</label><input name="nom"><label class="l">Dat ak lè (lè Ayiti)</label><input name="date" type="datetime-local">
       <label class="l">Kote</label><input name="lieu"><label class="l">Adrès</label><input name="adresse"><label class="l">Kapasite (plas an tout)</label><input name="capacite" type="number" min="1">
+      <label class="l">Lyen gwoup WhatsApp (pou moun ki rezève)</label><input name="lyen_gwoup" type="url" placeholder="https://chat.whatsapp.com/…">
       <label class="l">Estati</label><select name="statut"><option value="ouvert">Louvri</option><option value="ferme">Fèmen</option></select>
       <h3>Tikè yo</h3><p class="mute small">Non · pri $ · pri goud · kota (kantite plas) · dènye dat vant (vid = pa gen limit). Pou rabè premye yo: yon tikè pi bon mache ak yon kota oswa yon dat. Pou retire yon tikè sou sit la: kite pri goud la vid. Tikè lève-bonè a disparèt pou kont li apre dat la.</p><div id="tps"></div>
       <button type="button" class="btn sm light" id="tp-plis">+ Yon tip tikè</button>
       <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Anrejistre</button>`;
-    f.nom.value = e.nom || "Atelye konferans Atelye AI"; f.date.value = loc(e.date); f.lieu.value = e.lieu || ""; f.adresse.value = e.adresse || ""; f.capacite.value = e.capacite || 100; f.statut.value = e.statut || "ouvert";
+    f.nom.value = e.nom || "Atelye konferans Atelye AI"; f.date.value = loc(e.date); f.lieu.value = e.lieu || ""; f.adresse.value = e.adresse || ""; f.capacite.value = e.capacite || 100; f.statut.value = e.statut || "ouvert"; f.lyen_gwoup.value = e.lyen_gwoup || "";
     const tps = f.querySelector("#tps");
     const liy = (t = {}) => { const r = el("div", { className: "tp2" });
       r.innerHTML = `<input placeholder="Non" name="n"><input placeholder="$" name="u" inputmode="decimal"><input placeholder="Goud" name="h" inputmode="numeric"><input placeholder="Kota" name="q" inputmode="numeric"><input type="datetime-local" name="d">`;
@@ -532,7 +533,7 @@
     f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden";
       try {
         const types = [...tps.children].map((r, i) => ({ id: r.dataset.id, nom: r.querySelector("[name=n]").value.trim(), prix_usd: r.querySelector("[name=u]").value, prix_htg: r.querySelector("[name=h]").value, quota: Number(r.querySelector("[name=q]").value || 0), date_fin_vente: iso(r.querySelector("[name=d]").value), ordre: i})).filter((t) => t.nom);
-        await SB.rpc("staf_evenement", { p_code: KOD, p_evenement: { id: e.id || "", nom: f.nom.value, date: iso(f.date.value), lieu: f.lieu.value, adresse: f.adresse.value, capacite: Number(f.capacite.value), statut: f.statut.value }, p_types: types });
+        await SB.rpc("staf_evenement", { p_code: KOD, p_evenement: { id: e.id || "", nom: f.nom.value, date: iso(f.date.value), lieu: f.lieu.value, adresse: f.adresse.value, capacite: Number(f.capacite.value), statut: f.statut.value, lyen_gwoup: f.lyen_gwoup.value }, p_types: types });
         m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await chaje(); TAB = "param";
       } catch (er) { m.className = "msg err"; m.textContent = er.message; } };
     v.append(f);

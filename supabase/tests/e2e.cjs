@@ -28,7 +28,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await db.connect(); await new Promise((r) => srv.listen(5174, r));
   // admin sets the ticket types like on /staf
   const e = (await rpc("evenement_public", {}))[1];
-  await rpc("staf_evenement", { p_code: "sekre-admin-123", p_evenement: { id: e.id, nom: e.nom, date: "2026-11-28T10:00:00-05:00", lieu: "Lise Anacaona", adresse: "Leyogàn", capacite: 100, statut: "ouvert" },
+  await rpc("staf_evenement", { p_code: "sekre-admin-123", p_evenement: { id: e.id, nom: e.nom, date: "2026-11-28T10:00:00-05:00", lieu: "Lise Anacaona", adresse: "Leyogàn", capacite: 100, statut: "ouvert", lyen_gwoup: "https://chat.whatsapp.com/GwoupTest" },
     p_types: [{ nom: "Lève-bonè", prix_usd: "15", prix_htg: "2000", quota: 30, date_fin_vente: "2026-11-20T23:59:00-05:00", ordre: 0 }, { nom: "Estanda", prix_usd: "20", prix_htg: "2600", quota: 70, ordre: 1 }] });
   const e2 = (await rpc("evenement_public", {}))[1];
   await rpc("staf_kreye", { p_code: "sekre-admin-123", p_non: "Mika", p_role: "scanneur", p_nouvo_code: "skane-kod-456" });
@@ -84,7 +84,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await s.click("text=Wè kapti a"); await s.waitForSelector("img.kapti"); ok(true, "payment screenshot visible to staff");
   await s.screenshot({ path: S + "4-queue.png", fullPage: true });
   await s.click("text=Peman an rive, valide"); await s.waitForSelector("text=Pa gen peman k ap tann");
-  const link = opened.find((u) => u.includes("wa.me")); ok(!!link && decodeURIComponent(link).includes("/billet/"), "WhatsApp message with the ticket link");
+  const link = opened.find((u) => u.includes("wa.me")); ok(!!link && decodeURIComponent(link).includes("/billet/"), "WhatsApp message with the ticket link"); ok(decodeURIComponent(link).includes("chat.whatsapp.com/GwoupTest"), "WhatsApp message invites to the group");
   const code = decodeURIComponent(link).match(/billet\/([A-Z0-9]{12})/)[1];
   await s.click("#tabs button[data-k=tablo]"); await s.waitForSelector(".k4"); await s.screenshot({ path: S + "5-tablo.png", fullPage: true });
   await s.click("#tabs button[data-k=lis]"); await s.waitForSelector("text=Ekspòte CSV");
@@ -96,7 +96,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await p.screenshot({ path: S + "6-billet.png", fullPage: true });
   await p.addScriptTag({ url: "/vendor/jsQR.js" });
   const lu = await p.evaluate(() => { const c = document.querySelector("#qr"); const d = c.getContext("2d").getImageData(0, 0, c.width, c.height); const r = jsQR(d.data, c.width, c.height); return r && r.data; });
-  ok(lu === code, "QR decodes to the ticket code");
+  ok(lu === code, "QR decodes to the ticket code"); ok((await p.locator("#gw").getAttribute("href")) === "https://chat.whatsapp.com/GwoupTest" && await p.locator("#gw").isVisible(), "ticket page shows the group button");
   const [img] = await Promise.all([p.waitForEvent("download"), p.click("#sove")]); fs.copyFileSync(await img.path(), S + "7-tike.png"); ok(true, "ticket saved as image");
   // offline: the copy kept on the phone still shows
   await ctx.setOffline(true); await p.reload().catch(() => {}); 

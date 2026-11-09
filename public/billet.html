@@ -58,6 +58,7 @@
     <div class="act">
       <button class="btn full" id="sove" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="vertical-align:-3px;margin-right:6px"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Telechaje tikè a</button>
       <p class="mute small" style="text-align:center;margin:0">Montre kòd QR sa a nan pòt la. Li mache menm san entènèt.</p>
+      <a id="gw" class="btn full hidden" style="margin-top:14px;background:#25d366;color:#fff" target="_blank" rel="noopener">👥 Rejwenn gwoup WhatsApp la</a>
     </div>
   </div>
 
@@ -102,6 +103,7 @@
     const ban = $("#ban");
     ban.className = "ban " + (b.statut === "actif" ? "hidden" : b.statut);
     ban.textContent = b.statut === "annule" ? "Tikè sa a anile." : b.statut === "utilise" ? "Tikè sa a deja itilize nan pòt la." : "";
+    if (b.gwoup && /^https:\/\//.test(b.gwoup)) { $("#gw").href = b.gwoup; $("#gw").classList.remove("hidden"); } else $("#gw").classList.add("hidden");
     $("#tikè").classList.remove("hidden");
     document.title = `Tikè ${b.numero} · Atelye AI`;
   }
