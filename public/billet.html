@@ -17,6 +17,7 @@
   .tk .hd { background: #0f0f0f; color: #fff; padding: 18px 20px; }
   .tk .hd small { color: #d7ff3a; font-weight: 800; letter-spacing: .1em; font-size: 12px; text-transform: uppercase; }
   .tk .hd h1 { font-size: 22px; margin: 6px 0 0; letter-spacing: -0.02em; color: #fff; }
+  .tk { border: 3px solid transparent; }
   .tk .hd { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .tk .lg { flex: none; width: 64px; height: 52px; border-radius: 12px; background: #fff; display: grid; place-items: center; }
   .tk .lg img { width: 50px; height: auto; }
@@ -41,7 +42,7 @@
 <main>
   <div id="tikè" class="hidden">
     <div class="tk" id="tk">
-      <div class="hd"><div><small>Tikè antre</small><h1 id="t-evt">Atelye konferans Atelye AI</h1></div><span class="lg"><img id="t-logo" src="/logo.png" alt="Atelye AI"></span></div>
+      <div class="hd"><div><small id="t-tag">Tikè antre</small><h1 id="t-evt">Atelye konferans Atelye AI</h1></div><span class="lg"><img id="t-logo" src="/logo.png" alt="Atelye AI"></span></div>
       <div class="qr"><canvas id="qr" width="330" height="330" aria-label="Kòd QR tikè a"></canvas></div>
       <div class="num"><small>Nimewo</small><span id="t-num">AT-0000</span></div>
       <div class="cut"></div>
@@ -73,6 +74,7 @@
 </main>
 <script src="/vendor/qrcode.js"></script>
 <script src="/sb.js"></script>
+<script src="/tike.js"></script>
 <script>
 (() => {
   const $ = (q) => document.querySelector(q);
@@ -84,6 +86,7 @@
     g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.fillStyle = "#000";
     for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) g.fillRect(o + k * s, o + r * s, s, s);
   }
+  let T = { hd: "#0f0f0f", tx: "#d7ff3a", sub: "#fff", bd: "#0f0f0f", k: "std" };
   function montre(b) {
     $("#t-evt").textContent = b.evenement.nom;
     $("#t-num").textContent = b.numero; $("#t-non").textContent = b.nom; $("#t-tip").textContent = b.type;
@@ -91,6 +94,10 @@
     $("#t-le").textContent = SB.dat(b.evenement.date, { hour: "2-digit", minute: "2-digit" });
     $("#t-kote").textContent = [b.evenement.lieu, b.evenement.adresse].filter(Boolean).join(", ");
     qr($("#qr"), b.code);
+    T = TIKE.tem(b.type);
+    $("#t-tag").textContent = "Tikè antre · " + b.type;
+    $(".tk .hd").style.background = T.hd; $("#t-tag").style.color = T.tx; $("#t-evt").style.color = T.sub;
+    $("#tk").style.borderColor = T.k === "std" ? "transparent" : T.bd;
     $("#tk").classList.toggle("annule", b.statut === "annule");
     const ban = $("#ban");
     ban.className = "ban " + (b.statut === "actif" ? "hidden" : b.statut);
@@ -124,10 +131,10 @@
   // one image with the QR, number and details, to keep in the phone's gallery
   $("#sove").addEventListener("click", () => {
     const W = 720, H = 1180, c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
-    g.fillStyle = "#f2f2f2"; g.fillRect(0, 0, W, H); g.fillStyle = "#fff"; g.fillRect(40, 40, W - 80, H - 80);
-    g.fillStyle = "#0f0f0f"; g.fillRect(40, 40, W - 80, 150);
-    g.fillStyle = "#d7ff3a"; g.font = "800 24px Inter, sans-serif"; g.fillText("TIKÈ ANTRE · ATELYE AI", 80, 100);
-    g.fillStyle = "#fff"; g.font = "800 30px Inter, sans-serif"; g.fillText($("#t-evt").textContent.slice(0, 30), 80, 150);
+    g.fillStyle = T.k === "std" ? "#f2f2f2" : T.bd; g.fillRect(0, 0, W, H); g.fillStyle = "#fff"; g.fillRect(40, 40, W - 80, H - 80);
+    g.fillStyle = T.hd; g.fillRect(40, 40, W - 80, 150);
+    g.fillStyle = T.tx; g.font = "800 24px Inter, sans-serif"; g.fillText(("Tikè antre · " + $("#t-tip").textContent).toUpperCase().slice(0, 34), 80, 100);
+    g.fillStyle = T.sub; g.font = "800 30px Inter, sans-serif"; g.fillText($("#t-evt").textContent.slice(0, 30), 80, 150);
     const lg = $("#t-logo"); g.fillStyle = "#fff"; g.beginPath(); g.roundRect(W - 200, 65, 120, 100, 18); g.fill();
     if (lg.complete && lg.naturalWidth) { const w = 96, h = w * lg.naturalHeight / lg.naturalWidth; g.drawImage(lg, W - 140 - w / 2, 115 - h / 2, w, h); }
     g.drawImage($("#qr"), (W - 520) / 2, 220, 520, 520);

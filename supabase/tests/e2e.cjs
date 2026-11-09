@@ -40,9 +40,14 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   const p = await ctx.newPage(); p.on("pageerror", (x) => errs.push(x.message));
 
   // 1) register
-  await p.goto("http://localhost:5174/konferans"); await p.waitForSelector("#tip .tp");
+  await p.goto("http://localhost:5174/konferans");
+  await p.waitForFunction(() => document.querySelectorAll("#tkg .tk2").length === 2); ok((await p.locator(".pmin").first().textContent()).includes("15"), "hero price from the database"); ok((await p.locator("#tkg .tk2 .tkm").count()) === 2, "ticket cards with sample tickets shown");
+  ok((await p.locator("#enskri").count()) === 0, "no form on the workshop page");
+  const href = await p.locator("#tkg .tk2 .btn").nth(1).getAttribute("href"); ok(/^\/enskri\?tip=/.test(href), "ticket button opens /enskri with the ticket");
+  await p.goto("http://localhost:5174" + href); await p.waitForSelector("#tip .tp");
   ok((await p.locator("#tip .tp").count()) === 2, "two ticket types shown with prices");
-  await p.waitForFunction(() => document.querySelectorAll("#tkg .tk2").length === 2); ok((await p.locator(".pmin").first().textContent()).includes("15"), "hero price from the database"); ok((await p.locator("#tkg .tk2").count()) === 2, "ticket cards shown");
+  ok(await p.locator("#tip input").nth(1).isChecked(), "chosen ticket preselected"); ok((await p.locator("#modl .tkm").count()) === 1, "sample of the chosen ticket shown");
+  await p.locator("#tip .tp").first().click();
   await p.locator("#enskri").scrollIntoViewIfNeeded(); await p.screenshot({ path: S + "1-form.png" });
   await p.fill("#non", "Roselande Pierre"); await p.fill("#telefon", "3864 1234"); await p.selectOption("#nivo", { index: 1 }); await p.selectOption("#vle", { index: 1 });
   await p.click("#f1 button"); await p.waitForSelector("#f2:not(.hidden)");
@@ -57,7 +62,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await p.reload(); await p.waitForSelector("#f3:not(.hidden)"); ok(true, "confirmation kept after reload");
 
   // 2) same phone again → refused
-  const p2 = await ctx.newPage(); await p2.goto("http://localhost:5174/konferans"); await p2.evaluate(() => localStorage.clear()); await p2.reload(); await p2.waitForSelector("#tip .tp");
+  const p2 = await ctx.newPage(); await p2.goto("http://localhost:5174/enskri"); await p2.evaluate(() => localStorage.clear()); await p2.reload(); await p2.waitForSelector("#tip .tp");
   await p2.fill("#non", "Roselande"); await p2.fill("#telefon", "+509 38641234"); await p2.click("#f1 button"); await p2.waitForSelector("#m1.err");
   ok((await p2.textContent("#m1")).includes("enskri deja"), "same phone blocked");
 
