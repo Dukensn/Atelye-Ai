@@ -261,7 +261,7 @@
 
   // ---- my space: role, job, tasks, access and the photo badge
   function vMwen(v) {
-    const b = { ...ME };
+    const b = { ...ME, kind: "ekip" };
     if (!b.foto) v.append(el("div", { className: "alrt", textContent: "📷 Pran foto w kounye a: li obligatwa pou badj ou." }));
     const kol = el("div", { className: "grid2", style: "display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start" });
     const gch = el("div"), drt = el("div", { className: "card mw" });
