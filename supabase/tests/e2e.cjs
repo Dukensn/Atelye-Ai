@@ -5,7 +5,9 @@ const http = require("http"), fs = require("fs"), path = require("path");
 const S = "/tmp/claude-0/-home-user/f3f252e9-ddde-5a6f-90c9-6cc21f0637e8/scratchpad/e2e/"; fs.mkdirSync(S, { recursive: true });
 const root = "/home/user/atelier-ai/public";
 const db = new Client({ host: "localhost", user: "postgres", password: "pw", database: "levve" });
-async function rpc(fn, args) {
+let file = Promise.resolve();   // one database connection: run calls one after another, like the real server would isolate them
+function rpc(fn, args) { const r = file.then(() => rpc1(fn, args)); file = r.catch(() => {}); return r; }
+async function rpc1(fn, args) {
   const ks = Object.keys(args || {}); const sql = `select public.${fn}(${ks.map((k, i) => `${k} => $${i + 1}`).join(", ")}) as r`;
   const vals = ks.map((k) => (args[k] !== null && typeof args[k] === "object" ? JSON.stringify(args[k]) : args[k]));
   await db.query("begin"); await db.query("set local role anon");
@@ -81,11 +83,11 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await s.click("#tabs button[data-k=file]"); await s.waitForTimeout(1500); await s.waitForSelector("#v .card");
   await s.click("text=Wè kapti a"); await s.waitForSelector("img.kapti"); ok(true, "payment screenshot visible to staff");
   await s.screenshot({ path: S + "4-queue.png", fullPage: true });
-  await s.click("text=Peman an rive — Valide"); await s.waitForSelector("text=Pa gen peman k ap tann");
+  await s.click("text=Peman an rive, valide"); await s.waitForSelector("text=Pa gen peman k ap tann");
   const link = opened.find((u) => u.includes("wa.me")); ok(!!link && decodeURIComponent(link).includes("/billet/"), "WhatsApp message with the ticket link");
   const code = decodeURIComponent(link).match(/billet\/([A-Z0-9]{12})/)[1];
-  await s.click("text=Chif"); await s.waitForSelector(".kpi"); await s.screenshot({ path: S + "5-tablo.png", fullPage: true });
-  await s.click("text=Enskripsyon"); await s.waitForSelector("text=Ekspòte CSV");
+  await s.click("#tabs button[data-k=tablo]"); await s.waitForSelector(".k4"); await s.screenshot({ path: S + "5-tablo.png", fullPage: true });
+  await s.click("#tabs button[data-k=lis]"); await s.waitForSelector("text=Ekspòte CSV");
   const [dl] = await Promise.all([s.waitForEvent("download"), s.click("text=Ekspòte CSV")]); const csv = fs.readFileSync(await dl.path(), "utf8");
   ok(csv.includes("Roselande Pierre") && csv.includes(code), "CSV export");
 
@@ -129,7 +131,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await kat.locator("button", { hasText: "Valide kont lan" }).click(); await s.waitForSelector("#v .ek .bad.valide >> nth=1"); ok(true, "super admin approves with role, job and tasks");
   await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#tabs button[data-k=mwen]"); await u.click("#tabs button[data-k=mwen]"); await u.waitForSelector("#v .bj2");
   ok((await u.textContent("#v")).includes("Responsab enskripsyon Leyogàn") && (await u.textContent("#v")).includes("Revoye tikè pèdi"), "member sees job, tasks and access");
-  ok((await u.locator("#tabs button").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Espas mwen", "member sees only the tabs of the role");
+  ok((await u.locator("#tabs button").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Badj mwen", "member sees only the tabs of the role");
   const bj = await rpc("staf_mwen", { p_code: await u.evaluate(() => localStorage.getItem("staf-kod")) });
   await u.screenshot({ path: S + "7-badj.png", fullPage: true });
   await u.goto("http://localhost:5174/badj/" + bj[1].badj); await u.waitForSelector(".ver.ok"); ok(true, "badge QR page says valid");

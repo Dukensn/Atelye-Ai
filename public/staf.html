@@ -8,13 +8,73 @@
 <link rel="icon" href="/icon.png">
 <link rel="stylesheet" href="/style.css">
 <style>
-  body { background: var(--soft); }
-  main { max-width: 980px; margin: 0 auto; padding: 18px 16px 60px; }
+  :root { --bg2: #f5f6f8; --ln2: #eceef2; --ink2: #111827; --mu2: #6b7280; --grn: #16a34a; --org: #f59e0b; }
+  body { background: var(--bg2); color: var(--ink2); }
+  main { max-width: 1120px; margin: 0 auto; padding: 18px 16px 110px; }
+  .card { background: #fff; border: 1px solid var(--ln2); border-radius: 18px; box-shadow: 0 1px 2px rgba(16,24,40,.04); }
+  #app h3 { letter-spacing: -0.01em; }
+  /* app shell: side menu on computers, bottom menu on phones */
+  .shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 22px; align-items: start; }
+  .nv { position: sticky; top: 84px; display: grid; gap: 4px; background: #fff; border: 1px solid var(--ln2); border-radius: 18px; padding: 10px; }
+  .nv button { position: relative; display: flex; align-items: center; gap: 12px; border: 0; background: none; font: inherit; font-weight: 600; font-size: 15px;
+    color: var(--mu2); padding: 11px 12px; border-radius: 12px; cursor: pointer; text-align: left; }
+  .nv button svg { flex: none; width: 21px; height: 21px; }
+  .nv button[aria-selected="true"] { background: #111; color: #fff; }
+  .nv .nb { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #ef4444; color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+  @media (max-width: 900px) {
+    .shell { display: block; }
+    .nv { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; top: auto; display: flex; gap: 2px; overflow-x: auto; border-radius: 20px 20px 0 0; border-width: 1px 0 0;
+      padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); box-shadow: 0 -6px 20px rgba(16,24,40,.08); scrollbar-width: none; }
+    .nv::-webkit-scrollbar { display: none; }
+    .nv button { flex: 1 0 68px; flex-direction: column; gap: 3px; font-size: 11px; padding: 7px 4px; text-align: center; }
+    .nv button[aria-selected="true"] { background: #f1f2f4; color: #111; }
+    .nv .nb { position: absolute; top: 3px; right: 10px; margin: 0; min-width: 18px; height: 18px; font-size: 11px; }
+  }
+  .hi { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; }
+  .hi .av2 { flex: none; width: 48px; height: 48px; border-radius: 50%; background: #eee center/cover no-repeat; display: grid; place-items: center; font-weight: 800; color: #999; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--rk, #ddd); }
+  .hi h2 { margin: 0; font-size: 22px; letter-spacing: -0.02em; } .hi small { color: var(--mu2); font-weight: 600; }
+  .hi .rk { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; margin-left: 6px; }
+  /* home dashboard */
+  .k4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 900px) { .k4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
+  .kt { background: #fff; border: 1px solid var(--ln2); border-radius: 18px; padding: 16px; }
+  .kt .ic { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; margin-bottom: 10px; } .kt .ic svg { width: 19px; height: 19px; }
+  .kt small { display: block; color: var(--mu2); font-weight: 600; font-size: 13px; }
+  .kt b { display: block; font-size: 26px; letter-spacing: -0.03em; margin-top: 2px; } .kt b.g { color: var(--grn); }
+  .kt em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--mu2); }
+  .g2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; margin-top: 14px; } @media (max-width: 900px) { .g2 { grid-template-columns: 1fr; } }
+  .bx { background: #fff; border: 1px solid var(--ln2); border-radius: 18px; padding: 16px 18px; }
+  .bx h4 { margin: 0 0 12px; font-size: 15px; display: flex; justify-content: space-between; } .bx h4 small { color: var(--mu2); font-weight: 600; }
+  .bars { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding: 0; overflow-x: auto; background: none; border-radius: 0; }
+  .bars div { flex: 1 0 22px; max-width: 56px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; font-size: 11px; color: var(--mu2); font-weight: 600; }
+  .bars i { width: 100%; min-height: 4px; background: linear-gradient(180deg, #fbbf24, #f59e0b); border-radius: 6px 6px 3px 3px; display: block; }
+  .rw { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--ln2); } .rw:first-of-type { border-top: 0; }
+  .ai { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 14px; color: #fff; }
+  #v { padding: 0; } .py .tp4 .tx b { font-size: 16px; }
+  .rw .tx { flex: 1; min-width: 0; } .rw .tx b { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .rw .tx small { color: var(--mu2); font-size: 12px; }
+  .rw .mt { text-align: right; font-weight: 800; font-size: 14px; white-space: nowrap; }
+  .pl { display: inline-block; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; margin-top: 3px; }
+  .pl.ok { background: #dcfce7; color: #15803d; } .pl.at { background: #fef3c7; color: #92400e; } .pl.ko { background: #fee2e2; color: #b91c1c; }
+  .tp3 { display: flex; align-items: center; gap: 10px; margin-top: 10px; } .tp3 .tr2 { flex: 1; height: 10px; background: #f1f2f4; border-radius: 5px; overflow: hidden; } .tp3 .tr2 i { display: block; height: 100%; border-radius: 5px; background: #111; }
+  .tp3 span { font-size: 13px; font-weight: 700; min-width: 64px; text-align: right; }
+  /* payment to check */
+  .py { padding: 16px; } .py .tp4 { display: flex; align-items: center; gap: 12px; }
+  .py .mn { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; margin: 12px 0 2px; }
+  .py .mo { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 700; padding: 5px 10px; border-radius: 8px; background: #f1f2f4; }
+  .py .mo.mc { background: #fee2e2; color: #b91c1c; } .py .mo.nc { background: #ffedd5; color: #c2410c; } .py .mo.ka { background: #dcfce7; color: #15803d; }
+  .py code { font-family: ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 700; letter-spacing: .04em; }
+  .py .act2 .btn { flex: 1 1 140px; } .btn.vrt { background: var(--grn); color: #fff; }
+  /* notifications, like "Nouvo vant!" */
+  .tst { position: fixed; z-index: 60; top: 14px; left: 50%; transform: translateX(-50%); display: grid; gap: 8px; width: min(380px, calc(100% - 24px)); pointer-events: none; }
+  .tst div { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 16px; padding: 12px 14px; box-shadow: 0 14px 34px rgba(16,24,40,.18); animation: tin .35s ease-out; pointer-events: auto; }
+  .tst div i { flex: none; width: 36px; height: 36px; border-radius: 11px; background: #dcfce7; color: #15803d; display: grid; place-items: center; font-style: normal; font-weight: 800; }
+  .tst div b { display: block; font-size: 14px; } .tst div small { color: var(--mu2); font-size: 13px; }
+  @keyframes tin { from { transform: translateY(-14px); opacity: 0; } }
   .tabs3 { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
   .tabs3 button { flex: none; border: 0; padding: 10px 14px; border-radius: 999px; background: #fff; font: inherit; font-weight: 600; cursor: pointer; }
   .tabs3 button[aria-selected="true"] { background: #0f0f0f; color: #fff; }
   .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-  .kpi div { background: #fff; border-radius: 14px; padding: 14px 16px; }
+  .kpi div { background: #fff; border: 1px solid var(--ln2); border-radius: 16px; padding: 14px 16px; }
   .kpi small { color: var(--mute); font-weight: 600; } .kpi b { display: block; font-size: 28px; letter-spacing: -0.02em; }
   .row2 { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
   .kv2 { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 14px; margin: 10px 0; }
@@ -23,8 +83,6 @@
   .bad { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: var(--soft); }
   .bad.valide { background: #e7f4ec; color: var(--ok); } .bad.refuse, .bad.annule, .bad.rembourse { background: #fdecea; color: var(--bad); }
   .bad.en_attente { background: #fff1d6; color: #8a5a00; } .bad.utilise { background: #e7f0fd; color: #1d4ed8; }
-  .bars { display: flex; align-items: flex-end; gap: 4px; height: 120px; background: #fff; border-radius: 14px; padding: 12px; overflow-x: auto; }
-  .bars i { flex: 1 0 14px; background: #ffc83d; border-radius: 4px 4px 0 0; position: relative; }
   .kapti { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
   label.l { display: block; font-weight: 600; font-size: 14px; margin: 12px 0 6px; }
   select { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 0; border-radius: 10px; background: var(--soft); }
@@ -74,10 +132,10 @@
   </div>
 
   <div id="app" class="hidden">
-    <div class="row2"><h2 style="margin:0" id="evt">—</h2><span class="mute small" id="mizajou"></span></div>
-    <nav class="tabs3" id="tabs"></nav>
-    <section id="v"></section>
+    <div class="hi"><span class="av2" id="av2"></span><div><h2 id="bon">Bonjou</h2><small><span id="evt">—</span> · <span id="mizajou"></span></small></div></div>
+    <div class="shell"><nav class="nv" id="tabs" aria-label="Meni"></nav><section id="v"></section></div>
   </div>
+  <div class="tst" id="tst" aria-live="polite"></div>
 </main>
 <script src="/vendor/qrcode.js"></script>
 <script src="/sb.js"></script>
@@ -96,6 +154,30 @@
   const msgRefi = (x, motif) => `Bonjou ${premye(x.nom)}. Se Atelye AI. Nou pa t ka valide peman pou enskripsyon ${x.code_court}: ${motif}. Reponn mesaj sa a pou n regle sa ansanm.`;
 
   const AK = (k) => !!(ME && (ME.akse_kle || []).includes(k));
+  const sv = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+  const IK = {
+    tablo: sv("M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"), file: sv("M9 12l2 2 4-4M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"),
+    kach: sv("M15 19a6 6 0 0 0-12 0M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM19 8v6M22 11h-6"), lis: sv("M21 21l-4.3-4.3M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z"),
+    rapel: sv("M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0"), ekip: sv("M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"),
+    wol: sv("M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"), param: sv("M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"),
+    mwen: sv("M4 4h16v16H4zM12 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM7.5 17c.8-2.4 8.2-2.4 9 0") };
+  // notifications: a new payment to check or a new sign-up since the last refresh
+  let VI2 = null, NEK = 0;
+  function tost(ik, tit, det) {
+    const t = el("div", {}, el("i", { textContent: ik }), el("span", {}, el("b", { textContent: tit }), el("small", { textContent: det })));
+    $("#tst").append(t); if (navigator.vibrate) navigator.vibrate(60); setTimeout(() => t.remove(), 6000);
+  }
+  function nouvo() {
+    const fi = new Set(D.file.map((x) => x.id)), li = new Set((D.lis || []).map((x) => x.id));
+    if (VI2) {
+      D.file.filter((x) => !VI2.fi.has(x.id)).slice(0, 3).forEach((x) => tost("$", "Nouvo peman pou verifye", `${x.nom} · ${SB.goud(x.montant)}`));
+      (D.lis || []).filter((x) => !VI2.li.has(x.id) && !fi.has(x.id)).slice(0, 3).forEach((x) => tost("+", "Nouvo enskripsyon", `${x.nom} · ${x.type}`));
+    }
+    VI2 = { fi, li };
+  }
+  const KL = ["#f59e0b", "#3b82f6", "#22c55e", "#a855f7", "#ef4444", "#0ea5e9", "#14b8a6"];
+  const ai = (n) => { const s = String(n || "?"); let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    return el("span", { className: "ai", textContent: s.split(/\s+/).filter(Boolean).map((x) => x[0]).join("").slice(0, 2).toUpperCase(), style: `background:${KL[h % KL.length]}` }); };
   async function chaje() {
     ME = await SB.rpc("staf_mwen", { p_code: KOD });
     D = await SB.rpc("staf_tablo", { p_code: KOD });
@@ -104,14 +186,21 @@
     $("#mizajou").textContent = "Mizajou " + new Date().toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
     // tabs follow the access rights of the member's role
     const T = [
-      AK("valide_peman") && ["file", `Validasyon (${D.file.length})`], AK("chif") && ["tablo", "Chif"],
+      AK("chif") && ["tablo", "Akèy"], AK("valide_peman") && ["file", "Peman"],
       AK("enskri_sou_plas") && ["kach", "Enskri yon moun"],
       (AK("lis_enskripsyon") || AK("jwenn_tike")) && ["lis", AK("lis_enskripsyon") ? "Enskripsyon" : "Jwenn yon tikè"], AK("rapel") && ["rapel", "Rapèl"],
-      AK("jere_ekip") && ["ekip", "Ekip"], AK("jere_ekip") && ["wol", "Wòl"], AK("pri_evenman") && ["param", "Paramèt"], ["mwen", "Espas mwen"]].filter(Boolean);
+      AK("jere_ekip") && ["ekip", "Ekip"], AK("jere_ekip") && ["wol", "Wòl"], AK("pri_evenman") && ["param", "Paramèt"], ["mwen", "Badj mwen"]].filter(Boolean);
+    NEK = AK("jere_ekip") ? (await SB.rpc("staf_ekip", { p_code: KOD }).catch(() => [])).filter((x) => x.statut === "en_attente").length : 0;
+    nouvo();
     if (!ME.foto && !VI) TAB = "mwen";   // first screen asks for the badge photo
     VI = true;
     if (!T.some(([k]) => k === TAB)) TAB = T[0][0];
-    $("#tabs").replaceChildren(...T.map(([k, t]) => { const b = el("button", { type: "button", textContent: t }); b.dataset.k = k; b.setAttribute("aria-selected", String(k === TAB)); b.onclick = () => { TAB = k; afiche(); chaje().catch(() => {}); }; return b; }));
+    $("#tabs").replaceChildren(...T.map(([k, t]) => { const b = el("button", { type: "button", innerHTML: IK[k] || "" }); b.append(el("span", { textContent: t }));
+      const n = { file: D.file.length, ekip: NEK }[k]; if (n) b.append(el("span", { className: "nb", textContent: n }));
+      b.dataset.k = k; b.setAttribute("aria-selected", String(k === TAB)); b.onclick = () => { TAB = k; afiche(); scrollTo(0, 0); chaje().catch(() => {}); }; return b; }));
+    $("#bon").textContent = "Bonjou, " + premye(ME.non);
+    const av = $("#av2"); av.style.setProperty("--rk", ME.koule || "#ddd");
+    if (ME.foto) { av.style.backgroundImage = `url(data:image/jpeg;base64,${ME.foto})`; av.textContent = ""; } else av.textContent = (ME.non || "?")[0];
     afiche();
   }
   async function antre(k) {
@@ -150,25 +239,27 @@
 
   function afiche() {
     document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.k === TAB)));
-    const v = $("#v"); v.replaceChildren();
+    const v = el("div"); $("#v").replaceChildren(v);   // a fresh box each time, so a slower earlier render cannot add a second copy
     if (!D.evenement && !["mwen", "ekip", "wol"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
     ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, wol: vWol, mwen: vMwen }[TAB] || vMwen)(v);
   }
 
-  // ---- validation queue: oldest first
+  // ---- payments to check: oldest first, one clear card each
   function vFile(v) {
-    if (!D.file.length) { v.append(el("p", { className: "mute", textContent: "Pa gen peman k ap tann. ✓" })); return; }
-    v.append(el("p", { className: "mute small", textContent: "Pi ansyen an anlè. Konpare ak istorik MonCash/NatCash la anvan w valide." }));
+    if (!D.file.length) { v.append(el("div", { className: "bx", style: "text-align:center;padding:30px" }, el("b", { textContent: "Pa gen peman k ap tann ✓" }), el("p", { className: "mute", style: "margin:6px 0 0", textContent: "Nou ap montre w yon notifikasyon lè yon nouvo peman rive." }))); return; }
+    v.append(el("p", { className: "mute small", textContent: "Pi ansyen an anlè. Gade istorik MonCash/NatCash ou: si ou wè menm montan an ak menm nimewo tranzaksyon an, valide." }));
     D.file.forEach((x) => {
-      const kv = el("dl", { className: "kv2" });
-      [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Montan", SB.goud(x.montant)], ["Peman", (x.moyen || "").toUpperCase() + " · " + x.reference], ["Voye", SB.dat(x.soumis_le, { dateStyle: "short", timeStyle: "short" })]]
-        .forEach(([k, val]) => kv.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
-      const kat = el("div", { className: "card" }, el("div", { className: "row2" }, el("h3", { style: "margin:0", textContent: x.nom }), el("span", { className: "bad en_attente", textContent: "An atant" })), kv);
-      const a = el("div", { className: "act2" });
-      a.append(bouton("Peman an rive — Valide", async () => {
+      const mo = (x.moyen || "").toLowerCase(), k = el("div", { className: "card py" });
+      k.append(el("div", { className: "tp4" }, ai(x.nom), el("div", { className: "tx", style: "flex:1;min-width:0" }, el("b", { textContent: x.nom }), el("br"), el("small", { className: "mute", textContent: `${x.type} · ${x.code_court} · ${SB.dat(x.soumis_le, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}` })),
+        el("span", { className: "pl at", textContent: "Pou verifye" })));
+      k.append(el("div", { className: "mn", textContent: SB.goud(x.montant) }));
+      k.append(el("div", { style: "display:flex;gap:8px;flex-wrap:wrap;align-items:center" }, el("span", { className: "mo " + (mo === "moncash" ? "mc" : mo === "natcash" ? "nc" : "ka"), textContent: mo === "moncash" ? "MonCash" : mo === "natcash" ? "NatCash" : "Kach" }),
+        el("span", { className: "mute small", textContent: "Tranzaksyon" }), el("code", { textContent: x.reference }), el("span", { className: "mute small", textContent: "· " + x.telephone })));
+      const a = el("div", { className: "act2", style: "margin-top:14px" });
+      const vb = bouton("✓ Peman an rive, valide", async () => {
         const r = await SB.rpc("staf_valide", { p_code: KOD, p_id: x.id });
-        window.open(wa(x.telephone, msgTike(x, r.billet)), "_blank"); await chaje();
-      }));
+        window.open(wa(x.telephone, msgTike(x, r.billet)), "_blank"); tost("✓", "Peman valide", `${x.nom} resevwa tikè a sou WhatsApp`); await chaje();
+      }); vb.classList.add("vrt"); a.append(vb);
       a.append(bouton("Refize", async () => {
         const motif = prompt("Poukisa? (moun nan ap wè rezon sa a)"); if (!motif) return;
         await SB.rpc("staf_refize", { p_code: KOD, p_id: x.id, p_motif: motif });
@@ -178,21 +269,41 @@
         const c = await SB.rpc("staf_kapti", { p_code: KOD, p_id: x.id }); if (!c) return;
         b.replaceWith(el("img", { className: "kapti", src: `data:${c.type};base64,${c.data}`, alt: "Kapti peman" }));
       }, true));
-      kat.append(a); v.append(kat);
+      k.append(a); v.append(k);
     });
   }
 
-  // ---- key numbers
+  // ---- home: key numbers, sign-ups per day, latest sign-ups, seats per ticket
   function vTablo(v) {
     const c = D.chif, j = D.jour_j || { entres: 0, attendus: 0 };
     const restan = D.types.reduce((s, t) => s + Math.max(t.restants, 0), 0);
-    v.append(el("div", { className: "kpi" }, ...[["Enskri", c.inscrits], ["Peye", c.payes], ["An atant", c.en_attente], ["Poko peye", c.sans_paiement], ["Refize", c.refuses], ["Lajan antre", SB.goud(c.recettes_htg)], ["Plas ki rete", restan], ["Jou J: antre", `${j.entres} / ${j.attendus}`]]
-      .map(([k, n]) => el("div", {}, el("small", { textContent: k }), el("b", { textContent: n })))));
-    v.append(el("h3", { textContent: "Plas pa tikè" }));
-    v.append(el("div", { className: "kpi" }, ...D.types.map((t) => el("div", {}, el("small", { textContent: `${t.nom} · ${SB.goud(t.prix_htg || 0)}` }), el("b", { textContent: `${Math.max(t.restants, 0)} / ${t.quota}` })))));
-    v.append(el("h3", { textContent: "Enskripsyon pa jou" }));
-    const mx = Math.max(1, ...D.par_jour.map((d) => d.n));
-    v.append(el("div", { className: "bars" }, ...D.par_jour.map((d) => { const i = el("i", { title: `${d.jour}: ${d.n}` }); i.style.height = `${(d.n / mx) * 100}%`; return i; })));
+    const tl = (ik, bg, fg, lab, val, sub, g) => el("div", { className: "kt" }, el("span", { className: "ic", style: `background:${bg};color:${fg}`, innerHTML: ik }),
+      el("small", { textContent: lab }), el("b", { className: g ? "g" : "", textContent: val }), sub ? el("em", { textContent: sub }) : null);
+    v.append(el("div", { className: "k4" },
+      tl(sv("M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"), "#dcfce7", "#15803d", "Lajan antre", SB.goud(c.recettes_htg), `${c.payes} tikè peye`, true),
+      tl(IK.ekip, "#dbeafe", "#1d4ed8", "Enskri", c.inscrits, `${c.sans_paiement} poko peye`),
+      tl(IK.file, "#fef3c7", "#b45309", "Peman pou verifye", c.en_attente, c.en_attente ? "Ale nan « Peman »" : "Tout verifye ✓"),
+      tl(sv("M3 9h18M3 15h18M9 3v18"), "#f3e8ff", "#7e22ce", "Plas ki rete", restan, `Jou J: ${j.entres} / ${j.attendus} antre`)));
+    const g = el("div", { className: "g2" });
+    // sign-ups per day
+    const jou = D.par_jour.slice(-10), mx = Math.max(1, ...jou.map((d) => d.n));
+    const ba = el("div", { className: "bx" }, el("h4", {}, el("span", { textContent: "Enskripsyon pa jou" }), el("small", { textContent: "10 dènye jou" })));
+    ba.append(jou.length ? el("div", { className: "bars" }, ...jou.map((d) => { const i = el("i"); i.style.height = `${Math.max(4, (d.n / mx) * 100)}%`;
+      return el("div", { title: `${d.jour}: ${d.n}` }, el("span", { textContent: d.n }), i, el("span", { textContent: String(d.jour).slice(8, 10) + "/" + String(d.jour).slice(5, 7) })); }))
+      : el("p", { className: "mute", textContent: "Poko gen enskripsyon." }));
+    // latest sign-ups, like the order list in the video
+    const dn = el("div", { className: "bx" }, el("h4", {}, el("span", { textContent: "Dènye enskripsyon" }), el("small", { textContent: `${c.inscrits} an tout` })));
+    const L = (D.lis || []).slice(0, 6);
+    if (!L.length) dn.append(el("p", { className: "mute", textContent: "Poko gen enskripsyon." }));
+    L.forEach((x) => { const st = x.statut === "valide" ? ["ok", "Peye"] : x.statut === "en_attente" ? ["at", x.reference ? "Pou verifye" : "Poko peye"] : ["ko", x.statut === "refuse" ? "Refize" : "Ranbouse"];
+      dn.append(el("div", { className: "rw" }, ai(x.nom), el("div", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: x.cree_le ? `${x.type} · ${SB.dat(x.cree_le, { day: "numeric", month: "short" })}` : x.type })),
+        el("div", { className: "mt" }, x.montant ? SB.goud(x.montant) : "", el("br"), el("span", { className: "pl " + st[0], textContent: st[1] })))); });
+    g.append(ba, dn); v.append(g);
+    // seats per ticket
+    const pt = el("div", { className: "bx", style: "margin-top:14px" }, el("h4", {}, el("span", { textContent: "Plas pa tikè" })));
+    D.types.filter((t) => t.prix_htg != null).forEach((t) => { const pr = Math.max(0, t.quota - Math.max(t.restants, 0)), i = el("i"); i.style.width = `${t.quota ? (pr / t.quota) * 100 : 0}%`;
+      pt.append(el("div", {}, el("small", { className: "mute", textContent: `${t.nom} · ${SB.goud(t.prix_htg)}${t.bloke ? " · poko louvri" : ""}` }), el("div", { className: "tp3" }, el("div", { className: "tr2" }, i), el("span", { textContent: `${pr} / ${t.quota}` })))); });
+    v.append(pt);
   }
 
   // ---- full list, search, resend / cancel / refund, CSV
@@ -215,7 +326,8 @@
           if (AK("ranbouse_anile")) a.append(bouton("Anile tikè a", async () => { if (!confirm(`Anile tikè ${x.code_court}?`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: false }); await chaje(); }, true));
           if (AK("ranbouse_anile")) a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); await chaje(); }, true));
         }
-        return el("div", { className: "card" }, el("div", { className: "row2" }, el("h3", { style: "margin:0", textContent: x.nom }), el("span", { className: "bad " + st, textContent: st.replace("_", " ") })), kv, a);
+        const ps = { valide: ["ok", "Peye"], actif: ["ok", "Tikè aktif"], utilise: ["ok", "Antre ✓"], en_attente: ["at", "An atant"], refuse: ["ko", "Refize"], annule: ["ko", "Anile"], rembourse: ["ko", "Ranbouse"] }[st] || ["at", st];
+        return el("div", { className: "card", style: "padding:14px 16px" }, el("div", { className: "rw", style: "padding:0" }, ai(x.nom), el("div", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: `${x.code_court} · ${x.type}` })), el("span", { className: "pl " + ps[0], textContent: ps[1] })), kv, a);
       }));
     };
     s.oninput = () => { FILT = s.value; rann(); }; rann();
