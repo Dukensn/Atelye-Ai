@@ -1,243 +1,84 @@
 <template>
 <style>
-#root { position:absolute; inset:0; overflow:hidden; font-family:Montserrat, Inter, sans-serif; color:#fff;
-  background: radial-gradient(900px 700px at 40% 45%, #2b2410 0%, #121014 50%, #08080b 100%); }
-#vt-glow { position:absolute; left:620px; top:160px; width:700px; height:700px; border-radius:50%; background:radial-gradient(circle, rgba(255,200,61,.45), rgba(255,200,61,0) 65%); }
-#vt-kick { position:absolute; left:110px; top:90px; font-size:28px; font-weight:800; letter-spacing:.18em; color:#0f0f0f; background:#ffc83d; padding:8px 16px; border-radius:8px; }
-#vt-h1 { position:absolute; left:110px; top:150px; font-size:96px; font-weight:900; line-height:.95; letter-spacing:-.02em; }
-#vt-h1 em { font-style:normal; color:#ffc83d; }
-#vt-l1, #vt-l2 { position:absolute; left:110px; top:370px; font-family:Inter, sans-serif; font-size:40px; font-weight:700; color:#f2f2f2; }
-#vt-l2 { top:425px; color:#ffc83d; }
-#vt-stage { position:absolute; left:760px; top:250px; width:420px; height:520px; perspective:1200px; }
-.cv { position:absolute; inset:0; border-radius:24px; overflow:hidden; background:#fff; box-shadow:0 30px 90px rgba(0,0,0,.6); }
-#vt-card .im { height:300px; background:url(assets/cover.jpg) center/cover; }
-#vt-card .tx { padding:22px; color:#0f0f0f; }
-#vt-card .tx small { font-family:Inter, sans-serif; font-weight:700; font-size:18px; color:#1f7a43; letter-spacing:.08em; }
-#vt-card .tx b { display:block; font-size:34px; font-weight:900; line-height:1.05; margin-top:6px; }
-#vt-card .pr { position:absolute; right:20px; bottom:20px; background:#ffc83d; color:#0f0f0f; font-weight:900; font-size:28px; padding:8px 14px; border-radius:10px; }
-.cl { position:absolute; left:760px; top:250px; width:420px; height:520px; border-radius:24px; background:linear-gradient(#ffffff 0 58%, #f3f3f3 58%); border:3px solid #ffc83d; }
-#vt-crowd { position:absolute; left:110px; top:530px; width:520px; height:340px; }
-#vt-crowd i { position:absolute; width:20px; height:20px; border-radius:50%; background:#3a3a44; }
-#vt-count { position:absolute; left:110px; top:880px; }
-#vt-count small { display:none; }
-#vt-count b { display:block; font-size:110px; font-weight:900; color:#ffc83d; line-height:1; }
-#vt-phone { position:absolute; left:1320px; top:110px; width:470px; height:860px; border-radius:56px; background:#0f0f0f; padding:16px; box-shadow:0 40px 120px rgba(0,0,0,.6), 0 0 0 3px #2a2a30 inset; }
-#vt-scr { width:100%; height:100%; border-radius:42px; overflow:hidden; position:relative; background:linear-gradient(160deg,#1d2b64,#0f0f0f); }
-#vt-time { position:absolute; left:0; right:0; top:60px; text-align:center; font-size:96px; font-weight:800; }
-#vt-date { position:absolute; left:0; right:0; top:180px; text-align:center; font-family:Inter, sans-serif; font-size:28px; color:#e6e6e6; }
-#vt-list { position:absolute; left:18px; right:18px; top:250px; } #vt-scr::after { content:""; position:absolute; left:0; right:0; top:0; height:250px; background:linear-gradient(#1d2b64 88%, rgba(29,43,100,0)); pointer-events:none; z-index:1; } #vt-time, #vt-date { z-index:2; }
-.ts { display:flex; gap:14px; align-items:center; background:#ffffff; color:#0f0f0f; border-radius:22px; padding:14px 16px; margin-bottom:12px; }
-.ts .ic { flex:none; width:52px; height:52px; border-radius:14px; background:#1f7a43; color:#fff; font-weight:900; font-size:30px; display:flex; align-items:center; justify-content:center; }
-.ts b { display:block; font-size:22px; } .ts small { font-family:Inter, sans-serif; font-size:18px; color:#333; }
-#vt-fade { position:absolute; inset:0; background:#08080b; }
+#root { position:absolute; inset:0; overflow:hidden; background:#ffffff; font-family:Inter, sans-serif; color:#111827; }
+#vb-bgc { position:absolute; left:-200px; top:-200px; width:1100px; height:1100px; border-radius:50%; background:radial-gradient(circle, #fff6dc, rgba(255,246,220,0) 65%); }
+#vb-kick { position:absolute; left:100px; top:80px; font-family:Montserrat, sans-serif; font-size:28px; font-weight:800; letter-spacing:.16em; background:#ffc83d; color:#111; padding:8px 16px; border-radius:8px; }
+#vb-h1 { position:absolute; left:100px; top:140px; font-family:Montserrat, sans-serif; font-size:64px; font-weight:900; line-height:1.02; letter-spacing:-.02em; width:760px; }
+#vb-h1 em { font-style:normal; color:#e0a400; }
+#vb-book { position:absolute; left:150px; top:380px; width:380px; height:520px; perspective:1400px; }
+#vb-cover { position:absolute; inset:0; border-radius:6px 18px 18px 6px; background:linear-gradient(150deg,#0f1b3d,#1e3a8a); color:#fff; padding:40px 34px; box-shadow:22px 30px 60px rgba(17,24,39,.28), inset 10px 0 0 rgba(255,255,255,.08); transform-style:preserve-3d; }
+#vb-cover small { font-size:20px; font-weight:700; letter-spacing:.14em; color:#ffc83d; }
+#vb-cover b { display:block; font-family:Montserrat, sans-serif; font-size:50px; font-weight:900; line-height:1.02; margin-top:18px; }
+#vb-cover p { font-size:22px; color:#c7d2fe; margin-top:18px; line-height:1.35; }
+#vb-cover .ft { position:absolute; left:34px; right:34px; bottom:34px; display:flex; justify-content:space-between; align-items:center; font-size:20px; font-weight:700; }
+#vb-cover .ft span { background:#ffc83d; color:#111; padding:6px 12px; border-radius:8px; }
+#vb-chips { position:absolute; left:100px; top:940px; display:flex; gap:14px; }
+.ch { display:flex; align-items:center; gap:10px; padding:12px 18px; border-radius:999px; background:#f3f4f6; font-size:22px; font-weight:700; }
+.ch i { width:16px; height:16px; border-radius:4px; }
+#vb-toast { position:absolute; left:470px; top:430px; background:#fff; border-radius:16px; padding:16px 20px; display:flex; gap:14px; align-items:center; box-shadow:0 16px 40px rgba(17,24,39,.18); }
+#vb-toast .ic { width:48px; height:48px; border-radius:12px; background:#10b981; color:#fff; font-weight:900; font-size:28px; display:flex; align-items:center; justify-content:center; }
+#vb-toast b { display:block; font-size:24px; } #vb-toast small { font-size:19px; color:#4b5563; }
+#vb-dash { position:absolute; left:880px; top:70px; width:960px; height:940px; border-radius:24px; background:#fff; box-shadow:0 30px 80px rgba(17,24,39,.12), 0 0 0 1px #e5e7eb; padding:34px 38px; }
+#vb-dash h3 { font-size:28px; font-weight:800; } #vb-dash h3 small { font-size:20px; color:#6b7280; font-weight:500; margin-left:10px; }
+#vb-kp { display:flex; gap:18px; margin-top:20px; }
+.k { flex:1; border:1px solid #e5e7eb; border-radius:16px; padding:18px 20px; }
+.k small { font-size:19px; color:#6b7280; font-weight:600; } .k b { display:block; font-size:44px; font-weight:800; letter-spacing:-.02em; margin-top:4px; }
+.k.g { flex:1.7; } .k.g b { color:#059669; white-space:nowrap; }
+#vb-ch { margin-top:20px; height:170px; border:1px solid #e5e7eb; border-radius:16px; padding:18px 20px; display:flex; align-items:flex-end; gap:14px; }
+#vb-ch i { flex:1; border-radius:8px 8px 3px 3px; background:linear-gradient(#ffc83d,#f59e0b); transform-origin:bottom; }
+#vb-ol { margin-top:20px; }
+#vb-ol h4 { font-size:21px; font-weight:700; margin-bottom:6px; }
+.or { display:flex; align-items:center; gap:16px; padding:10px 0; border-bottom:1px solid #f0f1f3; }
+.or .av { width:44px; height:44px; border-radius:50%; color:#fff; font-weight:800; font-size:21px; display:flex; align-items:center; justify-content:center; flex:none; }
+.on { flex:1; } .on b { font-size:21px; } .on small { display:block; font-size:17px; color:#6b7280; }
+.oa { font-size:22px; font-weight:800; width:160px; text-align:right; }
+.ok { font-size:17px; font-weight:700; color:#047857; background:#d1fae5; padding:6px 12px; border-radius:999px; }
 </style>
 <div id="root" data-composition-id="vant" data-width="1920" data-height="1080" data-layout-allow-overflow>
-  <div id="vt-glow" data-layout-ignore></div>
-  <div id="vt-kick">PWODWI DIJITAL</div>
-  <div id="vt-h1">VANN<br><em>SAN LIMIT</em></div>
-  <div id="vt-l1">Kreye l yon sèl fwa…</div>
-  <div id="vt-l2">…vann li bay mil moun.</div>
-  <div id="vt-clones" data-layout-ignore><div class="cl" id="vt-c0"></div>
-<div class="cl" id="vt-c1"></div>
-<div class="cl" id="vt-c2"></div>
-<div class="cl" id="vt-c3"></div>
-<div class="cl" id="vt-c4"></div>
-<div class="cl" id="vt-c5"></div>
-<div class="cl" id="vt-c6"></div>
-<div class="cl" id="vt-c7"></div>
-<div class="cl" id="vt-c8"></div>
-<div class="cl" id="vt-c9"></div></div>
-  <div id="vt-stage" data-layout-ignore><div class="cv" id="vt-card"><div class="im"></div><div class="tx"><small>KOU VIDEYO</small><b>Kreye videyo<br>ak AI</b></div><div class="pr">1 500 HTG</div></div></div>
-  <div id="vt-crowd" data-layout-ignore><i id="vt-d0" style="left:0px;top:0px"></i>
-<i id="vt-d1" style="left:34px;top:0px"></i>
-<i id="vt-d2" style="left:68px;top:0px"></i>
-<i id="vt-d3" style="left:102px;top:0px"></i>
-<i id="vt-d4" style="left:136px;top:0px"></i>
-<i id="vt-d5" style="left:170px;top:0px"></i>
-<i id="vt-d6" style="left:204px;top:0px"></i>
-<i id="vt-d7" style="left:238px;top:0px"></i>
-<i id="vt-d8" style="left:272px;top:0px"></i>
-<i id="vt-d9" style="left:306px;top:0px"></i>
-<i id="vt-d10" style="left:340px;top:0px"></i>
-<i id="vt-d11" style="left:374px;top:0px"></i>
-<i id="vt-d12" style="left:408px;top:0px"></i>
-<i id="vt-d13" style="left:442px;top:0px"></i>
-<i id="vt-d14" style="left:476px;top:0px"></i>
-<i id="vt-d15" style="left:0px;top:34px"></i>
-<i id="vt-d16" style="left:34px;top:34px"></i>
-<i id="vt-d17" style="left:68px;top:34px"></i>
-<i id="vt-d18" style="left:102px;top:34px"></i>
-<i id="vt-d19" style="left:136px;top:34px"></i>
-<i id="vt-d20" style="left:170px;top:34px"></i>
-<i id="vt-d21" style="left:204px;top:34px"></i>
-<i id="vt-d22" style="left:238px;top:34px"></i>
-<i id="vt-d23" style="left:272px;top:34px"></i>
-<i id="vt-d24" style="left:306px;top:34px"></i>
-<i id="vt-d25" style="left:340px;top:34px"></i>
-<i id="vt-d26" style="left:374px;top:34px"></i>
-<i id="vt-d27" style="left:408px;top:34px"></i>
-<i id="vt-d28" style="left:442px;top:34px"></i>
-<i id="vt-d29" style="left:476px;top:34px"></i>
-<i id="vt-d30" style="left:0px;top:68px"></i>
-<i id="vt-d31" style="left:34px;top:68px"></i>
-<i id="vt-d32" style="left:68px;top:68px"></i>
-<i id="vt-d33" style="left:102px;top:68px"></i>
-<i id="vt-d34" style="left:136px;top:68px"></i>
-<i id="vt-d35" style="left:170px;top:68px"></i>
-<i id="vt-d36" style="left:204px;top:68px"></i>
-<i id="vt-d37" style="left:238px;top:68px"></i>
-<i id="vt-d38" style="left:272px;top:68px"></i>
-<i id="vt-d39" style="left:306px;top:68px"></i>
-<i id="vt-d40" style="left:340px;top:68px"></i>
-<i id="vt-d41" style="left:374px;top:68px"></i>
-<i id="vt-d42" style="left:408px;top:68px"></i>
-<i id="vt-d43" style="left:442px;top:68px"></i>
-<i id="vt-d44" style="left:476px;top:68px"></i>
-<i id="vt-d45" style="left:0px;top:102px"></i>
-<i id="vt-d46" style="left:34px;top:102px"></i>
-<i id="vt-d47" style="left:68px;top:102px"></i>
-<i id="vt-d48" style="left:102px;top:102px"></i>
-<i id="vt-d49" style="left:136px;top:102px"></i>
-<i id="vt-d50" style="left:170px;top:102px"></i>
-<i id="vt-d51" style="left:204px;top:102px"></i>
-<i id="vt-d52" style="left:238px;top:102px"></i>
-<i id="vt-d53" style="left:272px;top:102px"></i>
-<i id="vt-d54" style="left:306px;top:102px"></i>
-<i id="vt-d55" style="left:340px;top:102px"></i>
-<i id="vt-d56" style="left:374px;top:102px"></i>
-<i id="vt-d57" style="left:408px;top:102px"></i>
-<i id="vt-d58" style="left:442px;top:102px"></i>
-<i id="vt-d59" style="left:476px;top:102px"></i>
-<i id="vt-d60" style="left:0px;top:136px"></i>
-<i id="vt-d61" style="left:34px;top:136px"></i>
-<i id="vt-d62" style="left:68px;top:136px"></i>
-<i id="vt-d63" style="left:102px;top:136px"></i>
-<i id="vt-d64" style="left:136px;top:136px"></i>
-<i id="vt-d65" style="left:170px;top:136px"></i>
-<i id="vt-d66" style="left:204px;top:136px"></i>
-<i id="vt-d67" style="left:238px;top:136px"></i>
-<i id="vt-d68" style="left:272px;top:136px"></i>
-<i id="vt-d69" style="left:306px;top:136px"></i>
-<i id="vt-d70" style="left:340px;top:136px"></i>
-<i id="vt-d71" style="left:374px;top:136px"></i>
-<i id="vt-d72" style="left:408px;top:136px"></i>
-<i id="vt-d73" style="left:442px;top:136px"></i>
-<i id="vt-d74" style="left:476px;top:136px"></i>
-<i id="vt-d75" style="left:0px;top:170px"></i>
-<i id="vt-d76" style="left:34px;top:170px"></i>
-<i id="vt-d77" style="left:68px;top:170px"></i>
-<i id="vt-d78" style="left:102px;top:170px"></i>
-<i id="vt-d79" style="left:136px;top:170px"></i>
-<i id="vt-d80" style="left:170px;top:170px"></i>
-<i id="vt-d81" style="left:204px;top:170px"></i>
-<i id="vt-d82" style="left:238px;top:170px"></i>
-<i id="vt-d83" style="left:272px;top:170px"></i>
-<i id="vt-d84" style="left:306px;top:170px"></i>
-<i id="vt-d85" style="left:340px;top:170px"></i>
-<i id="vt-d86" style="left:374px;top:170px"></i>
-<i id="vt-d87" style="left:408px;top:170px"></i>
-<i id="vt-d88" style="left:442px;top:170px"></i>
-<i id="vt-d89" style="left:476px;top:170px"></i>
-<i id="vt-d90" style="left:0px;top:204px"></i>
-<i id="vt-d91" style="left:34px;top:204px"></i>
-<i id="vt-d92" style="left:68px;top:204px"></i>
-<i id="vt-d93" style="left:102px;top:204px"></i>
-<i id="vt-d94" style="left:136px;top:204px"></i>
-<i id="vt-d95" style="left:170px;top:204px"></i>
-<i id="vt-d96" style="left:204px;top:204px"></i>
-<i id="vt-d97" style="left:238px;top:204px"></i>
-<i id="vt-d98" style="left:272px;top:204px"></i>
-<i id="vt-d99" style="left:306px;top:204px"></i>
-<i id="vt-d100" style="left:340px;top:204px"></i>
-<i id="vt-d101" style="left:374px;top:204px"></i>
-<i id="vt-d102" style="left:408px;top:204px"></i>
-<i id="vt-d103" style="left:442px;top:204px"></i>
-<i id="vt-d104" style="left:476px;top:204px"></i>
-<i id="vt-d105" style="left:0px;top:238px"></i>
-<i id="vt-d106" style="left:34px;top:238px"></i>
-<i id="vt-d107" style="left:68px;top:238px"></i>
-<i id="vt-d108" style="left:102px;top:238px"></i>
-<i id="vt-d109" style="left:136px;top:238px"></i>
-<i id="vt-d110" style="left:170px;top:238px"></i>
-<i id="vt-d111" style="left:204px;top:238px"></i>
-<i id="vt-d112" style="left:238px;top:238px"></i>
-<i id="vt-d113" style="left:272px;top:238px"></i>
-<i id="vt-d114" style="left:306px;top:238px"></i>
-<i id="vt-d115" style="left:340px;top:238px"></i>
-<i id="vt-d116" style="left:374px;top:238px"></i>
-<i id="vt-d117" style="left:408px;top:238px"></i>
-<i id="vt-d118" style="left:442px;top:238px"></i>
-<i id="vt-d119" style="left:476px;top:238px"></i>
-<i id="vt-d120" style="left:0px;top:272px"></i>
-<i id="vt-d121" style="left:34px;top:272px"></i>
-<i id="vt-d122" style="left:68px;top:272px"></i>
-<i id="vt-d123" style="left:102px;top:272px"></i>
-<i id="vt-d124" style="left:136px;top:272px"></i>
-<i id="vt-d125" style="left:170px;top:272px"></i>
-<i id="vt-d126" style="left:204px;top:272px"></i>
-<i id="vt-d127" style="left:238px;top:272px"></i>
-<i id="vt-d128" style="left:272px;top:272px"></i>
-<i id="vt-d129" style="left:306px;top:272px"></i>
-<i id="vt-d130" style="left:340px;top:272px"></i>
-<i id="vt-d131" style="left:374px;top:272px"></i>
-<i id="vt-d132" style="left:408px;top:272px"></i>
-<i id="vt-d133" style="left:442px;top:272px"></i>
-<i id="vt-d134" style="left:476px;top:272px"></i>
-<i id="vt-d135" style="left:0px;top:306px"></i>
-<i id="vt-d136" style="left:34px;top:306px"></i>
-<i id="vt-d137" style="left:68px;top:306px"></i>
-<i id="vt-d138" style="left:102px;top:306px"></i>
-<i id="vt-d139" style="left:136px;top:306px"></i>
-<i id="vt-d140" style="left:170px;top:306px"></i>
-<i id="vt-d141" style="left:204px;top:306px"></i>
-<i id="vt-d142" style="left:238px;top:306px"></i>
-<i id="vt-d143" style="left:272px;top:306px"></i>
-<i id="vt-d144" style="left:306px;top:306px"></i>
-<i id="vt-d145" style="left:340px;top:306px"></i>
-<i id="vt-d146" style="left:374px;top:306px"></i>
-<i id="vt-d147" style="left:408px;top:306px"></i>
-<i id="vt-d148" style="left:442px;top:306px"></i>
-<i id="vt-d149" style="left:476px;top:306px"></i>
-
-
-
-</div>
-  <div id="vt-count"><b><span id="vt-n">0</span> vant</b></div>
-  <div id="vt-phone" data-layout-ignore><div id="vt-scr"><div id="vt-time">9:41</div><div id="vt-date">Samdi 28 novanm</div><div id="vt-list"><div class="ts" id="vt-t0"><span class="ic">$</span><div><b>Nouvo vant!</b><small>Roselande achte kou a · +1 500 HTG</small></div></div>
-<div class="ts" id="vt-t1"><span class="ic">$</span><div><b>Nouvo vant!</b><small>Wilner achte kou a · +1 500 HTG</small></div></div>
-<div class="ts" id="vt-t2"><span class="ic">$</span><div><b>Nouvo vant!</b><small>Nadège achte kou a · +1 500 HTG</small></div></div>
-<div class="ts" id="vt-t3"><span class="ic">$</span><div><b>Nouvo vant!</b><small>Ricardo achte kou a · +1 500 HTG</small></div></div>
-<div class="ts" id="vt-t4"><span class="ic">$</span><div><b>Nouvo vant!</b><small>Mirlande achte kou a · +1 500 HTG</small></div></div>
-<div class="ts" id="vt-t5"><span class="ic">$</span><div><b>Nouvo vant!</b><small>Jean-Marc achte kou a · +1 500 HTG</small></div></div>
-<div class="ts" id="vt-t6"><span class="ic">$</span><div><b>Nouvo vant!</b><small>Fabiola achte kou a · +1 500 HTG</small></div></div>
-<div class="ts" id="vt-t7"><span class="ic">$</span><div><b>Nouvo vant!</b><small>Kervens achte kou a · +1 500 HTG</small></div></div></div></div></div>
-  <div id="vt-fade" data-layout-ignore></div>
+  <div id="vb-bgc" data-layout-ignore></div>
+  <div id="vb-kick">PWODWI DIJITAL</div>
+  <div id="vb-h1">Kreye l yon fwa.<br><em>Vann li san rete.</em></div>
+  <div id="vb-book" data-layout-ignore><div id="vb-cover"><small>EBOOK · PDF</small><b>Gid pratik<br>Facebook<br>Ads</b><p>Lanse premye piblisite ou nan 7 jou.</p><div class="ft"><em style="font-style:normal">48 paj</em><span>750 HTG</span></div></div></div>
+  <div id="vb-toast" data-layout-ignore><div class="ic">$</div><div><b>Nouvo vant!</b><small>+750 HTG · livre otomatikman</small></div></div>
+  <div id="vb-chips"><div class="ch"><i style="background:#1e3a8a"></i>Ebook</div><div class="ch"><i style="background:#f59e0b"></i>Kou videyo</div><div class="ch"><i style="background:#10b981"></i>Modèl</div></div>
+  <div id="vb-dash">
+    <h3>Vant ou yo <small>jodi a</small></h3>
+    <div id="vb-kp">
+      <div class="k g"><small>Revni</small><b><span id="vb-n0">0</span> HTG</b></div>
+      <div class="k"><small>Kliyan</small><b id="vb-n1">0</b></div>
+      <div class="k"><small>Stòk</small><b>∞</b></div>
+    </div>
+    <div id="vb-ch" data-layout-ignore><i id="vb-b0" style="height:22%"></i><i id="vb-b1" style="height:30%"></i><i id="vb-b2" style="height:26%"></i><i id="vb-b3" style="height:41%"></i><i id="vb-b4" style="height:38%"></i><i id="vb-b5" style="height:52%"></i><i id="vb-b6" style="height:48%"></i><i id="vb-b7" style="height:63%"></i><i id="vb-b8" style="height:70%"></i><i id="vb-b9" style="height:66%"></i><i id="vb-b10" style="height:84%"></i><i id="vb-b11" style="height:96%"></i></div>
+    <div id="vb-ol"><h4>Dènye kòmand</h4><div class="or" id="vb-o0"><span class="av" style="background:#1877f2">R</span><div class="on"><b>Roselande P.</b><small>Ebook · Gid Facebook Ads</small></div><div class="oa">750 HTG</div><span class="ok">Peye</span></div>
+<div class="or" id="vb-o1"><span class="av" style="background:#f59e0b">W</span><div class="on"><b>Wilner J.</b><small>Kou videyo · Stickman</small></div><div class="oa">1 500 HTG</div><span class="ok">Peye</span></div>
+<div class="or" id="vb-o2"><span class="av" style="background:#10b981">N</span><div class="on"><b>Nadège L.</b><small>Modèl Canva · 30 post</small></div><div class="oa">500 HTG</div><span class="ok">Peye</span></div>
+<div class="or" id="vb-o3"><span class="av" style="background:#ef4444">R</span><div class="on"><b>Ricardo D.</b><small>Ebook · Gid Facebook Ads</small></div><div class="oa">750 HTG</div><span class="ok">Peye</span></div>
+<div class="or" id="vb-o4"><span class="av" style="background:#8b5cf6">M</span><div class="on"><b>Mirlande S.</b><small>Kou videyo · Stickman</small></div><div class="oa">1 500 HTG</div><span class="ok">Peye</span></div>
+<div class="or" id="vb-o5"><span class="av" style="background:#0ea5e9">K</span><div class="on"><b>Kervens A.</b><small>Ebook · Gid Facebook Ads</small></div><div class="oa">750 HTG</div><span class="ok">Peye</span></div></div>
+  </div>
 </div>
 <script>
 const tl = gsap.timeline({ paused: true });
-tl.fromTo("#vt-fade", { opacity: 1 }, { opacity: 0, duration: 0.35, ease: "none" }, 0);
-tl.fromTo("#vt-glow", { scale: 0.7, opacity: 0.5 }, { scale: 1.2, opacity: 1, duration: 4, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
-tl.fromTo("#vt-kick", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0.2);
-tl.fromTo("#vt-h1", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power4.out" }, 0.35);
-tl.fromTo("#vt-card", { rotateY: -70, scale: 0.6, opacity: 0 }, { rotateY: -14, scale: 1, opacity: 1, duration: 1.0, ease: "power3.out" }, 0.4);
-tl.to("#vt-card", { rotateY: 12, duration: 6.2, ease: "sine.inOut" }, 1.4);
-tl.fromTo("#vt-l1", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 1.0);
-document.querySelectorAll("#vt-clones .cl").forEach((el, i) => {
-  const a = -2.4 + i * 0.53, t0 = 1.7 + i * 0.07;
-  tl.fromTo(el, { x: 0, y: 0, scale: 1, rotate: 0, opacity: 0.9 }, { x: Math.cos(a) * 900, y: Math.sin(a) * 520, scale: 0.18, rotate: (i % 2 ? 1 : -1) * 40, opacity: 0, duration: 1.1, ease: "power2.in" }, t0);
+const fmt = (n) => Math.round(n).toLocaleString("en-US").replace(/,/g, " ");
+tl.fromTo("#vb-kick", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 0);
+tl.fromTo("#vb-h1", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, 0.15);
+tl.fromTo("#vb-cover", { rotateY: -55, x: -80, opacity: 0 }, { rotateY: -18, x: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, 0.3);
+tl.to("#vb-cover", { rotateY: 8, duration: 6.6, ease: "sine.inOut" }, 1.2);
+tl.fromTo(".ch", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", stagger: 0.1 }, 0.9);
+tl.fromTo("#vb-dash", { x: 120, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, 0.4);
+tl.fromTo(".k", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.08 }, 0.9);
+tl.fromTo("#vb-ch i", { scaleY: 0 }, { scaleY: 1, duration: 0.5, ease: "back.out(1.5)", stagger: 0.22 }, 1.4);
+const o0 = { n: 0 }, o1 = { n: 0 };
+tl.to(o0, { n: 186750, duration: 5, ease: "power1.inOut", onUpdate: () => { document.querySelector("#vb-n0").textContent = fmt(o0.n); } }, 1.5);
+tl.to(o1, { n: 1248, duration: 5, ease: "power1.inOut", onUpdate: () => { document.querySelector("#vb-n1").textContent = fmt(o1.n); } }, 1.5);
+document.querySelectorAll(".or").forEach((el, i) => {
+  tl.fromTo(el, { x: 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 1.8 + i * 0.75);
 });
-tl.fromTo("#vt-l2", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.1);
-tl.fromTo("#vt-crowd i", { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2)", stagger: { each: 0.004, from: "random" } }, 1.2);
-tl.to("#vt-crowd i", { backgroundColor: "#ffc83d", duration: 0.2, stagger: { each: 0.028, from: "start" } }, 2.6);
-tl.fromTo("#vt-count", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.3);
-const o = { n: 0 };
-tl.to(o, { n: 1248, duration: 4.4, ease: "power1.inOut", onUpdate: () => { document.querySelector("#vt-n").textContent = Math.round(o.n).toLocaleString("en-US").replace(/,/g, " "); } }, 2.6);
-tl.fromTo("#vt-phone", { x: 300, opacity: 0, rotate: 8 }, { x: 0, opacity: 1, rotate: 3, duration: 0.9, ease: "back.out(1.3)" }, 0.5);
-document.querySelectorAll("#vt-list .ts").forEach((el, i) => {
-  tl.fromTo(el, { y: -60, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.8)" }, 2.4 + i * 0.55);
+[2.0, 3.5, 5.0, 6.4].forEach((t) => {
+  tl.fromTo("#vb-toast", { y: 30, scale: 0.85, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2)" }, t);
+  tl.to("#vb-toast", { y: -30, opacity: 0, duration: 0.3, ease: "power2.in" }, t + 1.0);
 });
-tl.fromTo("#vt-list", { y: 0 }, { y: -100, duration: 2.2, ease: "power1.inOut" }, 5.0);
-tl.to("#vt-fade", { opacity: 1, duration: 0.45, ease: "none" }, 7.5);
+tl.to("#root > *", { opacity: 0, duration: 0.4 }, 7.55);
 window.__timelines["vant"] = tl;
 </script>
 </template>
