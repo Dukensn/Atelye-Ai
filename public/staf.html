@@ -94,14 +94,14 @@
 
   async function chaje() {
     ME = await SB.rpc("staf_mwen", { p_code: KOD });
-    D = ME.role === "scanneur" ? { role: "scanneur", non: ME.non, evenement: ME.evenement, file: [], lis: [], types: [] } : await SB.rpc("staf_tablo", { p_code: KOD });
+    D = ME.role === "scanneur" || ME.role === "asistan" ? { role: "scanneur", non: ME.non, evenement: ME.evenement, file: [], lis: [], types: [] } : await SB.rpc("staf_tablo", { p_code: KOD });
     $("#evt").textContent = D.evenement ? D.evenement.nom : "Pa gen evènman";
     $("#moun").textContent = `${D.non} · ${D.role}`;
     $("#mizajou").textContent = "Mizajou " + new Date().toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
     const T = D.role === "admin"
       ? [["file", `Validasyon (${D.file.length})`], ["tablo", "Chif"], ["lis", "Enskripsyon"], ["kach", "Enskri yon moun"], ["rapel", "Rapèl"], ["ekip", "Ekip"], ["param", "Paramèt"], ["mwen", "Espas mwen"]]
       : D.role === "vandeur" ? [["kach", "Enskri yon moun"], ["lis", "Jwenn yon tikè"], ["mwen", "Espas mwen"]]
-      : D.role === "scanneur" ? [["mwen", "Espas mwen"]]
+      : D.role === "scanneur" || D.role === "asistan" ? [["mwen", "Espas mwen"]]
       : [["file", `Validasyon (${D.file.length})`], ["mwen", "Espas mwen"]];
     if (!ME.foto && !VI) TAB = "mwen";   // first screen asks for the badge photo
     VI = true;
@@ -261,16 +261,20 @@
 
   // ---- my space: role, job, tasks, access and the photo badge
   function vMwen(v) {
-    const b = { ...ME, kind: "ekip" };
+    const b = { ...ME };
+    let OR = "v"; try { OR = localStorage.getItem("badj-or") || "v"; } catch {}
     if (!b.foto) v.append(el("div", { className: "alrt", textContent: "📷 Pran foto w kounye a: li obligatwa pou badj ou." }));
     const kol = el("div", { className: "grid2", style: "display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start" });
     const gch = el("div"), drt = el("div", { className: "card mw" });
-    gch.append(BADJ.rann(b));
+    const sw = el("nav", { className: "tabs3", style: "justify-content:center" });
+    const kad = el("div"); const mete = () => { kad.replaceChildren(BADJ.rann(b, OR)); sw.querySelectorAll("button").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.o === OR))); };
+    [["v", "▯ Pòtre"], ["h", "▭ Orizontal"]].forEach(([o, t]) => { const x = el("button", { type: "button", textContent: t }); x.dataset.o = o; x.onclick = () => { OR = o; try { localStorage.setItem("badj-or", o); } catch {} mete(); }; sw.append(x); });
+    gch.append(sw, kad); mete();
     const fi = el("input", { type: "file", accept: "image/*", capture: "user", className: "hidden" });
     fi.onchange = async () => { const f = fi.files[0]; if (!f) return; try { await SB.rpc("staf_foto", { p_code: KOD, p_foto: await foto(f) }); await chaje(); TAB = "mwen"; afiche(); } catch (e) { alert(e.message); } };
     gch.append(el("div", { className: "act2", style: "justify-content:center;margin-top:14px" },
       el("button", { type: "button", className: "btn" + (b.foto ? " light" : ""), textContent: b.foto ? "📷 Chanje foto a" : "📷 Pran foto w", onclick: () => fi.click() }), fi,
-      bouton("Telechaje badj la", async () => { const c = await BADJ.imaj(b); const a = el("a", { download: `badj-${b.non}.png`, href: c.toDataURL("image/png") }); a.click(); }, true)));
+      bouton("Telechaje badj la", async () => { const c = await BADJ.imaj(b, OR); const a = el("a", { download: `badj-${b.non}-${OR === "h" ? "orizontal" : "potre"}.png`, href: c.toDataURL("image/png") }); a.click(); }, true)));
     drt.append(el("h3", { style: "margin-top:0", textContent: b.non }));
     const kv = el("dl", { className: "kv2" });
     [["Wòl", BADJ.ROL[b.role] || b.role], ["Fonksyon", b.fonksyon || "—"], ["Konekte ak", b.idantifyan || "kòd ekip"]].forEach(([k, x]) => kv.append(el("dt", { textContent: k }), el("dd", { textContent: x })));
@@ -299,7 +303,7 @@
       d.append(el("div", { className: "row2" }, el("h3", { style: "margin:0", textContent: x.non + (x.mwen ? " (ou menm)" : "") }), el("span", { className: "bad " + ({ actif: "valide", en_attente: "en_attente" }[x.statut] || "refuse"), textContent: { actif: "aktif", en_attente: "an atant", refuse: "refize", dezaktive: "dezaktive" }[x.statut] || x.statut })));
       d.append(el("p", { className: "mute small", style: "margin:4px 0 8px", textContent: (x.idantifyan || "kòd ekip") + " · " + SB.dat(x.cree_le, { day: "numeric", month: "short" }) }));
       const f = el("form");
-      f.innerHTML = `<label class="l">Wòl</label><select name="r"><option value="">Chwazi…</option><option value="vandeur">Vandè: enskri moun sou plas, revoye tikè</option><option value="validateur">Validatè: valide peman</option><option value="scanneur">Eskanè: pòt la</option><option value="admin">Super admin: tout bagay</option></select>
+      f.innerHTML = `<label class="l">Wòl</label><select name="r"><option value="">Chwazi…</option><option value="vandeur">Vandè: enskri moun sou plas, revoye tikè</option><option value="validateur">Validatè: valide peman</option><option value="scanneur">Eskanè: pòt la</option><option value="asistan">Asistan: ede ekip la (badj sèlman)</option><option value="admin">Super admin: tout bagay</option></select>
         <label class="l">Fonksyon (sou badj la)</label><input name="f" placeholder="Egz. Responsab enskripsyon Leyogàn">
         <label class="l">Travay li</label><textarea name="t" rows="3" placeholder="Yon travay pa liy"></textarea>`;
       f.r.value = x.role || ""; f.f.value = x.fonksyon || ""; f.t.value = x.travay || "";
@@ -314,7 +318,7 @@
     });
     const g = el("form");
     g.innerHTML = `<h3 style="margin-top:0">Ansyen metòd: yon kòd ekip</h3><p class="mute small">Validatè: valide peman sèlman. Eskanè: pòt la jou J sèlman. Bay chak moun pwòp kòd li (omwen 10 karaktè).</p>
-      <label class="l">Non</label><input name="n" required><label class="l">Wòl</label><select name="r"><option value="vandeur">Vandè (enskri moun sou plas, revoye tikè)</option><option value="validateur">Validatè (valide peman)</option><option value="scanneur">Eskanè (pòt la)</option><option value="admin">Admin</option></select>
+      <label class="l">Non</label><input name="n" required><label class="l">Wòl</label><select name="r"><option value="vandeur">Vandè (enskri moun sou plas, revoye tikè)</option><option value="validateur">Validatè (valide peman)</option><option value="scanneur">Eskanè (pòt la)</option><option value="asistan">Asistan (badj sèlman)</option><option value="admin">Admin</option></select>
       <label class="l">Kòd</label><input name="k" minlength="10" required><div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Kreye kòd la</button>`;
     g.onsubmit = async (ev) => { ev.preventDefault(); const m = g.querySelector(".msg");
       try { await SB.rpc("staf_kreye", { p_code: KOD, p_non: g.n.value, p_role: g.r.value, p_nouvo_code: g.k.value }); m.className = "msg ok"; m.textContent = "Kòd la kreye ✓ Voye l bay moun nan an prive."; g.reset(); }

@@ -27,8 +27,8 @@
   if (!code) { box.innerHTML = '<p class="mute" style="text-align:center">Pa gen kòd badj.</p>'; return; }
   SB.rpc("badj_public", { p_badj: code }).then((b) => {
     if (!b) { ver.className = "ver ko"; ver.textContent = "Badj sa a pa egziste"; box.replaceChildren(); return; }
-    ver.className = "ver " + (b.valid ? "ok" : "ko"); ver.textContent = b.valid ? "Badj valid ✓ Manm ekip la" : "Badj sa a pa valid ankò";
-    box.replaceChildren(BADJ.rann({ ...b, kind: "ekip" }));
+    ver.className = "ver " + (b.valid ? "ok" : "ko"); ver.textContent = b.valid ? "Badj valid ✓ Manm ekip Atelye AI" : "Badj sa a pa valid ankò";
+    box.replaceChildren(BADJ.rann(b, innerWidth > 560 ? "h" : "v"));
   }).catch(() => { box.innerHTML = '<p class="mute" style="text-align:center">Pa gen entènèt. Eseye ankò.</p>'; });
 })();
 </script>
