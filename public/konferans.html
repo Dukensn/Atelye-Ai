@@ -191,12 +191,20 @@
   .kd .ko .no, .kd .ko h3 { display: none; }
   .tk2 .nm { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
   @media (max-width: 820px) { .kd summary { flex-wrap: wrap; gap: 4px 12px; padding: 16px; } .kd summary .kt { min-width: 0; width: 100%; order: -1; } .kd .ko { padding: 0 16px 20px; } }
-  .enf-s { padding: 4px 0 0; }
-  .enf { border: 1px solid var(--line); border-radius: 12px; padding: 0 14px; font-size: 14px; }
-  .enf summary { padding: 11px 0; gap: 10px; align-items: center; }
-  .enf summary span { font-weight: 600; } .enf summary small { flex: 1; color: var(--mute); font-weight: 500; }
-  .enf ul { list-style: none; padding: 0 0 12px; margin: 0; display: grid; gap: 6px; color: var(--mute); }
-  .enf li b { color: var(--ink); margin-right: 8px; }
+  .enf-s { padding: 28px 0 0; }
+  .enf-t { font-size: clamp(22px, 3vw, 28px); letter-spacing: -0.02em; margin: 0 0 12px; }
+  .enf3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .enf3 > div { background: var(--soft); border-radius: 12px; padding: 10px 12px; }
+  .enf3 span { font-size: 18px; line-height: 1; } .enf3 b { display: block; font-size: 14px; margin: 6px 0 2px; }
+  .enf3 p { margin: 0; font-size: 12.5px; line-height: 1.35; color: var(--mute); }
+  .tk2 .left { font-weight: 600; }
+  .tk2 .ct { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--mute); }
+  .tk2 .ct b { color: var(--ink); font-size: 15px; }
+  .tk2 .br { height: 6px; border-radius: 3px; background: var(--soft); margin: 6px 0 8px; overflow: hidden; }
+  .tk2 .br i { display: block; height: 100%; background: #111; border-radius: 3px; }
+  .tk2.lb .br i { background: #9ccc00; }
+  .tk2 .cd { font-size: 13px; color: var(--mute); } .tk2 .cd b { color: var(--ink); font-variant-numeric: tabular-nums; font-size: 15px; }
+  .tk2 .left.lo .ct span:first-child b { color: var(--bad); }
 </style>
 </head>
 <body>
@@ -236,13 +244,12 @@
 
 <!-- PRACTICAL -->
 <section id="enfo" class="enf-s"><div class="wrap">
-  <details class="enf"><summary><span>📍 Enfòmasyon pratik</span><small>Kote · Lè · Sa pou w pote</small></summary>
-    <ul>
-      <li><b>Kote</b>Lise Anacaona, Leyogàn, Ayiti.</li>
-      <li><b>Lè</b>Samdi 28 novanm. Akèy 9h30, kòmansman 10h00, fen 4h00.</li>
-      <li><b>Sa pou w pote</b>Telefòn ou byen chaje, chajè a, ak kont Facebook ou (non itilizatè ak modpas).</li>
-    </ul>
-  </details>
+  <h2 class="enf-t">Enfòmasyon pratik</h2>
+  <div class="enf3">
+    <div><span>📍</span><b>Kote</b><p>Lise Anacaona, Leyogàn</p></div>
+    <div><span>🕙</span><b>Lè</b><p>Samdi 28 novanm · Akèy 9h30 · 10h – 4h</p></div>
+    <div><span>🎒</span><b>Sa pou w pote</b><p>Telefòn chaje, chajè ak kont Facebook ou</p></div>
+  </div>
 </div></section>
 
 <!-- PROGRAM -->
@@ -260,14 +267,15 @@
       <div>
         <div class="no">10h00 – 10h45</div>
         <h3>Kreye kat debi vityèl ou</h3>
-        <p>Yon kat ki egziste nan telefòn ou, pou peye piblisite Facebook, zouti AI ak tout sa w achte sou entènèt. Nou kreye l ansanm nan atelye a.</p>
+        <p>Ou soti ak pwòp kat vityèl ou, ou ka rechaje ak MonCash oswa NatCash, pou peye piblisite Facebook ou ak zouti AI yo.</p>
         <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kisa yon kat vityèl ye, epi ki jan l mache</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kreye kat ou etap pa etap</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Mete kòb sou li epi peye an sekirite</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Konekte l ak kont piblisite ou</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Rechaje kat ou ak MonCash oswa NatCash</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Peye piblisite Facebook ak Instagram ou</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Peye abònman zouti AI yo</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Nou kreye l ansanm, sou plas, nan atelye a</li>
         </ul>
         <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
+        <a class="btn" href="/enskri">Mwen enskri</a>
       </div>
     </article>
 
@@ -290,7 +298,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Li rezilta yo epi amelyore kanpay ou</li>
         </ul>
         <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
-        <a class="btn" href="/enskri">Rezève plas mwen</a>
+        <a class="btn" href="/enskri">Mwen enskri</a>
       </div>
     </article>
 
@@ -313,6 +321,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Lanse l ak piblisite</li>
         </ul>
         <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
+        <a class="btn" href="/enskri">Mwen enskri</a>
       </div>
     </article>
 
@@ -339,6 +348,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Pibliye videyo w sou YouTube ak rezo sosyal</li>
         </ul>
         <div class="mt">An pèsòn · Kreyòl · Telefòn ase</div>
+        <a class="btn" href="/enskri">Mwen enskri</a>
       </div>
     </article>
   </div>
@@ -408,7 +418,16 @@
       d.querySelector(".px").innerHTML = `${t.prix_usd ? SB.dola(t.prix_usd) : SB.goud(t.prix_htg)} <s></s> <small></small>`;
       d.querySelector(".px s").textContent = rabè ? SB.dola(max) : "";
       d.querySelector(".px small").textContent = t.prix_usd ? `· ${SB.goud(t.prix_htg)}` : "";
-      const l = d.querySelector(".left"); l.textContent = plen ? "Plen" : `${t.restants} plas ki rete` + (t.date_fin_vente ? ` · jiska ${SB.dat(t.date_fin_vente, { day: "numeric", month: "long" })}` : "");
+      // seats: still available vs already taken, plus a live countdown
+      const kota = +t.quota || t.restants, pran = Math.max(0, kota - t.restants);
+      const l = d.querySelector(".left");
+      l.innerHTML = `<div class="ct"><span><b></b> disponib</span><span><b></b> pa disponib ankò</span></div><div class="br"><i></i></div><div class="cd"></div>`;
+      const [bd, bp] = l.querySelectorAll(".ct b"); bd.textContent = Math.max(0, t.restants); bp.textContent = pran;
+      l.querySelector(".br i").style.width = (kota ? Math.round(pran / kota * 100) : 0) + "%";
+      const cd = l.querySelector(".cd");
+      if (plen) cd.textContent = "Tikè sa a fini";
+      else if (t.date_fin_vente) { cd.dataset.fen = t.date_fin_vente; cd.dataset.pre = "Rabè a fini nan"; }
+      else if (EVT.date) { cd.dataset.fen = EVT.date; cd.dataset.pre = "Atelye a kòmanse nan"; }
       if (!plen && t.restants <= 10) l.classList.add("lo");
       const btn = d.querySelector(".btn"); btn.textContent = plen ? "Plen" : "Mwen chwazi tikè sa a";
       if (!plen) btn.href = "/enskri?tip=" + encodeURIComponent(t.id);
@@ -422,7 +441,16 @@
     const usd = ok.filter((x) => x.prix_usd).map((x) => +x.prix_usd);
     if (usd.length) document.querySelectorAll(".pmin").forEach((x) => (x.textContent = SB.dola(Math.min(...usd))));
   }
-  SB.rpc("evenement_public").catch(() => null).then((e) => { EVT = e; montrePri(); montreTike(); });
+  const de = (n) => String(n).padStart(2, "0");
+  function konte() {
+    document.querySelectorAll(".cd[data-fen]").forEach((x) => {
+      let r = Math.floor((new Date(x.dataset.fen) - Date.now()) / 1000);
+      if (r <= 0) { x.textContent = "Tikè sa a pa disponib ankò"; x.removeAttribute("data-fen"); return; }
+      const j = Math.floor(r / 86400); r %= 86400;
+      x.innerHTML = `${x.dataset.pre} <b>${j ? j + "j " : ""}${de(Math.floor(r / 3600))}:${de(Math.floor(r % 3600 / 60))}:${de(r % 60)}</b>`;
+    });
+  }
+  SB.rpc("evenement_public").catch(() => null).then((e) => { EVT = e; montrePri(); montreTike(); konte(); setInterval(konte, 1000); });
 })();
 
 // Sliders: swipe natively, arrows and dots on top, autoplay while on screen and untouched.
