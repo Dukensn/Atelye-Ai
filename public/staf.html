@@ -33,19 +33,42 @@
   .tp2 { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
   @media (max-width: 700px) { .tp2 { grid-template-columns: 1fr 1fr; } }
   .srch { margin-bottom: 10px; }
+  .fot { display: flex; align-items: center; gap: 12px; }
+  .fot span, .ek .av { flex: none; width: 64px; height: 64px; border-radius: 50%; background: #eee center/cover no-repeat; display: grid; place-items: center; font-weight: 800; color: #aaa; }
+  .ek { display: flex; gap: 12px; align-items: flex-start; } .ek > div { flex: 1; min-width: 0; }
+  .ek textarea, .mw textarea { width: 100%; font: inherit; border: 0; border-radius: 10px; background: var(--soft); padding: 10px; }
+  .mw ul { margin: 6px 0 0; padding-left: 18px; } .mw li { margin: 3px 0; }
+  .mw .tr { white-space: pre-wrap; background: var(--soft); border-radius: 10px; padding: 10px; }
+  .alrt { background: #fff1d6; color: #8a5a00; border-radius: 12px; padding: 12px; font-weight: 600; margin-bottom: 12px; }
   .done { white-space: pre-wrap; font-size: 14px; background: var(--soft); border-radius: 10px; padding: 10px; }
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap"><a href="/konferans" aria-label="Atelye AI"><img src="/logo.png" alt="Atelye AI"></a><nav><span class="mute small" id="moun"></span><button class="btn sm light hidden" id="soti" type="button">Soti</button></nav></div></header>
 <main>
-  <form id="login" class="card" style="max-width:420px;margin:40px auto">
+  <div id="login" class="card" style="max-width:440px;margin:30px auto">
     <h2 style="margin-top:0">Espas ekip la</h2>
-    <p class="mute">Mete kòd ekip ou a.</p>
-    <input id="kod" type="password" autocomplete="current-password" required>
-    <div id="ml" class="msg hidden"></div>
-    <button class="btn full" style="margin-top:14px">Antre</button>
-  </form>
+    <nav class="tabs3" id="lt"><button type="button" data-m="k" aria-selected="true">Konekte</button><button type="button" data-m="e" aria-selected="false">Kreye kont</button></nav>
+    <form id="fk">
+      <label class="l" for="li">Nimewo WhatsApp oswa Gmail</label><input id="li" autocomplete="username" required>
+      <label class="l" for="lm">Modpas</label><input id="lm" type="password" autocomplete="current-password" required>
+      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Antre</button>
+      <p class="mute small" style="text-align:center;margin:12px 0 0"><a href="#" id="akod">Mwen gen yon kòd ekip</a></p>
+    </form>
+    <form id="fkod" class="hidden">
+      <label class="l" for="kod">Kòd ekip</label><input id="kod" type="password" autocomplete="current-password" required>
+      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Antre ak kòd la</button>
+    </form>
+    <form id="fe" class="hidden">
+      <p class="mute small" style="margin:0">Kreye kont ou. Super admin lan ap valide l epi ba w wòl ou.</p>
+      <label class="l" for="en">Non konplè</label><input id="en" autocomplete="name" required>
+      <label class="l" for="ei">Nimewo WhatsApp oswa Gmail</label><input id="ei" autocomplete="username" required>
+      <label class="l" for="em">Modpas (omwen 8 karaktè)</label><input id="em" type="password" autocomplete="new-password" minlength="8" required>
+      <label class="l">Foto w (pou badj la)</label>
+      <div class="fot"><span id="fp"></span><label class="btn sm light" for="ef">📷 Pran yon foto</label><input id="ef" type="file" accept="image/*" capture="user" class="hidden"></div>
+      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Voye demann lan</button>
+    </form>
+  </div>
 
   <div id="app" class="hidden">
     <div class="row2"><h2 style="margin:0" id="evt">—</h2><span class="mute small" id="mizajou"></span></div>
@@ -53,13 +76,15 @@
     <section id="v"></section>
   </div>
 </main>
+<script src="/vendor/qrcode.js"></script>
 <script src="/sb.js"></script>
+<script src="/badj.js"></script>
 <script>
 (() => {
   const $ = (q) => document.querySelector(q);
   const el = (t, p = {}, ...c) => { const e = Object.assign(document.createElement(t), p); e.append(...c.filter((x) => x != null)); return e; };
-  let KOD = "", D = null, TAB = "file", FILT = "";
-  try { KOD = sessionStorage.getItem("staf-kod") || ""; } catch {}
+  let KOD = "", D = null, ME = null, TAB = "file", FILT = "", VI = false;
+  try { KOD = localStorage.getItem("staf-kod") || sessionStorage.getItem("staf-kod") || ""; } catch {}
   const site = location.origin;
   const tel = (t) => { const d = String(t || "").replace(/\D/g, ""); return d.length === 8 ? "509" + d : d; };
   const wa = (t, msg) => `https://wa.me/${tel(t)}?text=${encodeURIComponent(msg)}`;
@@ -68,28 +93,52 @@
   const msgRefi = (x, motif) => `Bonjou ${premye(x.nom)}. Se Atelye AI. Nou pa t ka valide peman pou enskripsyon ${x.code_court}: ${motif}. Reponn mesaj sa a pou n regle sa ansanm.`;
 
   async function chaje() {
-    D = await SB.rpc("staf_tablo", { p_code: KOD });
+    ME = await SB.rpc("staf_mwen", { p_code: KOD });
+    D = ME.role === "scanneur" ? { role: "scanneur", non: ME.non, evenement: ME.evenement, file: [], lis: [], types: [] } : await SB.rpc("staf_tablo", { p_code: KOD });
     $("#evt").textContent = D.evenement ? D.evenement.nom : "Pa gen evènman";
     $("#moun").textContent = `${D.non} · ${D.role}`;
     $("#mizajou").textContent = "Mizajou " + new Date().toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
     const T = D.role === "admin"
-      ? [["file", `Validasyon (${D.file.length})`], ["tablo", "Chif"], ["lis", "Enskripsyon"], ["kach", "Enskri yon moun"], ["rapel", "Rapèl"], ["param", "Paramèt"]]
-      : D.role === "vandeur" ? [["kach", "Enskri yon moun"], ["lis", "Jwenn yon tikè"]]
-      : [["file", `Validasyon (${D.file.length})`]];
+      ? [["file", `Validasyon (${D.file.length})`], ["tablo", "Chif"], ["lis", "Enskripsyon"], ["kach", "Enskri yon moun"], ["rapel", "Rapèl"], ["ekip", "Ekip"], ["param", "Paramèt"], ["mwen", "Espas mwen"]]
+      : D.role === "vandeur" ? [["kach", "Enskri yon moun"], ["lis", "Jwenn yon tikè"], ["mwen", "Espas mwen"]]
+      : D.role === "scanneur" ? [["mwen", "Espas mwen"]]
+      : [["file", `Validasyon (${D.file.length})`], ["mwen", "Espas mwen"]];
+    if (!ME.foto && !VI) TAB = "mwen";   // first screen asks for the badge photo
+    VI = true;
     if (!T.some(([k]) => k === TAB)) TAB = T[0][0];
     $("#tabs").replaceChildren(...T.map(([k, t]) => { const b = el("button", { type: "button", textContent: t }); b.dataset.k = k; b.setAttribute("aria-selected", String(k === TAB)); b.onclick = () => { TAB = k; afiche(); chaje().catch(() => {}); }; return b; }));
     afiche();
   }
   async function antre(k) {
-    KOD = k; const r = await SB.rpc("staf_konekte", { p_code: KOD });
-    if (r.role === "scanneur") { location.href = "/skane"; return; }
-    try { sessionStorage.setItem("staf-kod", KOD); } catch {}
+    KOD = k; await SB.rpc("staf_konekte", { p_code: KOD });
+    try { localStorage.setItem("staf-kod", KOD); } catch {}
     $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); $("#soti").classList.remove("hidden");
     await chaje(); setInterval(() => chaje().catch(() => {}), 60000);
   }
-  $("#login").addEventListener("submit", (ev) => { ev.preventDefault(); $("#ml").className = "msg hidden"; antre($("#kod").value).catch((e) => { $("#ml").className = "msg err"; $("#ml").textContent = e.message; }); });
-  $("#soti").onclick = () => { try { sessionStorage.removeItem("staf-kod"); } catch {} location.reload(); };
-  if (KOD) antre(KOD).catch(() => { try { sessionStorage.removeItem("staf-kod"); } catch {} });
+  const erè = (f, e) => { const m = f.querySelector(".msg"); m.className = "msg err"; m.textContent = e.message; };
+  // login screen: number/Gmail + password, old team code, or a new account waiting for approval
+  $("#lt").onclick = (ev) => { const m = ev.target.dataset.m; if (!m) return;
+    $("#lt").querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.m === m)));
+    $("#fk").classList.toggle("hidden", m !== "k"); $("#fkod").classList.add("hidden"); $("#fe").classList.toggle("hidden", m !== "e"); };
+  $("#akod").onclick = (ev) => { ev.preventDefault(); $("#fk").classList.add("hidden"); $("#fkod").classList.remove("hidden"); };
+  $("#fk").onsubmit = async (ev) => { ev.preventDefault(); const f = ev.target; f.querySelector(".msg").className = "msg hidden";
+    try { const r = await SB.rpc("staf_login", { p_idantifyan: $("#li").value, p_modpas: $("#lm").value }); await antre(r.token); } catch (e) { erè(f, e); } };
+  $("#fkod").onsubmit = (ev) => { ev.preventDefault(); antre($("#kod").value).catch((e) => erè(ev.target, e)); };
+  // phone photos are big: square crop, 480 px JPEG
+  const foto = (file) => new Promise((ok, ko) => { const i = new Image(); i.onload = () => {
+      const s = Math.min(i.width, i.height), c = document.createElement("canvas"); c.width = c.height = 480;
+      c.getContext("2d").drawImage(i, (i.width - s) / 2, (i.height - s) / 2, s, s, 0, 0, 480, 480);
+      ok(c.toDataURL("image/jpeg", 0.8).split(",")[1]); URL.revokeObjectURL(i.src); };
+    i.onerror = () => ko(new Error("Nou pa ka li foto sa a.")); i.src = URL.createObjectURL(file); });
+  let FOTO = null;
+  $("#ef").onchange = async () => { const f = $("#ef").files[0]; if (!f) return; FOTO = await foto(f); $("#fp").style.backgroundImage = `url(data:image/jpeg;base64,${FOTO})`; };
+  $("#fe").onsubmit = async (ev) => { ev.preventDefault(); const f = ev.target, m = f.querySelector(".msg"); m.className = "msg hidden";
+    if (!FOTO) return erè(f, new Error("Pran yon foto w pou badj la."));
+    try { await SB.rpc("staf_enskri", { p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO });
+      f.reset(); FOTO = null; $("#fp").style.backgroundImage = ""; m.className = "msg ok"; m.textContent = "Demann lan voye ✓ Super admin lan ap valide kont ou. Apre sa, konekte ak nimewo/Gmail ou ak modpas ou."; }
+    catch (e) { erè(f, e); } };
+  $("#soti").onclick = async () => { try { await SB.rpc("staf_soti", { p_code: KOD }); } catch {} try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} location.reload(); };
+  if (KOD) antre(KOD).catch(() => { try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} });
 
   const bouton = (t, f, light) => { const b = el("button", { type: "button", className: "btn sm" + (light ? " light" : ""), textContent: t }); b.onclick = async () => { b.disabled = true; try { await f(b); } catch (e) { alert(e.message); } b.disabled = false; }; return b; };
   const lyen = (t, href) => el("a", { className: "btn sm light", href, target: "_blank", rel: "noopener", textContent: t });
@@ -97,8 +146,8 @@
   function afiche() {
     document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.k === TAB)));
     const v = $("#v"); v.replaceChildren();
-    if (!D.evenement) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
-    ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam }[TAB] || vFile)(v);
+    if (!D.evenement && TAB !== "mwen" && TAB !== "ekip") { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
+    ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, mwen: vMwen }[TAB] || vFile)(v);
   }
 
   // ---- validation queue: oldest first
@@ -209,7 +258,71 @@
     });
   }
 
-  // ---- event, ticket types (prices, quotas, early-bird date), team codes
+
+  // ---- my space: role, job, tasks, access and the photo badge
+  function vMwen(v) {
+    const b = { ...ME };
+    if (!b.foto) v.append(el("div", { className: "alrt", textContent: "📷 Pran foto w kounye a: li obligatwa pou badj ou." }));
+    const kol = el("div", { className: "grid2", style: "display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start" });
+    const gch = el("div"), drt = el("div", { className: "card mw" });
+    gch.append(BADJ.rann(b));
+    const fi = el("input", { type: "file", accept: "image/*", capture: "user", className: "hidden" });
+    fi.onchange = async () => { const f = fi.files[0]; if (!f) return; try { await SB.rpc("staf_foto", { p_code: KOD, p_foto: await foto(f) }); await chaje(); TAB = "mwen"; afiche(); } catch (e) { alert(e.message); } };
+    gch.append(el("div", { className: "act2", style: "justify-content:center;margin-top:14px" },
+      el("button", { type: "button", className: "btn" + (b.foto ? " light" : ""), textContent: b.foto ? "📷 Chanje foto a" : "📷 Pran foto w", onclick: () => fi.click() }), fi,
+      bouton("Telechaje badj la", async () => { const c = await BADJ.imaj(b); const a = el("a", { download: `badj-${b.non}.png`, href: c.toDataURL("image/png") }); a.click(); }, true)));
+    drt.append(el("h3", { style: "margin-top:0", textContent: b.non }));
+    const kv = el("dl", { className: "kv2" });
+    [["Wòl", BADJ.ROL[b.role] || b.role], ["Fonksyon", b.fonksyon || "—"], ["Konekte ak", b.idantifyan || "kòd ekip"]].forEach(([k, x]) => kv.append(el("dt", { textContent: k }), el("dd", { textContent: x })));
+    drt.append(kv, el("b", { textContent: "Aksè ou" }), el("ul", {}, ...(b.akse || []).map((x) => el("li", { textContent: x }))));
+    drt.append(el("b", { textContent: "Travay ou" }), el("div", { className: "tr", textContent: b.travay || "Super admin lan poko ba w travay." }));
+    if (b.role === "scanneur") drt.append(el("div", { className: "act2" }, bouton("Louvri eskanè a", async () => { try { localStorage.setItem("skane-kod", JSON.stringify(KOD)); } catch {} location.href = "/skane"; })));
+    if (!b.idantifyan) {
+      const f = el("form", { style: "margin-top:16px" });
+      f.innerHTML = `<b>Konekte ak nimewo/Gmail ou</b><p class="mute small" style="margin:4px 0 0">Pou w pa bezwen kòd ekip la ankò.</p><label class="l">Nimewo WhatsApp oswa Gmail</label><input name="i" required><label class="l">Modpas (omwen 8 karaktè)</label><input name="m" type="password" minlength="8" required><div class="msg hidden"></div><button class="btn sm" style="margin-top:10px">Anrejistre</button>`;
+      f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg");
+        try { await SB.rpc("staf_mete_kont", { p_code: KOD, p_idantifyan: f.i.value, p_modpas: f.m.value }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; } catch (e) { m.className = "msg err"; m.textContent = e.message; } };
+      drt.append(f);
+    }
+    kol.append(gch, drt); v.append(kol);
+  }
+
+  // ---- team (super admin): approve sign-ups, give role, job and tasks, deactivate
+  async function vEkip(v) {
+    const L = await SB.rpc("staf_ekip", { p_code: KOD });
+    const atant = L.filter((x) => x.statut === "en_attente");
+    v.append(el("p", { className: "mute", textContent: atant.length ? `${atant.length} moun ap tann validasyon.` : "Pa gen moun k ap tann. Voye lyen sa a bay moun k ap travay avè w pou yo kreye kont yo: " + site + "/staf" }));
+    L.forEach((x) => {
+      const c = el("div", { className: "card ek" });
+      const av = el("span", { className: "av", textContent: x.foto ? "" : (x.non || "?")[0] }); if (x.foto) av.style.backgroundImage = `url(data:image/jpeg;base64,${x.foto})`;
+      const d = el("div");
+      d.append(el("div", { className: "row2" }, el("h3", { style: "margin:0", textContent: x.non + (x.mwen ? " (ou menm)" : "") }), el("span", { className: "bad " + ({ actif: "valide", en_attente: "en_attente" }[x.statut] || "refuse"), textContent: { actif: "aktif", en_attente: "an atant", refuse: "refize", dezaktive: "dezaktive" }[x.statut] || x.statut })));
+      d.append(el("p", { className: "mute small", style: "margin:4px 0 8px", textContent: (x.idantifyan || "kòd ekip") + " · " + SB.dat(x.cree_le, { day: "numeric", month: "short" }) }));
+      const f = el("form");
+      f.innerHTML = `<label class="l">Wòl</label><select name="r"><option value="">Chwazi…</option><option value="vandeur">Vandè: enskri moun sou plas, revoye tikè</option><option value="validateur">Validatè: valide peman</option><option value="scanneur">Eskanè: pòt la</option><option value="admin">Super admin: tout bagay</option></select>
+        <label class="l">Fonksyon (sou badj la)</label><input name="f" placeholder="Egz. Responsab enskripsyon Leyogàn">
+        <label class="l">Travay li</label><textarea name="t" rows="3" placeholder="Yon travay pa liy"></textarea>`;
+      f.r.value = x.role || ""; f.f.value = x.fonksyon || ""; f.t.value = x.travay || "";
+      const mete = (st) => bouton(st === "actif" ? (x.statut === "actif" ? "Anrejistre" : "Valide kont lan") : st === "refuse" ? "Refize" : "Dezaktive", async () => {
+        if (st !== "actif" && !confirm(`${st === "refuse" ? "Refize" : "Dezaktive"} ${x.non}?`)) return;
+        await SB.rpc("staf_ekip_mete", { p_code: KOD, p_id: x.id, p_statut: st, p_role: f.r.value || null, p_fonksyon: f.f.value, p_travay: f.t.value }); TAB = "ekip"; afiche(); }, st !== "actif");
+      const a = el("div", { className: "act2" }, mete("actif"));
+      if (x.statut === "en_attente") a.append(mete("refuse"));
+      else if (!x.mwen && x.statut === "actif") a.append(mete("dezaktive"));
+      if (x.statut === "actif") a.append(lyen("Wè badj li", `/badj/${x.badj}`));
+      d.append(f, a); c.append(av, d); v.append(c);
+    });
+    const g = el("form");
+    g.innerHTML = `<h3 style="margin-top:0">Ansyen metòd: yon kòd ekip</h3><p class="mute small">Validatè: valide peman sèlman. Eskanè: pòt la jou J sèlman. Bay chak moun pwòp kòd li (omwen 10 karaktè).</p>
+      <label class="l">Non</label><input name="n" required><label class="l">Wòl</label><select name="r"><option value="vandeur">Vandè (enskri moun sou plas, revoye tikè)</option><option value="validateur">Validatè (valide peman)</option><option value="scanneur">Eskanè (pòt la)</option><option value="admin">Admin</option></select>
+      <label class="l">Kòd</label><input name="k" minlength="10" required><div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Kreye kòd la</button>`;
+    g.onsubmit = async (ev) => { ev.preventDefault(); const m = g.querySelector(".msg");
+      try { await SB.rpc("staf_kreye", { p_code: KOD, p_non: g.n.value, p_role: g.r.value, p_nouvo_code: g.k.value }); m.className = "msg ok"; m.textContent = "Kòd la kreye ✓ Voye l bay moun nan an prive."; g.reset(); }
+      catch (er) { m.className = "msg err"; m.textContent = er.message; } };
+    v.append(el("details", { className: "card" }, el("summary", { textContent: "Kreye yon kòd ekip (san kont)" }), g));
+  }
+
+  // ---- event, ticket types (prices, quotas, early-bird date)
   function vParam(v) {
     const e = D.evenement || {}, f = el("form", { className: "card" });
     const loc = (iso) => iso ? new Date(new Date(iso).getTime() - 5 * 3600e3).toISOString().slice(0, 16) : "";
@@ -236,14 +349,6 @@
         m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await chaje(); TAB = "param";
       } catch (er) { m.className = "msg err"; m.textContent = er.message; } };
     v.append(f);
-    const g = el("form", { className: "card" });
-    g.innerHTML = `<h3 style="margin-top:0">Ajoute yon moun nan ekip la</h3><p class="mute small">Validatè: valide peman sèlman. Eskanè: pòt la jou J sèlman. Bay chak moun pwòp kòd li (omwen 10 karaktè).</p>
-      <label class="l">Non</label><input name="n" required><label class="l">Wòl</label><select name="r"><option value="vandeur">Vandè (enskri moun sou plas, revoye tikè)</option><option value="validateur">Validatè (valide peman)</option><option value="scanneur">Eskanè (pòt la)</option><option value="admin">Admin</option></select>
-      <label class="l">Kòd</label><input name="k" minlength="10" required><div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Kreye kòd la</button>`;
-    g.onsubmit = async (ev) => { ev.preventDefault(); const m = g.querySelector(".msg");
-      try { await SB.rpc("staf_kreye", { p_code: KOD, p_non: g.n.value, p_role: g.r.value, p_nouvo_code: g.k.value }); m.className = "msg ok"; m.textContent = "Kòd la kreye ✓ Voye l bay moun nan an prive."; g.reset(); }
-      catch (er) { m.className = "msg err"; m.textContent = er.message; } };
-    v.append(g);
   }
 })();
 </script>

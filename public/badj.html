@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badj ekip · Atelye AI</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/icon.png">
+<link rel="stylesheet" href="/style.css">
+<style>
+  body { background: var(--soft); }
+  main { max-width: 460px; margin: 0 auto; padding: 20px 16px 40px; }
+  .ver { margin: 0 auto 16px; max-width: 340px; padding: 14px; border-radius: 14px; text-align: center; font-weight: 800; font-size: 18px; }
+  .ver.ok { background: #1f7a43; color: #fff; } .ver.ko { background: #b3261e; color: #fff; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a href="/konferans" aria-label="Atelye AI"><img src="/logo.png" alt="Atelye AI"></a></div></header>
+<main><div id="ver" class="ver hidden"></div><div id="b"><p class="mute" style="text-align:center">Chajman…</p></div></main>
+<script src="/vendor/qrcode.js"></script>
+<script src="/sb.js"></script>
+<script src="/badj.js"></script>
+<script>
+(() => {
+  const code = (location.pathname.split("/")[2] || new URLSearchParams(location.search).get("k") || "").toUpperCase().replace(/[^A-F0-9]/g, "");
+  const box = document.getElementById("b"), ver = document.getElementById("ver");
+  if (!code) { box.innerHTML = '<p class="mute" style="text-align:center">Pa gen kòd badj.</p>'; return; }
+  SB.rpc("badj_public", { p_badj: code }).then((b) => {
+    if (!b) { ver.className = "ver ko"; ver.textContent = "Badj sa a pa egziste"; box.replaceChildren(); return; }
+    ver.className = "ver " + (b.valid ? "ok" : "ko"); ver.textContent = b.valid ? "Badj valid ✓ Manm ekip la" : "Badj sa a pa valid ankò";
+    box.replaceChildren(BADJ.rann(b));
+  }).catch(() => { box.innerHTML = '<p class="mute" style="text-align:center">Pa gen entènèt. Eseye ankò.</p>'; });
+})();
+</script>
+</body>
+</html>

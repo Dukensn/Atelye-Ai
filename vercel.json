@@ -24,7 +24,7 @@
       ]
     },
     {
-      "source": "/(espas|admin|staf|skane|billet)(.*)",
+      "source": "/(espas|admin|staf|skane|billet|badj|enskri)(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -50,6 +50,10 @@
     {
       "source": "/billet/:code",
       "destination": "/billet"
+    },
+    {
+      "source": "/badj/:code",
+      "destination": "/badj"
     }
   ]
 }
