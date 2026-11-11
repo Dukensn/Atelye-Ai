@@ -82,7 +82,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
 
   // 4) staff validates
   const s = await ctx.newPage(); await s.goto("http://localhost:5174/staf"); await s.click("#akod"); await s.fill("#kod", "sekre-admin-123"); await s.click("#fkod button"); await s.waitForSelector("#bn button[data-k=file]");
-  await ale(s, "file"); await s.waitForTimeout(1500); await s.waitForSelector("#v .card");
+  await ale(s, "file"); await s.waitForSelector("#v .li[data-id]"); await s.click("#v .li[data-id]");
   await s.click("text=Wè kapti a"); await s.waitForSelector("img.kapti"); ok(true, "payment screenshot visible to staff");
   await s.screenshot({ path: S + "4-queue.png", fullPage: true });
   await s.click("text=Peman an rive, valide"); await s.waitForSelector("text=Pa gen peman k ap tann");
@@ -127,15 +127,16 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await u.click("#fe button"); await u.waitForSelector("#fe .msg.ok"); ok(true, "team member signs up with a photo");
   await u.click("#lt button[data-m=k]"); await u.fill("#li", "nadege@gmail.com"); await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#fk .msg.err");
   ok((await u.textContent("#fk .msg")).includes("poko valide"), "pending account cannot log in");
-  await ale(s, "ekip"); await s.waitForSelector("#v .ek");
-  const kat = s.locator("#v .ek", { hasText: "Nadège" }); await kat.locator("select").selectOption("vandeur");
+  await ale(s, "ekip"); await s.waitForSelector("#v .li >> text=Nadège"); await s.click("#v .li >> text=Nadège");
+  const kat = s.locator("#sh .ek"); await kat.locator("select").selectOption("vandeur");
   await kat.locator("[name=f]").fill("Responsab enskripsyon Leyogàn"); await kat.locator("textarea").fill("Vann tikè nan lekòl yo\nRevoye tikè pèdi");
-  await kat.locator("button", { hasText: "Valide kont lan" }).click(); await s.locator("#v .ek", { hasText: "Nadège" }).locator(".bad.valide").waitFor(); ok(true, "super admin approves with role, job and tasks");
-  await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#bn button[data-k=tablo]"); await ale(u, "mwen"); await u.waitForSelector("#v .bj2");
+  await kat.locator("button", { hasText: "Valide kont lan" }).click(); await s.locator("#v .li", { hasText: "Nadège" }).locator(".pl.ok").waitFor(); ok(true, "super admin approves with role, job and tasks");
+  await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#bn button[data-k=tablo]"); await ale(u, "mwen"); await u.waitForSelector("#wè-badj");
   ok((await u.textContent("#v")).includes("Responsab enskripsyon Leyogàn") && (await u.textContent("#v")).includes("Revoye tikè pèdi"), "member sees job, tasks and access");
   await ale(u, "meni"); await u.waitForSelector("#v .li[data-k=mwen]");
   ok((await u.locator("#v .li[data-k]:not([data-k=soti]) .tx b").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Pwofil mwen", "member sees only the sections of the role");
-  await u.click("#v .li[data-k=mwen]"); await u.waitForSelector("#v .bj2");
+  await u.click("#v .li[data-k=mwen]"); await u.click("#wè-badj"); await u.waitForSelector("#sh .bj2 canvas");
+  ok(true, "badge opens behind the eye button"); await u.click("#sh .tabs3 button >> text=Klasik"); await u.waitForSelector("#sh .bj2 canvas"); await u.screenshot({ path: S + "7-badj.png" }); await u.click("#sh .bg", { position: { x: 10, y: 10 } });
   // profile: change name, add a phone, then log in with the phone; a wrong current password blocks a password change
   await u.click("#v .li[data-f=non]"); await u.fill("#pf-non", "Nadège Pòl Jean"); await u.fill("#pf-tel", "3711 2233"); await u.click("#sh button.full"); await u.waitForSelector("#sh .msg.ok"); await u.waitForSelector("#sh", { state: "detached" });
   const me2 = (await rpc("staf_mwen", { p_code: await u.evaluate(() => localStorage.getItem("staf-kod")) }))[1];
@@ -154,8 +155,8 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   const fw = s.locator("#v form.card").last(); await fw.locator("[name=n]").fill("Fotograf"); await fw.locator("[name=d]").fill("Pran foto ak videyo jou atelye a");
   await fw.locator(".ak input[value=eskane]").check(); await fw.locator("button").click();
   await s.waitForSelector("#v .wl >> text=Fotograf"); ok((await s.locator("#v .wl", { hasText: "Fotograf" }).textContent()).includes("Eskane tikè"), "super admin creates a role with its access");
-  await ale(s, "ekip"); await s.waitForSelector("#v .ek select");
-  ok((await s.locator("#v .ek select").first().locator("option").allTextContents()).includes("Fotograf"), "new role offered to team members");
+  await ale(s, "ekip"); await s.waitForSelector("#v .li >> text=Nadège"); await s.click("#v .li >> text=Nadège"); await s.waitForSelector("#sh .ek select");
+  ok((await s.locator("#sh .ek select").first().locator("option").allTextContents()).includes("Fotograf"), "new role offered to team members"); await s.click("#sh .bg", { position: { x: 10, y: 10 } });
 
   // 8) WhatsApp assistant tab: settings (keys write-only), a conversation that needs a person, try the assistant
   await dbq("update wa_konfig set sekre_hash = encode(extensions.digest('e2e-sekre','sha256'),'hex'), aktif = false");
@@ -193,7 +194,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await s.waitForSelector("#v .ch .bl.bot"); ok((await s.locator("#v .ch .bl.bot").textContent()).includes("2 000"), "try-the-assistant screen answers");
   await s.screenshot({ path: S + "11-asistan.png" });
   await ale(s, "meni"); await s.waitForSelector("#v .li[data-k=param]"); await s.screenshot({ path: S + "12-meni.png", fullPage: true });
-  await ale(s, "mwen"); await s.waitForSelector("#v .bj2"); await s.screenshot({ path: S + "13-pwofil.png", fullPage: true });
+  await ale(s, "mwen"); await s.waitForSelector("#wè-badj"); await s.screenshot({ path: S + "13-pwofil.png", fullPage: true });
   await s.setViewportSize({ width: 1280, height: 820 }); await s.click("#tabs button[data-k=tablo]"); await s.waitForSelector(".k4"); await s.screenshot({ path: S + "14-pc.png" }); ok(await s.locator("#tabs").isVisible(), "side menu on computers");
   console.log("page errors:", errs);
   await b.close(); srv.close(); await db.end();

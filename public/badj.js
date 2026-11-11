@@ -1,128 +1,104 @@
-// Permanent team badge (team members and helpers), portrait or landscape, worn on a lanyard.
-// No event date: it shows the role colour band, job, badge ID, "member since" and a QR that opens /badj/<code>.
+// Team badge, worn on a lanyard at workshops and conferences. One canvas drawing is both the preview and the PNG download.
+// Three looks: "tek" (dark, faint AI network in the background), "klasik" (white with a dark header), "minimal" (all white).
+// The title on the badge is the job the admins give the member (Fòmatè, Sekretè…), never the access role.
 (() => {
-  const ROL = { admin: "Super admin", validateur: "Validatè", vandeur: "Vandè", scanneur: "Eskanè", asistan: "Asistan" };
-  const KOU = { admin: ["#ffc83d", "#111"], validateur: ["#3b82f6", "#fff"], vandeur: ["#22c55e", "#fff"], scanneur: ["#f97316", "#fff"], asistan: ["#a855f7", "#fff"] };
-  const SLOGAN = ["Kreye.", "Vann.", "Otomatize."];
   const SIT = "atelye-ai.vercel.app";
-  const css = `
-  .bj2 { width: 340px; max-width: 100%; aspect-ratio: 54/86; margin: 0 auto; position: relative; border-radius: 24px; overflow: hidden; background: #fff; color: #111;
-    font-family: Inter, system-ui, sans-serif; box-shadow: 0 18px 40px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.06); display: flex; flex-direction: column; container-type: inline-size; }
-  .bj2 .hd { position: relative; height: 24%; background: #0f0f0f; color: #fff; padding: 9cqw 7cqw 0; overflow: hidden; flex: none; }
-  .bj2 .hd::before { content: ""; position: absolute; right: -18cqw; top: -14cqw; width: 70cqw; height: 70cqw; border-radius: 50%; background: radial-gradient(circle, rgba(215,255,58,.35), transparent 65%); }
-  .bj2 .hd::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.6cqw; background: linear-gradient(90deg, #d7ff3a, #ffc83d, #f97316); }
-  .bj2 .sl { position: absolute; left: 50%; top: 3.2cqw; width: 18cqw; height: 3.4cqw; margin-left: -9cqw; border-radius: 2cqw; background: #fff; box-shadow: inset 0 1px 3px rgba(0,0,0,.5); }
-  .bj2 .br { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 3cqw; }
-  .bj2 .lo { flex: none; width: 15cqw; height: 12cqw; border-radius: 3cqw; background: #fff; display: grid; place-items: center; overflow: hidden; } .bj2 .lo img { display: block; width: 76%; height: auto; max-width: none; }
-  .bj2 .ev { text-align: right; } .bj2 .ev b { display: block; font-size: 5.6cqw; font-weight: 800; letter-spacing: .12em; color: #d7ff3a; }
-  .bj2 .ev span { display: block; font-size: 3.5cqw; font-weight: 700; color: #cfcfcf; margin-top: 1cqw; letter-spacing: .18em; text-transform: uppercase; }
-  .bj2 .ph { position: relative; z-index: 1; flex: none; width: 40cqw; aspect-ratio: 4/5; margin: -9cqw auto 0; border-radius: 6cqw; border: 1.6cqw solid #fff; background: #eee center/cover no-repeat;
-    box-shadow: 0 2cqw 6cqw rgba(0,0,0,.18); display: grid; place-items: center; font-size: 15cqw; font-weight: 800; color: #bbb; }
-  .bj2 .nm { text-align: center; font-size: 8.2cqw; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; margin: 4cqw 6cqw 0; overflow-wrap: anywhere; }
-  .bj2 .fn { text-align: center; font-size: 4cqw; color: #555; font-weight: 600; margin: 1.6cqw 6cqw 0; min-height: 1.2em; }
-  .bj2 .mi { flex: 1; display: flex; align-items: center; gap: 4cqw; margin: 3cqw 6cqw 0; padding-top: 3cqw; border-top: .5cqw dashed #e2e2e2; min-height: 0; }
-  .bj2 canvas { flex: none; width: 25cqw; height: 25cqw; image-rendering: pixelated; }
-  .bj2 .if { flex: 1; min-width: 0; display: grid; gap: 1.3cqw; font-size: 3.4cqw; color: #666; }
-  .bj2 .if b { color: #111; font-weight: 800; letter-spacing: .06em; }
-  .bj2 .sg { font-size: 4.4cqw; font-weight: 800; letter-spacing: -.01em; color: #111; margin-top: .6cqw; } .bj2 .sg i { font-style: normal; color: #f97316; }
-  .bj2 .rl { flex: none; height: 12%; display: flex; align-items: center; justify-content: center; font-size: 6.4cqw; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
-  /* landscape */
-  .bj2.h { width: 520px; aspect-ratio: 86/54; display: grid; grid-template-columns: 34% 1fr; grid-template-rows: 25% 1fr 15%; }
-  .bj2.h .hd { grid-column: 1 / -1; height: auto; padding: 0 4.5cqw; display: flex; align-items: center; }
-  .bj2.h .hd .br { width: 100%; } .bj2.h .sl { top: 1.8cqw; width: 11cqw; height: 2.1cqw; margin-left: -5.5cqw; }
-  .bj2.h .lo { width: 9.5cqw; height: 7.6cqw; border-radius: 2cqw; }
-  .bj2.h .ev b { font-size: 3.6cqw; } .bj2.h .ev span { font-size: 2.2cqw; }
-  .bj2.h .ph { grid-row: 2; width: 24cqw; margin: -3cqw auto 0 5cqw; border-radius: 3.6cqw; border-width: 1cqw; font-size: 9cqw; align-self: start; }
-  .bj2.h .bd { grid-row: 2; padding: 3cqw 4.5cqw 0 1cqw; display: flex; flex-direction: column; min-width: 0; }
-  .bj2.h .nm { text-align: left; font-size: 5.4cqw; margin: 0; } .bj2.h .fn { text-align: left; font-size: 2.6cqw; margin: 1cqw 0 0; }
-  .bj2.h .mi { margin: 2cqw 0 0; padding-top: 2cqw; border-top-width: .35cqw; gap: 2.6cqw; }
-  .bj2.h canvas { width: 15cqw; height: 15cqw; } .bj2.h .if { font-size: 2.2cqw; gap: .8cqw; } .bj2.h .sg { font-size: 2.8cqw; }
-  .bj2.h .rl { grid-column: 1 / -1; height: auto; font-size: 4cqw; }`;
-  let stil = false;
+  const MODEL = [["tek", "Teknoloji"], ["klasik", "Klasik"], ["minimal", "Minimal"]];
+  const ACC = "#d7ff3a", ACC2 = "#ffc83d";
   const inisyal = (n) => String(n || "?").split(/\s+/).filter(Boolean).map((x) => x[0]).join("").slice(0, 2).toUpperCase();
   const id = (c) => String(c || "").replace(/(.{4})(?=.)/g, "$1-");
-  const depi = (d) => d && window.SB ? SB.dat(d, { month: "short", year: "numeric" }) : "";
-  const kle = (b) => (b.role in KOU ? b.role : "asistan");
-  // role colour and name come from the role itself (roles are defined in /staf → Wòl)
-  const klè = (h) => { const n = parseInt(String(h).slice(1), 16); return (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) > 160; };
-  const kou = (b) => { const bg = /^#[0-9a-f]{6}$/i.test(b.koule || "") ? b.koule : KOU[kle(b)][0]; return [bg, klè(bg) ? "#111" : "#fff"]; };
-  const rnon = (b) => b.role_non || ROL[kle(b)];
+  const tit = (b) => (b.fonksyon || "").trim() || "Ekip Atelye AI";
+  const img = (src) => new Promise((ok) => { if (!src) return ok(null); const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; });
+  // deterministic pseudo-random, so the background is the same on every render
+  const rnd = (s) => () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
 
-  function qr(c, txt) {
+  function qr(txt, px) {
     const q = qrcode(0, "M"); q.addData(txt); q.make();
-    const n = q.getModuleCount(), m = 1, s = Math.floor(c.width / (n + 2 * m)), o = Math.floor((c.width - s * n) / 2), g = c.getContext("2d");
-    g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.fillStyle = "#000";
-    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) g.fillRect(o + k * s, o + r * s, s, s);
+    const n = q.getModuleCount(), c = document.createElement("canvas"); c.width = c.height = px; const g = c.getContext("2d"), s = px / (n + 2);
+    g.fillStyle = "#fff"; g.fillRect(0, 0, px, px); g.fillStyle = "#000";
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) g.fillRect(Math.floor((k + 1) * s), Math.floor((r + 1) * s), Math.ceil(s), Math.ceil(s));
+    return c;
   }
-
-  // b: { non, role, fonksyon, foto, badj, depi }   o: "v" (portrait) | "h" (landscape)
-  function rann(b, o = "v") {
-    if (!stil) { stil = true; const s = document.createElement("style"); s.textContent = css; document.head.append(s); }
-    const [bg, fg] = kou(b), d = document.createElement("div"); d.className = "bj2" + (o === "h" ? " h" : "");
-    const kò = `<div class="nm"></div><div class="fn"></div>
-      <div class="mi"><canvas width="240" height="240" aria-label="Kòd QR badj la"></canvas>
-        <div class="if"><span>ID <b class="i1"></b></span><span class="i2"></span><span>${SIT}</span><div class="sg">Kreye. Vann. <i>Otomatize.</i></div></div></div>`;
-    d.innerHTML = `<div class="hd"><span class="sl"></span><div class="br"><span class="lo"><img src="/logo.png" alt="Atelye AI"></span>
-        <div class="ev"><b>ATELYE AI</b><span>Ekip ofisyèl</span></div></div></div>
-      <div class="ph"></div>${o === "h" ? `<div class="bd">${kò}</div>` : kò}<div class="rl"></div>`;
-    const ph = d.querySelector(".ph");
-    if (b.foto) ph.style.backgroundImage = `url(data:image/jpeg;base64,${b.foto})`; else ph.textContent = inisyal(b.non);
-    d.querySelector(".nm").textContent = b.non || "";
-    d.querySelector(".fn").textContent = b.fonksyon || "Ekip Atelye AI";
-    d.querySelector(".i1").textContent = id(b.badj);
-    d.querySelector(".i2").textContent = b.depi ? "Manm depi " + depi(b.depi) : "";
-    const rl = d.querySelector(".rl"); rl.textContent = rnon(b); rl.style.background = bg; rl.style.color = fg;
-    if (b.badj) qr(d.querySelector("canvas"), `${location.origin}/badj/${b.badj}`);
-    return d;
-  }
-
-  // the same badge as a PNG, to print or keep in the phone (portrait 680x1083, landscape 1083x680)
-  async function imaj(b, o = "v") {
-    const H0 = o === "h", W = H0 ? 1083 : 680, H = H0 ? 680 : 1083, u = W / 100, c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
-    const img = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; });
-    const [bg, fg] = kou(b), F = (w, px) => `${w} ${px}px Inter, system-ui, sans-serif`;
-    const sp = (t) => String(t).split("").join(String.fromCharCode(8202));
-    g.save(); g.beginPath(); g.roundRect(0, 0, W, H, (H0 ? 4.4 : 7) * u); g.clip(); g.fillStyle = "#fff"; g.fillRect(0, 0, W, H);
-    // header
-    const hh = H * (H0 ? 0.25 : 0.24); g.fillStyle = "#0f0f0f"; g.fillRect(0, 0, W, hh);
-    const rg = g.createRadialGradient(W - 17 * u, 20 * u, 0, W - 17 * u, 20 * u, 35 * u); rg.addColorStop(0, "rgba(215,255,58,.35)"); rg.addColorStop(1, "rgba(215,255,58,0)"); g.fillStyle = rg; g.fillRect(0, 0, W, hh);
-    const lg = g.createLinearGradient(0, 0, W, 0); lg.addColorStop(0, "#d7ff3a"); lg.addColorStop(.5, "#ffc83d"); lg.addColorStop(1, "#f97316"); g.fillStyle = lg; g.fillRect(0, hh - (H0 ? 1 : 1.6) * u, W, (H0 ? 1 : 1.6) * u);
-    const slw = (H0 ? 11 : 18) * u, slh = (H0 ? 2.1 : 3.4) * u; g.fillStyle = "#fff"; g.beginPath(); g.roundRect(W / 2 - slw / 2, (H0 ? 1.8 : 3.2) * u, slw, slh, slh / 2); g.fill();
-    const lw = (H0 ? 9.5 : 15) * u, lh = (H0 ? 7.6 : 12) * u, lx = (H0 ? 4.5 : 7) * u, ly = H0 ? hh / 2 - lh / 2 : 7 * u;
-    g.fillStyle = "#fff"; g.beginPath(); g.roundRect(lx, ly, lw, lh, (H0 ? 2 : 3) * u); g.fill();
-    const lo = await img("/logo.png"); if (lo) { const w = lw * 0.77, h = w * lo.naturalHeight / lo.naturalWidth; g.drawImage(lo, lx + lw / 2 - w / 2, ly + lh / 2 - h / 2, w, h); }
-    g.textAlign = "right"; g.fillStyle = "#d7ff3a"; g.font = F(800, (H0 ? 3.6 : 5.6) * u); g.fillText(sp("ATELYE AI"), W - lx, ly + lh * 0.48);
-    g.fillStyle = "#cfcfcf"; g.font = F(700, (H0 ? 2.2 : 3.5) * u); g.fillText(sp("EKIP OFISYÈL"), W - lx, ly + lh * 0.9);
-    // photo
-    const pw = (H0 ? 24 : 40) * u, ph = pw * 5 / 4, px = H0 ? 5 * u : W / 2 - pw / 2, py = hh - (H0 ? 3 : 9) * u, bw = (H0 ? 1 : 1.6) * u, br = (H0 ? 3.6 : 6) * u;
-    g.fillStyle = "#fff"; g.beginPath(); g.roundRect(px - bw, py - bw, pw + 2 * bw, ph + 2 * bw, br + bw); g.fill();
-    g.save(); g.beginPath(); g.roundRect(px, py, pw, ph, br); g.clip();
-    const ft = b.foto ? await img(`data:image/jpeg;base64,${b.foto}`) : null;
-    if (ft) { const r = pw / ph, sr = ft.width / ft.height; let sw = ft.width, sh = ft.height; if (sr > r) sw = sh * r; else sh = sw / r; g.drawImage(ft, (ft.width - sw) / 2, (ft.height - sh) / 2, sw, sh, px, py, pw, ph); }
-    else { g.fillStyle = "#eee"; g.fillRect(px, py, pw, ph); g.fillStyle = "#bbb"; g.font = F(800, (H0 ? 9 : 15) * u); g.textAlign = "center"; g.fillText(inisyal(b.non), px + pw / 2, py + ph / 2 + (H0 ? 3 : 5) * u); }
+  // faint "neural network": nodes and links, plus a few circuit traces
+  function rezo(g, x, y, w, h, col, a, seed) {
+    const R = rnd(seed), N = 34, P = [];
+    for (let i = 0; i < N; i++) P.push([x + R() * w, y + R() * h]);
+    g.save(); g.globalAlpha = a; g.strokeStyle = col; g.fillStyle = col; g.lineWidth = Math.max(1, w / 420);
+    for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) { const d = Math.hypot(P[i][0] - P[j][0], P[i][1] - P[j][1]); if (d < w * 0.23) { g.beginPath(); g.moveTo(...P[i]); g.lineTo(...P[j]); g.stroke(); } }
+    P.forEach(([px, py], i) => { g.beginPath(); g.arc(px, py, (i % 5 === 0 ? 3.2 : 1.8) * w / 680, 0, 7); g.fill(); });
+    for (let k = 0; k < 6; k++) { let px = x + R() * w, py = y + R() * h; g.beginPath(); g.moveTo(px, py);
+      for (let s = 0; s < 3; s++) { if (s % 2) py += (R() - .5) * h * .3; else px += (R() - .5) * w * .4; g.lineTo(px, py); } g.stroke(); g.beginPath(); g.arc(px, py, 3 * w / 680, 0, 7); g.stroke(); }
     g.restore();
-    // name + job
-    const tx = H0 ? 34 * u + u : W / 2, tw = H0 ? W - tx - 4.5 * u : W - 12 * u, al = H0 ? "left" : "center";
-    g.textAlign = al; g.fillStyle = "#111"; const nf = (H0 ? 5.4 : 8.2) * u; g.font = F(800, nf);
-    let y = H0 ? hh + 3 * u + nf * 0.85 : py + ph + 12 * u, li = "", lin = [];
-    String(b.non || "").split(" ").forEach((w) => { const t = li ? li + " " + w : w; if (g.measureText(t).width > tw && li) { lin.push(li); li = w; } else li = t; }); if (li) lin.push(li);
-    lin.slice(0, 2).forEach((l, i) => g.fillText(l, tx, y + i * nf * 1.05)); y += (Math.min(lin.length, 2) - 1) * nf * 1.05;
-    g.fillStyle = "#555"; g.font = F(600, (H0 ? 2.6 : 4) * u); y += (H0 ? 4 : 6.5) * u; g.fillText(b.fonksyon || "Ekip Atelye AI", tx, y);
-    // QR + info
-    const by = H * (H0 ? 0.85 : 0.88), my = y + (H0 ? 3 : 5) * u, x0 = H0 ? tx : 6 * u;
-    g.strokeStyle = "#e2e2e2"; g.setLineDash([1.2 * u, 1.2 * u]); g.lineWidth = (H0 ? .35 : .5) * u; g.beginPath(); g.moveTo(x0, my); g.lineTo(W - (H0 ? 4.5 : 6) * u, my); g.stroke(); g.setLineDash([]);
-    const qs = (H0 ? 15 : 25) * u, qy = my + (by - my - qs) / 2, q = document.createElement("canvas"); q.width = q.height = 300; qr(q, `${location.origin}/badj/${b.badj}`); g.drawImage(q, x0, qy, qs, qs);
-    const ix = x0 + qs + (H0 ? 2.6 : 4) * u, fs = (H0 ? 2.2 : 3.4) * u, lh2 = fs * 1.55; let iy = qy + fs;
-    g.textAlign = "left"; g.font = F(500, fs); g.fillStyle = "#666"; g.fillText("ID ", ix, iy); g.fillStyle = "#111"; g.font = F(800, fs); g.fillText(id(b.badj), ix + g.measureText("ID  ").width, iy);
-    g.font = F(500, fs); g.fillStyle = "#666"; if (b.depi) { iy += lh2; g.fillText("Manm depi " + depi(b.depi), ix, iy); } iy += lh2; g.fillText(SIT, ix, iy);
-    iy += lh2 * 1.25; g.font = F(800, (H0 ? 2.8 : 4.4) * u); let sx = ix;
-    SLOGAN.forEach((s, i) => { g.fillStyle = i === 2 ? "#f97316" : "#111"; g.fillText(s, sx, iy); sx += g.measureText(s + " ").width; });
-    // role band
-    g.fillStyle = bg; g.fillRect(0, by, W, H - by); g.fillStyle = fg; g.textAlign = "center"; g.font = F(800, (H0 ? 4 : 6.4) * u);
-    g.fillText(sp(rnon(b).toUpperCase()), W / 2, by + (H - by) / 2 + (H0 ? 1.4 : 2.2) * u);
+  }
+  function rond(g, x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
+  function koupe(g, t, max) { let s = String(t); while (s.length > 1 && g.measureText(s).width > max) s = s.slice(0, -2) + "…"; return s; }
+  function liy(g, t, max) { const W = String(t || "").split(" "), L = []; let li = "";
+    W.forEach((w) => { const x = li ? li + " " + w : w; if (g.measureText(x).width > max && li) { L.push(li); li = w; } else li = x; }); if (li) L.push(li); return L.slice(0, 2); }
+  function foto(g, ft, x, y, w, h, r, b, fond, kl) {
+    g.save(); rond(g, x, y, w, h, r); g.clip();
+    if (ft) { const rt = w / h, sr = ft.width / ft.height; let sw = ft.width, sh = ft.height; if (sr > rt) sw = sh * rt; else sh = sw / rt; g.drawImage(ft, (ft.width - sw) / 2, (ft.height - sh) / 2, sw, sh, x, y, w, h); }
+    else { g.fillStyle = fond; g.fillRect(x, y, w, h); g.fillStyle = kl; g.font = `700 ${w * 0.32}px Inter, system-ui, sans-serif`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(inisyal(b.non), x + w / 2, y + h / 2); }
+    g.restore();
+  }
+
+  // b: { non, fonksyon, foto, badj }, o: "v" portrait (680x1083) | "h" landscape (1083x680), m: model
+  async function desen(b, o = "v", m = "tek") {
+    const H0 = o === "h", W = H0 ? 1083 : 680, H = H0 ? 680 : 1083, c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
+    const [lo, ft] = await Promise.all([img("/logo.png"), img(b.foto ? `data:image/jpeg;base64,${b.foto}` : null)]);
+    const F = (w, px) => `${w} ${px}px Inter, system-ui, sans-serif`, u = Math.min(W, H) / 100;
+    const nuit = m === "tek", ink = nuit ? "#fff" : "#111", mu = nuit ? "rgba(255,255,255,.62)" : "#6b6b6b";
+    g.save(); rond(g, 0, 0, W, H, 5 * u); g.clip();
+    // background
+    if (nuit) { const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, "#0b0f17"); bg.addColorStop(1, "#141a26"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+      const gl = g.createRadialGradient(W * .85, H * .1, 0, W * .85, H * .1, W * .8); gl.addColorStop(0, "rgba(215,255,58,.16)"); gl.addColorStop(1, "rgba(215,255,58,0)"); g.fillStyle = gl; g.fillRect(0, 0, W, H);
+      rezo(g, 0, 0, W, H, "#9fb4ff", .16, 7); }
+    else { g.fillStyle = "#fff"; g.fillRect(0, 0, W, H); rezo(g, 0, 0, W, H, "#1e2a44", m === "minimal" ? .045 : .06, 11); }
+    if (m === "klasik") { const hh = H0 ? H * .24 : H * .2; g.fillStyle = "#101010"; g.fillRect(0, 0, W, hh); rezo(g, 0, 0, W, hh, "#9fb4ff", .2, 3);
+      const lg = g.createLinearGradient(0, 0, W, 0); lg.addColorStop(0, ACC); lg.addColorStop(1, ACC2); g.fillStyle = lg; g.fillRect(0, hh - .9 * u, W, .9 * u); }
+    // lanyard slot
+    const slw = (H0 ? 9 : 16) * u; g.fillStyle = nuit || m === "klasik" ? "rgba(255,255,255,.92)" : "#e9e9e9"; rond(g, W / 2 - slw / 2, 2.6 * u, slw, 2.4 * u, 1.2 * u); g.fill();
+    // logo: white chip on dark, plain on white
+    const lgw = (H0 ? 15 : 22) * u, lgh = lo ? lgw * lo.naturalHeight / lo.naturalWidth : 0, lx = 7 * u, ly = (H0 ? 7.5 : 9) * u;
+    if (lo) { if (nuit || m === "klasik") { g.fillStyle = "#fff"; rond(g, lx - 2 * u, ly - 1.6 * u, lgw + 4 * u, lgh + 3.2 * u, 2.4 * u); g.fill(); } g.drawImage(lo, lx, ly, lgw, lgh); }
+    g.textAlign = "right"; g.textBaseline = "alphabetic"; g.fillStyle = nuit || m === "klasik" ? ACC : "#111"; g.font = F(800, 3.3 * u);
+    g.fillText("EKIP OFISYÈL", W - 7 * u, ly + lgh * .62);
+    // photo + text
+    const nf = (H0 ? 7 : 8.6) * u, tf = (H0 ? 3.6 : 4.4) * u;
+    let pw, ph, px, py, tx, tw, ty, al;
+    if (H0) { pw = 33 * u; ph = pw * 1.18; px = 7 * u; py = H * .27; tx = px + pw + 6 * u; tw = W - tx - 7 * u; ty = py + 11 * u; al = "left"; }
+    else { pw = 44 * u; ph = pw * 1.18; px = W / 2 - pw / 2; py = H * (m === "minimal" ? .2 : .24); tx = W / 2; tw = W - 14 * u; ty = py + ph + 12 * u; al = "center"; }
+    if (m === "tek") { g.save(); g.shadowColor = "rgba(215,255,58,.55)"; g.shadowBlur = 5 * u; g.strokeStyle = ACC; g.lineWidth = .9 * u; rond(g, px - 1.2 * u, py - 1.2 * u, pw + 2.4 * u, ph + 2.4 * u, 5.4 * u); g.stroke(); g.restore(); }
+    else if (m === "klasik") { g.fillStyle = "#fff"; rond(g, px - 1.4 * u, py - 1.4 * u, pw + 2.8 * u, ph + 2.8 * u, 5.6 * u); g.fill(); }
+    foto(g, ft, px, py, pw, ph, 4.6 * u, b, nuit ? "#1f2735" : "#efefef", nuit ? "#8a96ad" : "#b5b5b5");
+    g.textAlign = al; g.fillStyle = ink; g.font = F(800, nf);
+    const L = liy(g, b.non || "", tw); L.forEach((l, i) => g.fillText(l, tx, ty + i * nf * 1.04)); ty += (L.length - 1) * nf * 1.04;
+    // the title (job given by the admins), as a pill
+    ty += tf * 1.9; g.font = F(800, tf); const t = koupe(g, tit(b).toUpperCase(), tw - 6 * u), pwd = g.measureText(t).width + 6 * u, phh = tf * 2;
+    const pxl = al === "center" ? tx - pwd / 2 : tx;
+    g.fillStyle = m === "minimal" ? "#111" : ACC; rond(g, pxl, ty - tf * 1.36, pwd, phh, phh / 2); g.fill();
+    g.fillStyle = m === "minimal" ? "#fff" : "#111"; g.textAlign = "center"; g.fillText(t, pxl + pwd / 2, ty);
+    // bottom: QR, ID, site, slogan
+    const qs = (H0 ? 20 : 24) * u, by = H - qs - 7 * u, qx = H0 ? W - qs - 7 * u : 7 * u;
+    if (!nuit) { g.strokeStyle = "#ececec"; g.lineWidth = .3 * u; g.beginPath(); g.moveTo(7 * u, by - 4 * u); g.lineTo(W - 7 * u, by - 4 * u); g.stroke(); }
+    if (b.badj) { if (nuit) { g.fillStyle = "#fff"; rond(g, qx - 1.4 * u, by - 1.4 * u, qs + 2.8 * u, qs + 2.8 * u, 2.4 * u); g.fill(); } g.drawImage(qr(`${location.origin}/badj/${b.badj}`, 360), qx, by, qs, qs); }
+    const ix = H0 ? 7 * u : qx + qs + 5 * u, fs = 3 * u; g.textAlign = "left"; let iy = by + fs * 1.5;
+    if (H0) { iy = by + qs - fs * 4.4; }
+    g.fillStyle = mu; g.font = F(500, fs); g.fillText("ID", ix, iy); g.fillStyle = ink; g.font = F(800, fs); g.fillText(id(b.badj), ix + 4.4 * u, iy);
+    iy += fs * 1.6; g.fillStyle = mu; g.font = F(500, fs); g.fillText(SIT, ix, iy);
+    iy += fs * 2.1; g.font = F(800, fs * 1.32); let sx = ix;
+    [["Kreye.", ink], ["Vann.", ink], ["Otomatize.", nuit ? ACC : "#e2701f"]].forEach(([s, k]) => { g.fillStyle = k; g.fillText(s, sx, iy); sx += g.measureText(s + " ").width; });
     g.restore();
     return c;
   }
 
-  window.BADJ = { rann, imaj, ROL };
+  // preview element: the drawing itself (fills in once the logo and photo are loaded)
+  function rann(b, o = "v", m = "tek") {
+    const d = document.createElement("div"); d.className = "bj2" + (o === "h" ? " h" : "");
+    d.style.cssText = `width:${o === "h" ? 520 : 320}px;max-width:100%;aspect-ratio:${o === "h" ? "1083/680" : "680/1083"};margin:0 auto;border-radius:16px;overflow:hidden;background:#f1f1f1`;
+    desen(b, o, m).then((c) => { c.style.cssText = "display:block;width:100%;height:100%"; c.setAttribute("role", "img"); c.setAttribute("aria-label", `Badj ${b.non || ""}, ${tit(b)}`); d.replaceChildren(c); });
+    return d;
+  }
+  const imaj = (b, o = "v", m = "tek") => desen(b, o, m);
+
+  window.BADJ = { rann, imaj, MODEL };
 })();
