@@ -24,6 +24,7 @@ const srv = http.createServer((q, r) => {
   let f = path.join(root, u === "/" ? "index.html" : u); if (!path.extname(f)) f += ".html";
   fs.readFile(f, (e, d) => { if (e) { r.statusCode = 404; return r.end(); } r.setHeader("content-type", types[path.extname(f)] || "application/octet-stream"); r.end(d); });
 });
+async function ale(p, k) { const b = p.locator(`#bn button[data-k=${k}]`); if (await b.count()) await b.click(); else { await p.click("#bn button[data-k=meni]"); await p.click(`#v .li[data-k=${k}]`); } }
 const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process.exitCode = 1; };
 (async () => {
   await db.connect(); await new Promise((r) => srv.listen(5174, r));
@@ -80,15 +81,15 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   ok((await p2.textContent("#mj")).includes("verifye"), "pending ticket message");
 
   // 4) staff validates
-  const s = await ctx.newPage(); await s.goto("http://localhost:5174/staf"); await s.click("#akod"); await s.fill("#kod", "sekre-admin-123"); await s.click("#fkod button"); await s.waitForSelector("#tabs button[data-k=file]");
-  await s.click("#tabs button[data-k=file]"); await s.waitForTimeout(1500); await s.waitForSelector("#v .card");
+  const s = await ctx.newPage(); await s.goto("http://localhost:5174/staf"); await s.click("#akod"); await s.fill("#kod", "sekre-admin-123"); await s.click("#fkod button"); await s.waitForSelector("#bn button[data-k=file]");
+  await ale(s, "file"); await s.waitForTimeout(1500); await s.waitForSelector("#v .card");
   await s.click("text=Wè kapti a"); await s.waitForSelector("img.kapti"); ok(true, "payment screenshot visible to staff");
   await s.screenshot({ path: S + "4-queue.png", fullPage: true });
   await s.click("text=Peman an rive, valide"); await s.waitForSelector("text=Pa gen peman k ap tann");
   const link = opened.find((u) => u.includes("wa.me")); ok(!!link && decodeURIComponent(link).includes("/billet/"), "WhatsApp message with the ticket link"); ok(decodeURIComponent(link).includes("chat.whatsapp.com/GwoupTest"), "WhatsApp message invites to the group");
   const code = decodeURIComponent(link).match(/billet\/([A-Z0-9]{12})/)[1];
-  await s.click("#tabs button[data-k=tablo]"); await s.waitForSelector(".k4"); await s.screenshot({ path: S + "5-tablo.png", fullPage: true });
-  await s.click("#tabs button[data-k=lis]"); await s.waitForSelector("text=Ekspòte CSV");
+  await ale(s, "tablo"); await s.waitForSelector(".k4"); await s.screenshot({ path: S + "5-tablo.png", fullPage: true });
+  await ale(s, "lis"); await s.waitForSelector("text=Ekspòte CSV");
   const [dl] = await Promise.all([s.waitForEvent("download"), s.click("text=Ekspòte CSV")]); const csv = fs.readFileSync(await dl.path(), "utf8");
   ok(csv.includes("Roselande Pierre") && csv.includes(code), "CSV export");
 
@@ -126,19 +127,21 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await u.click("#fe button"); await u.waitForSelector("#fe .msg.ok"); ok(true, "team member signs up with a photo");
   await u.click("#lt button[data-m=k]"); await u.fill("#li", "nadege@gmail.com"); await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#fk .msg.err");
   ok((await u.textContent("#fk .msg")).includes("poko valide"), "pending account cannot log in");
-  await s.click("#tabs button[data-k=ekip]"); await s.waitForSelector("#v .ek");
+  await ale(s, "ekip"); await s.waitForSelector("#v .ek");
   const kat = s.locator("#v .ek", { hasText: "Nadège" }); await kat.locator("select").selectOption("vandeur");
   await kat.locator("[name=f]").fill("Responsab enskripsyon Leyogàn"); await kat.locator("textarea").fill("Vann tikè nan lekòl yo\nRevoye tikè pèdi");
   await kat.locator("button", { hasText: "Valide kont lan" }).click(); await s.locator("#v .ek", { hasText: "Nadège" }).locator(".bad.valide").waitFor(); ok(true, "super admin approves with role, job and tasks");
-  await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#tabs button[data-k=mwen]"); await u.click("#tabs button[data-k=mwen]"); await u.waitForSelector("#v .bj2");
+  await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#bn button[data-k=tablo]"); await ale(u, "mwen"); await u.waitForSelector("#v .bj2");
   ok((await u.textContent("#v")).includes("Responsab enskripsyon Leyogàn") && (await u.textContent("#v")).includes("Revoye tikè pèdi"), "member sees job, tasks and access");
-  ok((await u.locator("#tabs button").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Pwofil mwen", "member sees only the tabs of the role");
+  await ale(u, "meni"); await u.waitForSelector("#v .li[data-k=mwen]");
+  ok((await u.locator("#v .li[data-k]:not([data-k=soti]) .tx b").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Pwofil mwen", "member sees only the sections of the role");
+  await u.click("#v .li[data-k=mwen]"); await u.waitForSelector("#v .bj2");
   // profile: change name, add a phone, then log in with the phone; a wrong current password blocks a password change
-  await u.fill("#pf-non", "Nadège Pòl Jean"); await u.fill("#pf-tel", "3711 2233"); await u.click("#v form.card button.full"); await u.waitForSelector("#v form.card .msg.ok");
+  await u.click("#v .li[data-f=non]"); await u.fill("#pf-non", "Nadège Pòl Jean"); await u.fill("#pf-tel", "3711 2233"); await u.click("#sh button.full"); await u.waitForSelector("#sh .msg.ok"); await u.waitForSelector("#sh", { state: "detached" });
   const me2 = (await rpc("staf_mwen", { p_code: await u.evaluate(() => localStorage.getItem("staf-kod")) }))[1];
   ok(me2.non === "Nadège Pòl Jean" && me2.tel === "50937112233" && me2.imel === "nadege@gmail.com", "member edits name and adds a phone");
-  await u.fill("#pf-mp", "nouvo-modpas-9"); await u.fill("#pf-ma", "pa-bon-ditou"); await u.click("#v form.card button.full"); await u.waitForSelector("#v form.card .msg.err");
-  ok((await u.textContent("#v form.card .msg")).includes("aktyèl"), "password change needs the current password");
+  await u.click("#v .li[data-f=kle]"); await u.fill("#pf-mp", "nouvo-modpas-9"); await u.fill("#pf-ma", "pa-bon-ditou"); await u.click("#sh button.full"); await u.waitForSelector("#sh .msg.err");
+  ok((await u.textContent("#sh .msg")).includes("aktyèl"), "password change needs the current password"); await u.click("#sh .bg", { position: { x: 10, y: 10 } });
   const lg = await rpc("staf_login", { p_idantifyan: "+509 3711-2233", p_modpas: "modpas-nadege" }); ok(lg[0] === 200 && !!lg[1].token, "log in with the phone number");
   const lg2 = await rpc("staf_login", { p_idantifyan: "Nadege@Gmail.com", p_modpas: "modpas-nadege" }); ok(lg2[0] === 200, "log in with the email (any case)");
   const np = await rpc("staf_enskri", { p_non: "Wilnick", p_idantifyan: "wilnick@yahoo.fr", p_modpas: "modpas-wilnick", p_foto: null }); ok(np[0] === 200, "sign up without a photo");
@@ -147,11 +150,11 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await u.goto("http://localhost:5174/badj/" + bj[1].badj); await u.waitForSelector(".ver.ok"); ok(true, "badge QR page says valid");
   // 7) custom role: the (only) super admin proposes it, so it applies at once; then it can be given to a member
   s.on("dialog", (d) => d.accept());
-  await s.click("#tabs button[data-k=wol]"); await s.waitForSelector("#v .wl");
+  await ale(s, "wol"); await s.waitForSelector("#v .wl");
   const fw = s.locator("#v form.card").last(); await fw.locator("[name=n]").fill("Fotograf"); await fw.locator("[name=d]").fill("Pran foto ak videyo jou atelye a");
   await fw.locator(".ak input[value=eskane]").check(); await fw.locator("button").click();
   await s.waitForSelector("#v .wl >> text=Fotograf"); ok((await s.locator("#v .wl", { hasText: "Fotograf" }).textContent()).includes("Eskane tikè"), "super admin creates a role with its access");
-  await s.click("#tabs button[data-k=ekip]"); await s.waitForSelector("#v .ek select");
+  await ale(s, "ekip"); await s.waitForSelector("#v .ek select");
   ok((await s.locator("#v .ek select").first().locator("option").allTextContents()).includes("Fotograf"), "new role offered to team members");
 
   // 8) WhatsApp assistant tab: settings (keys write-only), a conversation that needs a person, try the assistant
@@ -164,28 +167,34 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
     if (d.aksyon === "eseye") return route.fulfill({ contentType: "application/json", body: JSON.stringify({ teks: "Bonjou! Lève-bonè a 2 000 goud.", fe: [] }) });
     if (d.aksyon === "voye") { await rpc("wa_sv_ekri", { p_sekre: "e2e-sekre", p_tel: d.tel, p_sans: "staf", p_teks: d.teks, p_wa_id: null }); return route.fulfill({ contentType: "application/json", body: '{"ok":true}' }); }
     route.fulfill({ contentType: "application/json", body: '{"ok":false,"ere":"tès"}' }); });
-  await s.evaluate(() => localStorage.setItem("staf-kod", "sekre-admin-123")); await s.reload(); await s.waitForSelector("#tabs button[data-k=wa]");
-  ok((await s.locator("#tabs button[data-k=wa] .nb").textContent()) === "1", "WhatsApp tab shows 1 customer waiting for a person");
-  await s.click("#tabs button[data-k=wa]"); await s.waitForSelector("#v .wst");
-  ok((await s.locator("#v .wst").textContent()).includes("fèmen"), "assistant shown as off");
-  await s.click("#v .tabs3 button >> nth=2"); await s.waitForSelector("#v [name=gemini_kle]");
+  await s.evaluate(() => localStorage.setItem("staf-kod", "sekre-admin-123")); await s.reload(); await s.waitForSelector("#bn button[data-k=wa]");
+  ok((await s.locator("#bn button[data-k=wa] .nb").textContent()) === "1", "WhatsApp tab shows 1 customer waiting for a person");
+  await s.screenshot({ path: S + "10-akey.png", fullPage: true });
+  await ale(s, "wa"); await s.waitForSelector("#wa-st");
+  ok((await s.locator("#wa-st").textContent()).includes("Fèmen"), "assistant shown as off");
+  await s.click("#wa-param"); await s.waitForSelector("#v [name=gemini_kle]");
   await s.fill("#v [name=gemini_kle]", "AIzaE2EKEY00000000000000000000wxyz"); await s.click("#v form.card button.full");
   await s.waitForSelector("#v [name=gemini_kle][placeholder*='wxyz']");
   const kv = (await dbq("select gemini_kle from wa_konfig")).rows[0].gemini_kle;
   ok(kv === "AIzaE2EKEY00000000000000000000wxyz" && (await s.inputValue("#v [name=gemini_kle]")) === "", "Gemini key saved, never shown again (only its last 4)");
   ok((await s.locator("#v .cp input").first().inputValue()).endsWith("/api/whatsapp"), "webhook address ready to copy");
-  await s.click("#v .wst button"); await s.waitForSelector("#v .wst >> text=poko konekte"); ok(true, "assistant switched on, says it is not connected yet");
-  await s.click("#v .tabs3 button >> nth=0"); await s.waitForSelector("#v .rw.kl");
-  ok((await s.locator("#v .rw.kl").first().textContent()).includes("Bezwen ou"), "conversation flagged « Bezwen ou »");
-  await s.click("#v .rw.kl >> nth=0"); await s.waitForSelector("#v .ch .bl.in");
-  ok((await s.locator("#v .alrt").textContent()).includes("pwoblèm"), "reason shown to the team");
-  await s.fill("#v .rp textarea", "Bonjou Lina, se Duke. Ki pwoblèm lan?"); await s.click("#v .rp button");
+  await s.click("#wa-sw"); await s.waitForSelector("#wa-eta >> text=poko konekte"); ok(true, "assistant switched on, says it is not connected yet");
+  await s.click("#tb-b"); await s.waitForSelector("#v .cl .li");
+  ok((await s.locator("#v .cl .li").first().textContent()).includes("Bezwen ou"), "conversation flagged « Bezwen ou »");
+  await s.click("#v .cl .li >> nth=0"); await s.waitForSelector("#v .ch .bl.in");
+  ok((await s.locator("#wa-rezon").textContent()).includes("pwoblèm"), "reason shown to the team");
+  await s.fill("#ta", "Bonjou Lina, se Duke. Ki pwoblèm lan?"); await s.click(".snd");
   await s.waitForSelector("#v .ch .bl.staf"); ok(waCalls.some((x) => x.aksyon === "voye" && x.tel === "50955550001"), "team reply sent from the screen");
   await s.screenshot({ path: S + "9-whatsapp.png", fullPage: true });
-  await s.click("text=Remèt li bay asistan an"); await s.waitForSelector("text=Mwen pran relè");
+  await s.click("#wa-remet"); await s.waitForSelector("#wa-pran");
   ok((await dbq("select eta, alet from wa_konv where telefon = '50955550001'")).rows[0].eta === "bot", "conversation given back to the assistant");
-  await s.click("#v .row2 button"); await s.click("#v .tabs3 button >> nth=1"); await s.fill("#v .rp textarea", "Konbyen tikè a ye?"); await s.click("#v .rp button");
+  await s.click("#tb-b"); await s.click("#v .tabs3 button >> nth=1"); await s.waitForSelector("#v .sg");
+  await s.fill("#ta", "Konbyen tikè a ye?"); await s.click(".snd");
   await s.waitForSelector("#v .ch .bl.bot"); ok((await s.locator("#v .ch .bl.bot").textContent()).includes("2 000"), "try-the-assistant screen answers");
+  await s.screenshot({ path: S + "11-asistan.png" });
+  await ale(s, "meni"); await s.waitForSelector("#v .li[data-k=param]"); await s.screenshot({ path: S + "12-meni.png", fullPage: true });
+  await ale(s, "mwen"); await s.waitForSelector("#v .bj2"); await s.screenshot({ path: S + "13-pwofil.png", fullPage: true });
+  await s.setViewportSize({ width: 1280, height: 820 }); await s.click("#tabs button[data-k=tablo]"); await s.waitForSelector(".k4"); await s.screenshot({ path: S + "14-pc.png" }); ok(await s.locator("#tabs").isVisible(), "side menu on computers");
   console.log("page errors:", errs);
   await b.close(); srv.close(); await db.end();
 })().catch(async (e) => { console.error("ERROR", e.message); process.exit(1); });

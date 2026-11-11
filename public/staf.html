@@ -7,150 +7,215 @@
 <meta name="robots" content="noindex">
 <link rel="icon" href="/icon.png">
 <link rel="stylesheet" href="/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
 <style>
-  :root { --bg2: #f5f6f8; --ln2: #eceef2; --ink2: #111827; --mu2: #6b7280; --grn: #16a34a; --org: #f59e0b; }
-  body { background: var(--bg2); color: var(--ink2); }
-  main { max-width: 1120px; margin: 0 auto; padding: 18px 16px 110px; }
-  .card { background: #fff; border: 1px solid var(--ln2); border-radius: 18px; box-shadow: 0 1px 2px rgba(16,24,40,.04); }
-  #app h3 { letter-spacing: -0.01em; }
-  /* app shell: side menu on computers, bottom menu on phones */
-  .shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 22px; align-items: start; }
-  .nv { position: sticky; top: 84px; display: grid; gap: 4px; background: #fff; border: 1px solid var(--ln2); border-radius: 18px; padding: 10px; }
-  .nv button { position: relative; display: flex; align-items: center; gap: 12px; border: 0; background: none; font: inherit; font-weight: 600; font-size: 15px;
-    color: var(--mu2); padding: 11px 12px; border-radius: 12px; cursor: pointer; text-align: left; }
-  .nv button svg { flex: none; width: 21px; height: 21px; }
-  .nv button[aria-selected="true"] { background: #111; color: #fff; }
-  .nv .nb { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #ef4444; color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
-  @media (max-width: 900px) {
-    .shell { display: block; }
-    .nv { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; top: auto; display: flex; gap: 2px; overflow-x: auto; border-radius: 20px 20px 0 0; border-width: 1px 0 0;
-      padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); box-shadow: 0 -6px 20px rgba(16,24,40,.08); scrollbar-width: none; }
-    .nv::-webkit-scrollbar { display: none; }
-    .nv button { flex: 1 0 68px; flex-direction: column; gap: 3px; font-size: 11px; padding: 7px 4px; text-align: center; }
-    .nv button[aria-selected="true"] { background: #f1f2f4; color: #111; }
-    .nv .nb { position: absolute; top: 3px; right: 10px; margin: 0; min-width: 18px; height: 18px; font-size: 11px; }
+  /* Team space — calm, flat, list-first (like a settings app): warm off-white, hairlines, small controls, serif titles. */
+  :root { --bg: #f8f7f4; --sf: #ffffff; --ln: #e9e6df; --ln2: #f0eee9; --tx: #1e1d1b; --mu: #75716b; --mu2: #9a958d; --ink: #1e1d1b;
+    --ok: #237a4b; --okb: #e8f3ec; --wa: #a36109; --wab: #fbf1df; --ko: #b3261e; --kob: #fbeae8; --ac: #c8641f;
+    --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif; --r: 12px; }
+  html, body { background: var(--bg); }
+  body { color: var(--tx); font-size: 15px; }
+  h1, h2, h3 { letter-spacing: -0.01em; }
+  .mute { color: var(--mu); } .small { font-size: 13.5px; }
+  /* controls */
+  .btn { min-height: 38px; padding: 8px 16px; border-radius: 10px; font-size: 14.5px; font-weight: 500; background: var(--ink); color: #fff; gap: 6px; }
+  .btn:hover { background: #33312e; }
+  .btn.sm { min-height: 34px; padding: 6px 13px; font-size: 14px; }
+  .btn.light { background: var(--sf); color: var(--tx); border: 1px solid var(--ln); } .btn.light:hover { background: var(--ln2); }
+  .btn.vrt { background: var(--ok); } .btn.full { width: 100%; }
+  .btn.dg { background: none; border: 1px solid var(--ln); color: var(--ko); }
+  .ib { width: 36px; height: 36px; display: grid; place-items: center; border: 0; background: none; border-radius: 10px; color: var(--tx); cursor: pointer; padding: 0; }
+  .ib:hover { background: var(--ln2); } .ib svg { width: 21px; height: 21px; }
+  input, textarea, select { width: 100%; font: inherit; font-size: 15px; padding: 10px 12px; border: 1px solid var(--ln); border-radius: 10px; background: var(--sf); color: var(--tx); }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--tx); }
+  label, label.l { display: block; font-weight: 500; font-size: 13.5px; color: var(--mu); margin: 14px 0 6px; }
+  .msg { border-radius: 10px; padding: 10px 12px; margin-top: 12px; font-weight: 500; font-size: 14px; }
+  .msg.err { background: var(--kob); color: var(--ko); } .msg.ok { background: var(--okb); color: var(--ok); }
+  /* surfaces: hairline, no shadows */
+  .card, .bx, .kt { background: var(--sf); border: 1px solid var(--ln); border-radius: 14px; box-shadow: none; padding: 16px; }
+  .card + .card { margin-top: 10px; }
+  .bx h4 { margin: 0 0 10px; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; } .bx h4 small { color: var(--mu); font-weight: 500; }
+  .sec { font-size: 12.5px; font-weight: 600; color: var(--mu); margin: 22px 4px 8px; }
+  .sec:first-child { margin-top: 4px; }
+  /* list rows (settings style) */
+  .grp { background: var(--sf); border: 1px solid var(--ln); border-radius: 14px; overflow: hidden; }
+  .li { display: flex; align-items: center; gap: 14px; width: 100%; padding: 13px 16px; border: 0; background: none; font: inherit; color: var(--tx); text-align: left; cursor: pointer; text-decoration: none; }
+  .li + .li { border-top: 1px solid var(--ln2); }
+  .li:hover { background: #fbfaf8; }
+  .li > svg, .li .ic { flex: none; width: 21px; height: 21px; color: var(--tx); }
+  .li .tx { flex: 1; min-width: 0; } .li .tx b { display: block; font-weight: 500; font-size: 15px; } .li .tx small { display: block; color: var(--mu); font-size: 13px; line-height: 1.35; }
+  .li .vl { color: var(--mu); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%; }
+  .li .cv { flex: none; width: 16px; height: 16px; color: var(--mu2); }
+  .li.dg, .li.dg > svg { color: var(--ko); }
+  .nb { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--ko); color: #fff; font-size: 11.5px; font-weight: 700; display: inline-grid; place-items: center; }
+  /* app shell */
+  #app { min-height: 100vh; }
+  .tb { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(248,247,244,.94); backdrop-filter: blur(10px); border-bottom: 1px solid transparent; }
+  .tb.sc { border-bottom-color: var(--ln); }
+  .tb .in { max-width: 1040px; margin: 0 auto; height: 56px; display: flex; align-items: center; gap: 8px; padding: 0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px)); }
+  .tb h1 { flex: 1; margin: 0; font: 500 19px/1.2 var(--serif); letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tb .tblg { height: 26px; width: auto; padding: 0; margin: 0; }
+  .av { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 0; padding: 0; background: #e7e2d8 center/cover no-repeat; color: var(--tx); font-weight: 600; font-size: 13px; display: grid; place-items: center; cursor: pointer; }
+  .shell { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start;
+    padding: 12px max(16px, env(safe-area-inset-right, 0px)) 120px max(16px, env(safe-area-inset-left, 0px)); }
+  #tabs { position: sticky; top: 72px; display: grid; gap: 2px; }
+  #tabs button { display: flex; align-items: center; gap: 11px; border: 0; background: none; font: inherit; font-size: 14.5px; color: var(--tx); padding: 8px 10px; border-radius: 9px; cursor: pointer; text-align: left; }
+  #tabs button svg { width: 19px; height: 19px; color: var(--mu); } #tabs button .nb { margin-left: auto; }
+  #tabs button:hover { background: var(--ln2); }
+  #tabs button[aria-selected="true"] { background: #ece9e2; font-weight: 600; } #tabs button[aria-selected="true"] svg { color: var(--tx); }
+  #tabs .gt { font-size: 12px; font-weight: 600; color: var(--mu2); padding: 14px 10px 4px; }
+  #v { min-width: 0; padding: 0; margin: 0; }
+  .pg { max-width: 680px; }
+  .bn { display: none; }
+  @media (max-width: 860px) {
+    .shell { display: block; padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+    #tabs { display: none; }
+    .bn { display: flex; position: fixed; z-index: 25; left: 0; right: 0; bottom: 0; background: rgba(248,247,244,.97); backdrop-filter: blur(10px); border-top: 1px solid var(--ln);
+      padding: 4px max(8px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+    .bn button { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; background: none; font: inherit; font-size: 11px; color: var(--mu); padding: 6px 2px; cursor: pointer; }
+    .bn button svg { width: 22px; height: 22px; } .bn button[aria-selected="true"] { color: var(--tx); font-weight: 600; }
+    .bn .nb { position: absolute; top: 2px; left: calc(50% + 6px); min-width: 17px; height: 17px; font-size: 10.5px; }
+    body.chat .bn { display: none; }
+    .cmp { bottom: calc(66px + env(safe-area-inset-bottom, 0px)); } body.chat .cmp { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
   }
-  .hi { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; }
-  .hi .av2 { flex: none; width: 48px; height: 48px; border-radius: 50%; background: #eee center/cover no-repeat; display: grid; place-items: center; font-weight: 800; color: #999; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--rk, #ddd); }
-  .hi h2 { margin: 0; font-size: 22px; letter-spacing: -0.02em; } .hi small { color: var(--mu2); font-weight: 600; }
-  .hi .rk { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; margin-left: 6px; }
-  /* home dashboard */
-  .k4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-  @media (max-width: 900px) { .k4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
-  .kt { background: #fff; border: 1px solid var(--ln2); border-radius: 18px; padding: 16px; }
-  .kt .ic { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; margin-bottom: 10px; } .kt .ic svg { width: 19px; height: 19px; }
-  .kt small { display: block; color: var(--mu2); font-weight: 600; font-size: 13px; }
-  .kt b { display: block; font-size: 26px; letter-spacing: -0.03em; margin-top: 2px; } .kt b.g { color: var(--grn); }
-  .kt em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--mu2); }
-  .g2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; margin-top: 14px; } @media (max-width: 900px) { .g2 { grid-template-columns: 1fr; } }
-  .bx { background: #fff; border: 1px solid var(--ln2); border-radius: 18px; padding: 16px 18px; }
-  .bx h4 { margin: 0 0 12px; font-size: 15px; display: flex; justify-content: space-between; } .bx h4 small { color: var(--mu2); font-weight: 600; }
-  .bars { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding: 0; overflow-x: auto; background: none; border-radius: 0; }
-  .bars div { flex: 1 0 22px; max-width: 56px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; font-size: 11px; color: var(--mu2); font-weight: 600; }
-  .bars i { width: 100%; min-height: 4px; background: linear-gradient(180deg, #fbbf24, #f59e0b); border-radius: 6px 6px 3px 3px; display: block; }
+  /* greeting + stats */
+  .hel { margin: 6px 4px 18px; } .hel h2 { font: 500 26px/1.15 var(--serif); margin: 0 0 4px; } .hel p { margin: 0; color: var(--mu); }
+  .k4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 860px) { .k4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kt { padding: 14px; } .kt .ic { display: none; }
+  .kt small { display: block; color: var(--mu); font-size: 13px; } .kt b { display: block; font: 500 24px/1.2 var(--serif); margin-top: 4px; font-variant-numeric: tabular-nums; } .kt b.g { color: var(--ok); }
+  .kt em { font-style: normal; font-size: 12.5px; color: var(--mu); }
+  .g2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10px; margin-top: 10px; } @media (max-width: 860px) { .g2 { grid-template-columns: 1fr; } }
+  .bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; overflow-x: auto; }
+  .bars div { flex: 1 0 20px; max-width: 48px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; font-size: 11px; color: var(--mu); }
+  .bars i { width: 100%; min-height: 3px; background: var(--ac); border-radius: 4px 4px 2px 2px; display: block; opacity: .85; }
   .rw { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--ln2); } .rw:first-of-type { border-top: 0; }
-  .ai { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 14px; color: #fff; }
-  #v { padding: 0; } .py .tp4 .tx b { font-size: 16px; }
-  .rw .tx { flex: 1; min-width: 0; } .rw .tx b { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .rw .tx small { color: var(--mu2); font-size: 12px; }
-  .rw .mt { text-align: right; font-weight: 800; font-size: 14px; white-space: nowrap; }
-  .pl { display: inline-block; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; margin-top: 3px; }
-  .pl.ok { background: #dcfce7; color: #15803d; } .pl.at { background: #fef3c7; color: #92400e; } .pl.ko { background: #fee2e2; color: #b91c1c; }
-  .tp3 { display: flex; align-items: center; gap: 10px; margin-top: 10px; } .tp3 .tr2 { flex: 1; height: 10px; background: #f1f2f4; border-radius: 5px; overflow: hidden; } .tp3 .tr2 i { display: block; height: 100%; border-radius: 5px; background: #111; }
-  .tp3 span { font-size: 13px; font-weight: 700; min-width: 64px; text-align: right; }
-  /* payment to check */
-  .py { padding: 16px; } .py .tp4 { display: flex; align-items: center; gap: 12px; }
-  .py .mn { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; margin: 12px 0 2px; }
-  .py .mo { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 700; padding: 5px 10px; border-radius: 8px; background: #f1f2f4; }
-  .py .mo.mc { background: #fee2e2; color: #b91c1c; } .py .mo.nc { background: #ffedd5; color: #c2410c; } .py .mo.ka { background: #dcfce7; color: #15803d; }
-  .py code { font-family: ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 700; letter-spacing: .04em; }
-  .py .act2 .btn { flex: 1 1 140px; } .btn.vrt { background: var(--grn); color: #fff; }
-  /* notifications, like "Nouvo vant!" */
-  .tst { position: fixed; z-index: 60; top: 14px; left: 50%; transform: translateX(-50%); display: grid; gap: 8px; width: min(380px, calc(100% - 24px)); pointer-events: none; }
-  .tst div { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 16px; padding: 12px 14px; box-shadow: 0 14px 34px rgba(16,24,40,.18); animation: tin .35s ease-out; pointer-events: auto; }
-  .tst div i { flex: none; width: 36px; height: 36px; border-radius: 11px; background: #dcfce7; color: #15803d; display: grid; place-items: center; font-style: normal; font-weight: 800; }
-  .tst div b { display: block; font-size: 14px; } .tst div small { color: var(--mu2); font-size: 13px; }
-  @keyframes tin { from { transform: translateY(-14px); opacity: 0; } }
-  .tabs3 { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
-  .tabs3 button { flex: none; border: 0; padding: 10px 14px; border-radius: 999px; background: #fff; font: inherit; font-weight: 600; cursor: pointer; }
-  .tabs3 button[aria-selected="true"] { background: #0f0f0f; color: #fff; }
-  .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-  .kpi div { background: #fff; border: 1px solid var(--ln2); border-radius: 16px; padding: 14px 16px; }
-  .kpi small { color: var(--mute); font-weight: 600; } .kpi b { display: block; font-size: 28px; letter-spacing: -0.02em; }
-  .row2 { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
-  .kv2 { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 14px; margin: 10px 0; }
-  .kv2 dt { color: var(--mute); } .kv2 dd { margin: 0; word-break: break-word; }
-  .act2 { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .bad { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: var(--soft); }
-  .bad.valide { background: #e7f4ec; color: var(--ok); } .bad.refuse, .bad.annule, .bad.rembourse { background: #fdecea; color: var(--bad); }
-  .bad.en_attente { background: #fff1d6; color: #8a5a00; } .bad.utilise { background: #e7f0fd; color: #1d4ed8; }
+  .rw .tx { flex: 1; min-width: 0; } .rw .tx b { display: block; font-size: 14.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .rw .tx small { color: var(--mu); font-size: 12.5px; }
+  .rw .mt { text-align: right; font-size: 13.5px; white-space: nowrap; }
+  .ai { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; font-size: 13px; color: #fff; }
+  .pl { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .pl.ok { background: var(--okb); color: var(--ok); } .pl.at { background: var(--wab); color: var(--wa); } .pl.ko { background: var(--kob); color: var(--ko); }
+  .tp3 { display: flex; align-items: center; gap: 10px; margin-top: 8px; } .tp3 .tr2 { flex: 1; height: 6px; background: var(--ln2); border-radius: 3px; overflow: hidden; } .tp3 .tr2 i { display: block; height: 100%; background: var(--tx); }
+  .tp3 span { font-size: 12.5px; min-width: 56px; text-align: right; color: var(--mu); }
+  /* payments */
+  .py .tp4 { display: flex; align-items: center; gap: 12px; } .py .mn { font: 500 24px/1.2 var(--serif); margin: 12px 0 4px; }
+  .py .mo { display: inline-flex; font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 8px; background: var(--ln2); }
+  .py .mo.mc { background: #fbe9e7; color: #b3261e; } .py .mo.nc { background: #fdf0e3; color: #b9560f; } .py .mo.ka { background: var(--okb); color: var(--ok); }
+  .py code { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; font-weight: 600; }
+  .py .act2 .btn { flex: 1 1 130px; }
   .kapti { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
-  label.l { display: block; font-weight: 600; font-size: 14px; margin: 12px 0 6px; }
-  select { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 0; border-radius: 10px; background: var(--soft); }
-  .tp2 { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.6fr; gap: 6px; margin-bottom: 8px; }
-  .tp2 input, .tp2 textarea { padding: 10px; font-size: 14px; }
-  .tp2 { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
-  @media (max-width: 700px) { .tp2 { grid-template-columns: 1fr 1fr; } }
+  /* misc used by older screens */
+  .tabs3 { display: inline-flex; gap: 2px; padding: 3px; background: #efece6; border-radius: 10px; margin: 0 0 14px; }
+  .tabs3 button { border: 0; background: none; font: inherit; font-size: 13.5px; font-weight: 500; color: var(--mu); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+  .tabs3 button[aria-selected="true"] { background: var(--sf); color: var(--tx); box-shadow: 0 0 0 1px var(--ln); }
+  .row2 { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .kv2 { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 14px; margin: 10px 0; } .kv2 dt { color: var(--mu); } .kv2 dd { margin: 0; word-break: break-word; }
+  .act2 { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .bad { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--ln2); }
+  .bad.valide { background: var(--okb); color: var(--ok); } .bad.refuse, .bad.annule, .bad.rembourse { background: var(--kob); color: var(--ko); }
+  .bad.en_attente { background: var(--wab); color: var(--wa); } .bad.utilise { background: #e8eefb; color: #2453b3; }
+  .tp2 { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.6fr; gap: 6px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--ln2); }
+  .tp2 input { padding: 8px 10px; font-size: 14px; } @media (max-width: 700px) { .tp2 { grid-template-columns: 1fr 1fr; } }
   .srch { margin-bottom: 10px; }
   .fot { display: flex; align-items: center; gap: 12px; }
-  .fot span, .ek .av { flex: none; width: 64px; height: 64px; border-radius: 50%; background: #eee center/cover no-repeat; display: grid; place-items: center; font-weight: 800; color: #aaa; }
+  .fot span, .ek .av { flex: none; width: 56px; height: 56px; border-radius: 50%; background: #e7e2d8 center/cover no-repeat; display: grid; place-items: center; font-weight: 600; color: var(--mu); }
   .ek { display: flex; gap: 12px; align-items: flex-start; } .ek > div { flex: 1; min-width: 0; }
-  .ek textarea, .mw textarea { width: 100%; font: inherit; border: 0; border-radius: 10px; background: var(--soft); padding: 10px; }
-  .mw ul { margin: 6px 0 0; padding-left: 18px; } .mw li { margin: 3px 0; }
-  .mw .tr { white-space: pre-wrap; background: var(--soft); border-radius: 10px; padding: 10px; }
-  .alrt { background: #fff1d6; color: #8a5a00; border-radius: 12px; padding: 12px; font-weight: 600; margin-bottom: 12px; }
-  .ak { display: grid; gap: 6px; } .ck { display: flex; gap: 10px; align-items: center; font-size: 15px; padding: 8px 10px; background: var(--soft); border-radius: 10px; }
+  .alrt { background: var(--wab); color: var(--wa); border-radius: 10px; padding: 10px 12px; font-size: 14px; margin-bottom: 12px; }
+  .ak { display: grid; gap: 6px; } .ck { display: flex; gap: 10px; align-items: center; font-size: 14.5px; color: var(--tx); font-weight: 400; padding: 8px 10px; border: 1px solid var(--ln); border-radius: 10px; margin: 0; }
   .ck input { width: auto; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; } .chips span { font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; background: var(--soft); }
-  .done { white-space: pre-wrap; font-size: 14px; background: var(--soft); border-radius: 10px; padding: 10px; }
-  /* WhatsApp assistant */
-  .wst { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px; margin-bottom: 12px; }
-  .wst .dt { width: 12px; height: 12px; border-radius: 50%; background: #d1d5db; box-shadow: 0 0 0 4px #f1f2f4; } .wst .dt.on { background: #22c55e; box-shadow: 0 0 0 4px #dcfce7; }
-  .wst b { font-size: 16px; } .wst .sp { flex: 1; }
-  .ch { display: flex; flex-direction: column; gap: 6px; max-height: 58vh; overflow-y: auto; background: #efeae2; border-radius: 14px; padding: 12px; }
-  .bl { max-width: 82%; padding: 8px 12px 6px; border-radius: 14px; white-space: pre-wrap; word-break: break-word; font-size: 15px; line-height: 1.35; box-shadow: 0 1px 1px rgba(0,0,0,.06); }
-  .bl small { display: block; font-size: 11px; opacity: .6; margin-top: 3px; text-align: right; }
-  .bl.in { align-self: flex-start; background: #fff; border-top-left-radius: 4px; }
-  .bl.bot { align-self: flex-end; background: #d9fdd3; border-top-right-radius: 4px; } .bl.staf { align-self: flex-end; background: #1f2937; color: #fff; border-top-right-radius: 4px; }
-  .bl.zt { align-self: center; background: #fff8e1; color: #8a5a00; font-size: 12px; font-weight: 700; }
-  .rp { display: flex; gap: 8px; margin-top: 10px; } .rp textarea { flex: 1; font: inherit; font-size: 16px; border: 0; border-radius: 12px; background: #fff; padding: 10px 12px; min-height: 46px; resize: vertical; }
-  .rw.kl { cursor: pointer; } .rw .nl { flex: none; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: #22c55e; color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; } .chips span { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: var(--ln2); }
+  .done { white-space: pre-wrap; font-size: 14px; background: var(--ln2); border-radius: 10px; padding: 10px; }
+  details.card > summary { cursor: pointer; font-weight: 500; }
   .cp { display: flex; gap: 8px; } .cp input { flex: 1; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
-  .gid { font-size: 14px; color: var(--mu2); margin: 4px 0 0; padding-left: 18px; } .gid li { margin: 4px 0; }
+  .gid { font-size: 14px; color: var(--mu); margin: 4px 0 0; padding-left: 18px; } .gid li { margin: 4px 0; }
+  /* profile */
+  .pf { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; margin: 8px 0 18px; }
+  .pf .big { width: 76px; height: 76px; font-size: 26px; cursor: default; }
+  .pf h2 { font: 500 24px/1.2 var(--serif); margin: 6px 0 0; } .pf p { margin: 0; color: var(--mu); }
+  .bjw { display: grid; justify-items: center; gap: 12px; padding: 18px 12px; }
+  /* bottom sheet */
+  .sh { position: fixed; inset: 0; z-index: 70; display: flex; align-items: flex-end; justify-content: center; }
+  .sh .bg { position: absolute; inset: 0; background: rgba(20,18,15,.32); }
+  .sh .pn { position: relative; width: min(560px, 100%); max-height: 88vh; overflow-y: auto; background: var(--sf); border-radius: 18px 18px 0 0;
+    padding: 8px max(18px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); }
+  .sh .gr { width: 36px; height: 4px; border-radius: 2px; background: var(--ln); margin: 4px auto 12px; }
+  .sh h3 { font: 500 19px/1.3 var(--serif); margin: 0 0 4px; display: flex; justify-content: space-between; align-items: center; }
+  @media (min-width: 861px) { .sh { align-items: center; } .sh .pn { border-radius: 16px; } .sh .gr { display: none; } }
+  /* toasts */
+  .tst { position: fixed; z-index: 80; top: calc(10px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); display: grid; gap: 8px; width: min(380px, calc(100% - 24px)); pointer-events: none; }
+  .tst div { display: flex; align-items: center; gap: 12px; background: var(--sf); border: 1px solid var(--ln); border-radius: 14px; padding: 10px 12px; animation: tin .3s ease-out; pointer-events: auto; }
+  .tst div i { flex: none; width: 30px; height: 30px; border-radius: 9px; background: var(--okb); color: var(--ok); display: grid; place-items: center; font-style: normal; font-weight: 700; }
+  .tst div b { display: block; font-size: 14px; font-weight: 600; } .tst div small { color: var(--mu); font-size: 13px; }
+  @keyframes tin { from { transform: translateY(-10px); opacity: 0; } }
+  /* chat (WhatsApp + assistant) */
+  .wtop { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; } .wtop .sp { flex: 1; }
+  .st { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--mu); } .st i { width: 8px; height: 8px; border-radius: 50%; background: var(--mu2); } .st.on i { background: #2fa463; }
+  .cl .li .ai { width: 42px; height: 42px; font-size: 15px; }
+  .cl .li .tm { display: grid; justify-items: end; gap: 4px; font-size: 12px; color: var(--mu); }
+  .cl .li .tm .nl { min-width: 19px; height: 19px; padding: 0 6px; border-radius: 10px; background: #2fa463; color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+  .chv { display: flex; flex-direction: column; min-height: calc(100vh - 150px); } @media (max-width: 860px) { .chv { min-height: calc(100vh - 200px); } body.chat .chv { min-height: calc(100vh - 80px); } }
+  .ch { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding: 6px 2px 16px; }
+  .bl { max-width: 84%; padding: 9px 13px; border-radius: 16px; white-space: pre-wrap; word-break: break-word; font-size: 15px; line-height: 1.42; }
+  .bl small { display: block; font-size: 11px; color: var(--mu2); margin-top: 3px; text-align: right; }
+  .bl.in { align-self: flex-start; background: var(--sf); border: 1px solid var(--ln); border-bottom-left-radius: 5px; }
+  .bl.bot { align-self: flex-end; background: #efece6; border-bottom-right-radius: 5px; } .bl.bot .who, .bl.staf .who { display: block; font-size: 11.5px; font-weight: 600; color: var(--mu); margin-bottom: 2px; }
+  .bl.staf { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 5px; } .bl.staf .who, .bl.staf small { color: #c9c4ba; }
+  .bl.zt { align-self: center; background: none; color: var(--mu); font-size: 12.5px; padding: 2px 8px; }
+  .em { text-align: center; color: var(--mu); padding: 40px 12px 12px; } .em h3 { font: 500 22px/1.3 var(--serif); color: var(--tx); margin: 0 0 6px; }
+  .sg { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+  .sg button { border: 1px solid var(--ln); background: var(--sf); border-radius: 999px; padding: 7px 13px; font: inherit; font-size: 13.5px; color: var(--tx); cursor: pointer; }
+  .cmp { position: sticky; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); background: var(--bg); padding-top: 6px; }
+  .cmp .bxi { display: flex; align-items: flex-end; gap: 8px; background: var(--sf); border: 1px solid var(--ln); border-radius: 22px; padding: 6px 6px 6px 16px; }
+  .cmp textarea { border: 0; padding: 9px 0; resize: none; max-height: 140px; min-height: 22px; line-height: 1.4; background: none; }
+  .cmp textarea:focus { border: 0; }
+  .snd { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--ink); color: #fff; display: grid; place-items: center; cursor: pointer; }
+  .snd:disabled { background: #d8d3ca; cursor: default; } .snd svg { width: 18px; height: 18px; }
+  .cmp .nt { font-size: 12px; color: var(--mu2); text-align: center; margin: 6px 0 0; }
+  .chh { display: flex; align-items: center; gap: 10px; padding: 4px 0 10px; border-bottom: 1px solid var(--ln); margin-bottom: 8px; } .chh .tx { flex: 1; min-width: 0; } .chh b { display: block; font-weight: 600; } .chh small { color: var(--mu); }
+  /* login */
+  #login { max-width: 400px; margin: 8vh auto 40px; padding: 0 16px; }
+  #login .lgh { text-align: center; margin-bottom: 18px; } #login .lgh img { height: 40px; width: auto; margin: 0 auto 14px; } #login .lgh h2 { font: 500 26px/1.2 var(--serif); margin: 0; }
+  #login .tabs3 { display: flex; } #login .tabs3 button { flex: 1; }
 </style>
+
 </head>
 <body>
-<header class="top"><div class="wrap"><a href="/konferans" aria-label="Atelye AI"><img src="/logo.png" alt="Atelye AI"></a><nav><span class="mute small" id="moun"></span><button class="btn sm light hidden" id="soti" type="button">Soti</button></nav></div></header>
-<main>
-  <div id="login" class="card" style="max-width:440px;margin:30px auto">
-    <h2 style="margin-top:0">Espas ekip la</h2>
+<div id="login">
+  <div class="lgh"><img src="/logo.png" alt="Atelye AI"><h2>Espas ekip la</h2></div>
+  <div class="card">
     <nav class="tabs3" id="lt"><button type="button" data-m="k" aria-selected="true">Konekte</button><button type="button" data-m="e" aria-selected="false">Kreye kont</button></nav>
     <form id="fk">
       <label class="l" for="li">Nimewo telefòn oswa imèl</label><input id="li" autocomplete="username" required>
       <label class="l" for="lm">Modpas</label><input id="lm" type="password" autocomplete="current-password" required>
-      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Antre</button>
-      <p class="mute small" style="text-align:center;margin:12px 0 0"><a href="#" id="akod">Mwen gen yon kòd ekip</a></p>
+      <div class="msg hidden"></div><button class="btn full" style="margin-top:16px">Antre</button>
+      <p class="mute small" style="text-align:center;margin:14px 0 0"><a href="#" id="akod">Mwen gen yon kòd ekip</a></p>
     </form>
     <form id="fkod" class="hidden">
       <label class="l" for="kod">Kòd ekip</label><input id="kod" type="password" autocomplete="current-password" required>
-      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Antre ak kòd la</button>
+      <div class="msg hidden"></div><button class="btn full" style="margin-top:16px">Antre ak kòd la</button>
     </form>
     <form id="fe" class="hidden">
       <p class="mute small" style="margin:0">Kreye kont ou. Super admin lan ap valide l epi ba w wòl ou.</p>
       <label class="l" for="en">Non konplè</label><input id="en" autocomplete="name" required>
       <label class="l" for="ei">Nimewo telefòn oswa imèl</label><input id="ei" autocomplete="username" required>
       <label class="l" for="em">Modpas (omwen 8 karaktè)</label><input id="em" type="password" autocomplete="new-password" minlength="8" required>
-      <label class="l">Foto w pou badj la <span class="mute">(si w vle, ou ka mete l pita)</span></label>
-      <div class="fot"><span id="fp"></span><label class="btn sm light" for="ef">📷 Pran yon foto</label><input id="ef" type="file" accept="image/*" capture="user" class="hidden"></div>
-      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Voye demann lan</button>
+      <label class="l">Foto pou badj ou <span class="mute">(si w vle)</span></label>
+      <div class="fot"><span id="fp"></span><label class="btn sm light" for="ef" style="margin:0;color:var(--tx)">Pran yon foto</label><input id="ef" type="file" accept="image/*" capture="user" class="hidden"></div>
+      <div class="msg hidden"></div><button class="btn full" style="margin-top:16px">Voye demann lan</button>
     </form>
   </div>
-
-  <div id="app" class="hidden">
-    <div class="hi"><span class="av2" id="av2"></span><div><h2 id="bon">Bonjou</h2><small><span id="evt">—</span> · <span id="mizajou"></span></small></div></div>
-    <div class="shell"><nav class="nv" id="tabs" aria-label="Meni"></nav><section id="v"></section></div>
-  </div>
-  <div class="tst" id="tst" aria-live="polite"></div>
-</main>
+</div>
+<div id="app" class="hidden">
+  <header class="tb"><div class="in">
+    <button class="ib hidden" id="tb-b" type="button" aria-label="Retounen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <img class="tblg" id="tb-l" src="/logo.png" alt="Atelye AI">
+    <h1 id="tb-t">Akèy</h1>
+    <button class="av" id="av2" type="button" aria-label="Pwofil mwen"></button>
+  </div></header>
+  <div class="shell"><nav id="tabs" aria-label="Meni"></nav><section id="v"></section></div>
+  <nav class="bn" id="bn" aria-label="Meni"></nav>
+</div>
+<div class="tst" id="tst" aria-live="polite"></div>
 <script src="/vendor/qrcode.js"></script>
 <script src="/sb.js"></script>
 <script src="/badj.js"></script>
@@ -158,7 +223,7 @@
 (() => {
   const $ = (q) => document.querySelector(q);
   const el = (t, p = {}, ...c) => { const e = Object.assign(document.createElement(t), p); e.append(...c.filter((x) => x != null)); return e; };
-  let KOD = "", D = null, ME = null, TAB = "file", FILT = "", VI = false, PREMYE = true;
+  let GR = [], KOD = "", D = null, ME = null, TAB = "tablo", FILT = "", VI = false, PREMYE = true;
   try { KOD = localStorage.getItem("staf-kod") || sessionStorage.getItem("staf-kod") || ""; } catch {}
   const site = location.origin;
   const tel = (t) => { const d = String(t || "").replace(/\D/g, ""); return d.length === 8 ? "509" + d : d; };
@@ -175,7 +240,13 @@
     rapel: sv("M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0"), ekip: sv("M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"),
     wol: sv("M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"), param: sv("M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"),
     wa: sv("M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 1 1 21 11.5z"),
-    mwen: sv("M4 4h16v16H4zM12 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM7.5 17c.8-2.4 8.2-2.4 9 0") };
+    mwen: sv("M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"), meni: sv("M4 6h16M4 12h16M4 18h16"),
+    skane: sv("M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"),
+    soti: sv("M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"), cv: sv("M9 18l6-6-6-6"),
+    kle: sv("M15 7a4 4 0 1 1-3.4 6.1L4 20.7V17h3v-3h3l1.6-1.6A4 4 0 0 1 15 7z"), tel: sv("M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"),
+    imel: sv("M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6"), non: sv("M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"),
+    foto: sv("M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"),
+    dl: sv("M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"), send: sv("M12 19V5M5 12l7-7 7 7"), gear: sv("M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z") };
   // notifications: a new payment to check or a new sign-up since the last refresh
   let VI2 = null, NEK = 0, NWA = 0;
   function tost(ik, tit, det) {
@@ -196,36 +267,35 @@
   async function chaje() {
     ME = await SB.rpc("staf_mwen", { p_code: KOD });
     D = await SB.rpc("staf_tablo", { p_code: KOD });
-    $("#evt").textContent = D.evenement ? D.evenement.nom : "Pa gen evènman";
-    $("#moun").textContent = `${D.non} · ${ME.role_non || D.role}`;
-    $("#mizajou").textContent = "Mizajou " + new Date().toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
-    // tabs follow the access rights of the member's role
-    const T = [
-      AK("chif") && ["tablo", "Akèy"], AK("valide_peman") && ["file", "Peman"], AK("whatsapp") && ["wa", "WhatsApp"],
-      AK("enskri_sou_plas") && ["kach", "Enskri yon moun"],
-      (AK("lis_enskripsyon") || AK("jwenn_tike")) && ["lis", AK("lis_enskripsyon") ? "Enskripsyon" : "Jwenn yon tikè"], AK("rapel") && ["rapel", "Rapèl"],
-      AK("jere_ekip") && ["ekip", "Ekip"], AK("jere_ekip") && ["wol", "Wòl"], AK("pri_evenman") && ["param", "Paramèt"], ["mwen", "Pwofil mwen"]].filter(Boolean);
+    // the sections a member can open, grouped like a settings list
+    GR = [
+      ["Travay", [AK("valide_peman") && ["file", "Peman", "Valide peman MonCash ak NatCash"], AK("enskri_sou_plas") && ["kach", "Enskri yon moun", "Vann yon tikè sou plas"],
+        (AK("lis_enskripsyon") || AK("jwenn_tike")) && ["lis", AK("lis_enskripsyon") ? "Enskripsyon" : "Jwenn yon tikè", "Chèche, revoye oswa anile yon tikè"],
+        AK("rapel") && ["rapel", "Rapèl", "Mesaj WhatsApp J-7, J-1 ak maten an"], AK("eskane") && ["skane", "Eskanè", "Tcheke tikè yo nan pòt la"]]],
+      ["Kominikasyon", [AK("whatsapp") && ["wa", "WhatsApp", "Konvèsasyon kliyan ak asistan an"]]],
+      ["Ekip", [AK("jere_ekip") && ["ekip", "Manm yo", "Valide kont, bay wòl ak travay"], AK("jere_ekip") && ["wol", "Wòl ak aksè", "Kreye ak modifye wòl yo"]]],
+      ["Paramèt", [AK("pri_evenman") && ["param", "Evènman ak tikè", "Dat, kote, pri, gwoup WhatsApp"]]],
+      ["Kont", [["mwen", "Pwofil mwen", "Badj, non, foto, modpas"]]],
+    ].map(([g, L]) => [g, L.filter(Boolean)]).filter(([, L]) => L.length);
     const nwa = AK("whatsapp") ? ((await SB.rpc("staf_wa_konfig", { p_code: KOD }).catch(() => null)) || {}).alet || 0 : 0;
     if (nwa > NWA && !PREMYE) tost("!", "Yon kliyan WhatsApp bezwen ou", "Asistan an pase w relè. Gade nan WhatsApp.");
     NWA = nwa;
     NEK = AK("jere_ekip") ? (await SB.rpc("staf_ekip", { p_code: KOD }).catch(() => [])).filter((x) => x.statut === "en_attente").length : 0;
     nouvo();
     VI = true;
-    if (!T.some(([k]) => k === TAB)) TAB = T[0][0];
-    $("#tabs").replaceChildren(...T.map(([k, t]) => { const b = el("button", { type: "button", innerHTML: IK[k] || "" }); b.append(el("span", { textContent: t }));
-      const n = { file: D.file.length, ekip: NEK, wa: NWA }[k]; if (n) b.append(el("span", { className: "nb", textContent: n }));
-      b.dataset.k = k; b.setAttribute("aria-selected", String(k === TAB)); b.onclick = () => { TAB = k; afiche(); scrollTo(0, 0); chaje().catch(() => {}); }; return b; }));
-    $("#bon").textContent = "Bonjou, " + premye(ME.non);
-    const av = $("#av2"); av.style.setProperty("--rk", ME.koule || "#ddd");
-    if (ME.foto) { av.style.backgroundImage = `url(data:image/jpeg;base64,${ME.foto})`; av.textContent = ""; } else av.textContent = (ME.non || "?")[0];
+    const ok = ["tablo", "meni", ...GR.flatMap(([, L]) => L.map((x) => x[0]))];
+    if (!ok.includes(TAB)) TAB = "tablo";
+    nav();
+    const av = $("#av2");
+    if (ME.foto) { av.style.backgroundImage = `url(data:image/jpeg;base64,${ME.foto})`; av.textContent = ""; } else { av.style.backgroundImage = ""; av.textContent = (ME.non || "?")[0]; }
     // redraw only screens without forms, so a refresh never wipes what someone is typing
-    if (PREMYE || ["tablo", "file", "lis"].includes(TAB)) afiche();
+    if (PREMYE || ["tablo", "file", "lis", "meni"].includes(TAB)) afiche();
     PREMYE = false;
   }
   async function antre(k) {
     KOD = k; await SB.rpc("staf_konekte", { p_code: KOD });
     try { localStorage.setItem("staf-kod", KOD); } catch {}
-    $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); $("#soti").classList.remove("hidden");
+    $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
     await chaje(); setInterval(() => chaje().catch(() => {}), 60000);
   }
   const erè = (f, e) => { const m = f.querySelector(".msg"); m.className = "msg err"; m.textContent = e.message; };
@@ -249,17 +319,72 @@
     try { await SB.rpc("staf_enskri", { p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO || null });
       f.reset(); FOTO = null; $("#fp").style.backgroundImage = ""; m.className = "msg ok"; m.textContent = "Demann lan voye ✓ Super admin lan ap valide kont ou. Apre sa, konekte ak nimewo/Gmail ou ak modpas ou."; }
     catch (e) { erè(f, e); } };
-  $("#soti").onclick = async () => { try { await SB.rpc("staf_soti", { p_code: KOD }); } catch {} try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} location.reload(); };
+  const soti = async () => { try { await SB.rpc("staf_soti", { p_code: KOD }); } catch {} try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} location.reload(); };
+  window.__soti = soti;
+  $("#av2").onclick = () => ale("mwen");
+  $("#tb-b").onclick = () => { if (TAB === "wa" && (WA.tel || WA.sub === "param")) { WA.tel = null; WA.sub = WA.sub === "param" ? "konv" : WA.sub; afiche(); } else ale("meni"); };
+  addEventListener("scroll", () => document.querySelector(".tb").classList.toggle("sc", scrollY > 4), { passive: true });
   if (KOD) antre(KOD).catch(() => { try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} });
 
   const bouton = (t, f, light) => { const b = el("button", { type: "button", className: "btn sm" + (light ? " light" : ""), textContent: t }); b.onclick = async () => { b.disabled = true; try { await f(b); } catch (e) { alert(e.message); } b.disabled = false; }; return b; };
   const lyen = (t, href) => el("a", { className: "btn sm light", href, target: "_blank", rel: "noopener", textContent: t });
 
+  const TIT = () => Object.fromEntries([["tablo", "Akèy"], ["meni", "Meni"], ...GR.flatMap(([, L]) => L.map((x) => [x[0], x[1]]))]);
+  const konte = (k) => ({ file: D ? D.file.length : 0, ekip: NEK, wa: NWA }[k] || 0);
+  function ale(k) {
+    if (k === "skane") { try { localStorage.setItem("skane-kod", JSON.stringify(KOD)); } catch {} location.href = "/skane"; return; }
+    if (k === "wa") { WA.tel = null; if (WA.sub === "param") WA.sub = "konv"; }
+    TAB = k; afiche(); scrollTo(0, 0); if (k !== "meni") chaje().catch(() => {});
+  }
+  window.__ale = ale;
+  // side list on computers, 4-item bar on phones (Akèy, two main tasks, Meni)
+  function nav() {
+    const btn = (k, t, cls) => { const b = el("button", { type: "button", className: cls || "", innerHTML: IK[k] || "" }); b.append(el("span", { textContent: t }));
+      const n = konte(k); if (n) b.append(el("span", { className: "nb", textContent: n })); b.dataset.k = k; b.onclick = () => ale(k); return b; };
+    const sd = [btn("tablo", "Akèy")];
+    GR.forEach(([g, L]) => { sd.push(el("div", { className: "gt", textContent: g })); L.forEach((x) => sd.push(btn(x[0], x[1]))); });
+    $("#tabs").replaceChildren(...sd);
+    const pri = ["file", "wa", "kach", "lis"].filter((k) => GR.some(([, L]) => L.some((x) => x[0] === k))).slice(0, 2);
+    const T = TIT();
+    $("#bn").replaceChildren(btn("tablo", "Akèy"), ...pri.map((k) => btn(k, k === "lis" ? "Tikè" : k === "kach" ? "Enskri" : T[k])), btn("meni", "Meni"));
+    BN = ["tablo", "meni", ...pri];
+  }
+  let BN = ["tablo", "meni"];
   function afiche() {
-    document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.k === TAB)));
-    const v = el("div"); $("#v").replaceChildren(v);   // a fresh box each time, so a slower earlier render cannot add a second copy
-    if (!D.evenement && !["mwen", "ekip", "wol", "wa"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
-    ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, wol: vWol, wa: vWa, mwen: vMwen }[TAB] || vMwen)(v);
+    document.querySelectorAll("#tabs button, #bn button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.k === TAB || (b.dataset.k === "meni" && !BN.includes(TAB)))));
+    document.body.classList.remove("chat");
+    const sub = TAB === "wa" && (WA.tel || WA.sub === "param");
+    $("#tb-t").textContent = TAB === "wa" && WA.sub === "param" ? "Paramèt WhatsApp" : TIT()[TAB] || "Akèy";
+    const back = sub || !BN.includes(TAB);
+    $("#tb-b").classList.toggle("hidden", !back); $("#tb-l").classList.toggle("hidden", back);
+    if (matchMedia("(min-width: 861px)").matches && !sub) { $("#tb-b").classList.add("hidden"); $("#tb-l").classList.remove("hidden"); }
+    const v = el("div", { className: TAB === "tablo" || TAB === "wa" ? "" : "pg" }); $("#v").replaceChildren(v);   // a fresh box each time, so a slower earlier render cannot add a second copy
+    if (!D.evenement && !["mwen", "ekip", "wol", "wa", "meni", "tablo"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
+    ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, wol: vWol, wa: vWa, mwen: vMwen, meni: vMeni }[TAB] || vTablo)(v);
+  }
+  // a list row: icon, label, small text, value or count, chevron
+  const liy = (k, t, sub, o = {}) => { const r = el(o.href ? "a" : "button", { type: o.href ? undefined : "button", className: "li" + (o.dg ? " dg" : ""), innerHTML: IK[o.ik || k] || "" });
+    if (o.href) r.href = o.href;
+    r.append(el("span", { className: "tx" }, el("b", { textContent: t }), sub ? el("small", { textContent: sub }) : null));
+    if (o.vl != null) r.append(el("span", { className: "vl", textContent: o.vl }));
+    const n = o.n ?? konte(k); if (n) r.append(el("span", { className: "nb", textContent: n }));
+    if (!o.dg) r.insertAdjacentHTML("beforeend", IK.cv.replace("<svg", '<svg class="cv"'));
+    r.dataset.k = k; r.onclick = o.on || (() => ale(k)); return r; };
+  const grp = (...rows) => el("div", { className: "grp" }, ...rows.filter(Boolean));
+  const sek = (t) => el("div", { className: "sec", textContent: t });
+  function sheet(tit, ...kontni) {
+    const s = el("div", { className: "sh", id: "sh" }), fèmen = () => s.remove();
+    const x = el("button", { type: "button", className: "ib", "aria-label": "Fèmen", innerHTML: sv("M18 6L6 18M6 6l12 12") }); x.onclick = fèmen;
+    const bg = el("div", { className: "bg" }); bg.onclick = fèmen;
+    s.append(bg, el("div", { className: "pn" }, el("div", { className: "gr" }), el("h3", {}, el("span", { textContent: tit }), x), ...kontni));
+    document.body.append(s); return fèmen;
+  }
+  // ---- the full menu (like a settings page)
+  function vMeni(v) {
+    v.append(el("div", { className: "pf" }, (() => { const a = el("span", { className: "av big", textContent: ME.foto ? "" : (ME.non || "?")[0] }); if (ME.foto) a.style.backgroundImage = `url(data:image/jpeg;base64,${ME.foto})`; return a; })(),
+      el("h2", { textContent: ME.non }), el("p", { textContent: [ME.role_non, ME.fonksyon].filter(Boolean).join(" · ") })));
+    GR.forEach(([g, L]) => v.append(sek(g), grp(...L.map((x) => liy(x[0], x[1], x[2])))));
+    v.append(el("div", { style: "height:18px" }), grp(liy("soti", "Soti", null, { dg: true, on: () => soti() })));
   }
 
   // ---- payments to check: oldest first, one clear card each
@@ -293,6 +418,20 @@
 
   // ---- home: key numbers, sign-ups per day, latest sign-ups, seats per ticket
   function vTablo(v) {
+    const h = new Date().getHours();
+    v.append(el("div", { className: "hel" }, el("h2", { textContent: (h < 12 ? "Bonjou, " : h < 18 ? "Bonswa, " : "Bonswa, ") + premye(ME.non) }),
+      el("p", { textContent: D.evenement ? `${D.evenement.nom} · ${SB.dat(D.evenement.date, { weekday: true, day: true, month: true })}` : "Pa gen evènman pou kounye a" })));
+    const fè = [];
+    if (D.file.length && AK("valide_peman")) fè.push(liy("file", `${D.file.length} peman pou verifye`, "Pi ansyen an anlè", { n: D.file.length }));
+    if (NWA && AK("whatsapp")) fè.push(liy("wa", `${NWA} kliyan WhatsApp bezwen ou`, "Asistan an pase w relè", { n: NWA }));
+    if (NEK && AK("jere_ekip")) fè.push(liy("ekip", `${NEK} manm ap tann validasyon`, "Valide kont yo epi ba yo wòl", { n: NEK }));
+    if (fè.length) v.append(sek("Pou fè kounye a"), grp(...fè));
+    if (ME.travay) v.append(sek("Travay ou"), el("div", { className: "card", style: "white-space:pre-wrap" , textContent: ME.travay }));
+    if (AK("chif") && D.chif) { v.append(sek("Chif yo")); vChif(v); }
+    const rap = GR.flatMap(([, L]) => L).filter((x) => x[0] !== "mwen").slice(0, 6);
+    if (rap.length) v.append(sek("Aksè rapid"), grp(...rap.map((x) => liy(x[0], x[1], x[2]))));
+  }
+  function vChif(v) {
     const c = D.chif, j = D.jour_j || { entres: 0, attendus: 0 };
     const restan = D.types.reduce((s, t) => s + Math.max(t.restants, 0), 0);
     const tl = (ik, bg, fg, lab, val, sub, g) => el("div", { className: "kt" }, el("span", { className: "ic", style: `background:${bg};color:${fg}`, innerHTML: ik }),
@@ -398,43 +537,46 @@
   function vMwen(v) {
     const b = { ...ME };
     let OR = "v"; try { OR = localStorage.getItem("badj-or") || "v"; } catch {}
-    if (!b.foto) v.append(el("div", { className: "alrt", textContent: "📷 Mete yon foto lè w vle: li parèt sou badj ou." }));
-    const kol = el("div", { className: "grid2", style: "display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start" });
-    const gch = el("div"), drt = el("div", { className: "card mw" });
-    const sw = el("nav", { className: "tabs3", style: "justify-content:center" });
+    const big = el("span", { className: "av big", textContent: b.foto ? "" : (b.non || "?")[0] }); if (b.foto) big.style.backgroundImage = `url(data:image/jpeg;base64,${b.foto})`;
+    v.append(el("div", { className: "pf" }, big, el("h2", { textContent: b.non }), el("p", { textContent: [b.role_non || b.role, b.fonksyon].filter(Boolean).join(" · ") })));
+    // the badge, always visible
+    const sw = el("nav", { className: "tabs3", style: "margin:0" });
     const kad = el("div"); const mete = () => { kad.replaceChildren(BADJ.rann(b, OR)); sw.querySelectorAll("button").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.o === OR))); };
-    [["v", "▯ Pòtre"], ["h", "▭ Orizontal"]].forEach(([o, t]) => { const x = el("button", { type: "button", textContent: t }); x.dataset.o = o; x.onclick = () => { OR = o; try { localStorage.setItem("badj-or", o); } catch {} mete(); }; sw.append(x); });
-    gch.append(sw, kad); mete();
+    [["v", "Pòtre"], ["h", "Orizontal"]].forEach(([o, t]) => { const x = el("button", { type: "button", textContent: t }); x.dataset.o = o; x.onclick = () => { OR = o; try { localStorage.setItem("badj-or", o); } catch {} mete(); }; sw.append(x); });
+    v.append(sek("Badj mwen"), el("div", { className: "card bjw" }, sw, kad)); mete();
     const fi = el("input", { type: "file", accept: "image/*", capture: "user", className: "hidden" });
     fi.onchange = async () => { const f = fi.files[0]; if (!f) return; try { await SB.rpc("staf_foto", { p_code: KOD, p_foto: await foto(f) }); await chaje(); TAB = "mwen"; afiche(); } catch (e) { alert(e.message); } };
-    gch.append(el("div", { className: "act2", style: "justify-content:center;margin-top:14px" },
-      el("button", { type: "button", className: "btn" + (b.foto ? " light" : ""), textContent: b.foto ? "📷 Chanje foto a" : "📷 Pran foto w", onclick: () => fi.click() }), fi,
-      bouton("Telechaje badj la", async () => { const c = await BADJ.imaj(b, OR); const a = el("a", { download: `badj-${b.non}-${OR === "h" ? "orizontal" : "potre"}.png`, href: c.toDataURL("image/png") }); a.click(); }, true)));
-    drt.append(el("h3", { style: "margin-top:0", textContent: b.non }));
-    const kv = el("dl", { className: "kv2" });
-    [["Wòl", b.role_non || b.role], ["Fonksyon", b.fonksyon || "—"], ["Telefòn", b.tel || "—"], ["Imèl", b.imel || "—"]].forEach(([k, x]) => kv.append(el("dt", { textContent: k }), el("dd", { textContent: x })));
-    drt.append(kv, el("b", { textContent: "Aksè ou" }), el("ul", {}, ...(b.akse || []).map((x) => el("li", { textContent: x }))));
-    drt.append(el("b", { textContent: "Travay ou" }), el("div", { className: "tr", textContent: b.travay || "Super admin lan poko ba w travay." }));
-    if (b.role_desk) drt.append(el("p", { className: "mute small", style: "margin:0 0 10px", textContent: b.role_desk }));
-    if (AK("eskane")) drt.append(el("div", { className: "act2" }, bouton("Louvri eskanè a", async () => { try { localStorage.setItem("skane-kod", JSON.stringify(KOD)); } catch {} location.href = "/skane"; })));
-    // my profile: name, phone, email, password (the photo uses the button under the badge)
-    const f = el("form", { className: "card", style: "padding:18px;margin-top:16px" });
-    f.innerHTML = `<h3 style="margin-top:0">Modifye pwofil mwen</h3>
-      <label class="l" for="pf-non">Non</label><input id="pf-non" name="non" autocomplete="name" required>
-      <label class="l" for="pf-tel">Nimewo telefòn</label><input id="pf-tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX">
-      <label class="l" for="pf-imel">Imèl</label><input id="pf-imel" name="imel" type="email" autocomplete="email" placeholder="non@gmail.com">
-      <p class="mute small" style="margin:6px 0 0">Ou ka konekte ak nimewo a oswa ak imèl la, menm modpas la.</p>
-      <label class="l" for="pf-mp">${b.gen_modpas ? "Nouvo modpas (kite vid pou kenbe ansyen an)" : "Chwazi yon modpas (omwen 8 karaktè)"}</label><input id="pf-mp" name="modpas" type="password" autocomplete="new-password" minlength="8">
-      <div id="pf-ans" class="hidden"><label class="l" for="pf-ma">Modpas aktyèl ou</label><input id="pf-ma" name="ansyen" type="password" autocomplete="current-password"></div>
-      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Anrejistre</button>`;
-    f.non.value = b.non || ""; f.tel.value = b.tel || ""; f.imel.value = b.imel || "";
-    f.modpas.oninput = () => f.querySelector("#pf-ans").classList.toggle("hidden", !(b.gen_modpas && f.modpas.value));
-    f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden";
-      try { await SB.rpc("staf_pwofil", { p_code: KOD, p: { non: f.non.value, tel: f.tel.value, imel: f.imel.value, modpas: f.modpas.value, modpas_ansyen: f.ansyen.value } });
-        m.className = "msg ok"; m.textContent = "Anrejistre ✓"; f.modpas.value = ""; f.ansyen.value = ""; await chaje(); TAB = "mwen"; setTimeout(() => afiche(), 900); }
-      catch (e) { m.className = "msg err"; m.textContent = e.message; } };
-    drt.append(f);
-    kol.append(gch, drt); v.append(kol);
+    v.append(fi, el("div", { style: "height:10px" }), grp(
+      liy("foto", b.foto ? "Chanje foto a" : "Mete yon foto", "Li parèt sou badj ou", { on: () => fi.click() }),
+      liy("dl", "Telechaje badj la", OR === "h" ? "Imaj orizontal" : "Imaj pòtre", { on: async () => { const c = await BADJ.imaj(b, OR); el("a", { download: `badj-${b.non}-${OR === "h" ? "orizontal" : "potre"}.png`, href: c.toDataURL("image/png") }).click(); } })));
+    // account: each row opens the same small form in a sheet
+    const fòm = () => {
+      const f = el("form");
+      f.innerHTML = `<label class="l" for="pf-non">Non</label><input id="pf-non" name="non" autocomplete="name" required>
+        <label class="l" for="pf-tel">Nimewo telefòn</label><input id="pf-tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX">
+        <label class="l" for="pf-imel">Imèl</label><input id="pf-imel" name="imel" type="email" autocomplete="email" placeholder="non@gmail.com">
+        <p class="mute small" style="margin:6px 0 0">Ou ka konekte ak nimewo a oswa ak imèl la, ak menm modpas la.</p>
+        <label class="l" for="pf-mp">${b.gen_modpas ? "Nouvo modpas (kite vid pou kenbe l)" : "Chwazi yon modpas (omwen 8 karaktè)"}</label><input id="pf-mp" name="modpas" type="password" autocomplete="new-password" minlength="8">
+        <div id="pf-ans" class="hidden"><label class="l" for="pf-ma">Modpas aktyèl ou</label><input id="pf-ma" name="ansyen" type="password" autocomplete="current-password"></div>
+        <div class="msg hidden"></div><button class="btn full" style="margin-top:16px">Anrejistre</button>`;
+      f.non.value = b.non || ""; f.tel.value = b.tel || ""; f.imel.value = b.imel || "";
+      f.modpas.oninput = () => f.querySelector("#pf-ans").classList.toggle("hidden", !(b.gen_modpas && f.modpas.value));
+      f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden";
+        try { await SB.rpc("staf_pwofil", { p_code: KOD, p: { non: f.non.value, tel: f.tel.value, imel: f.imel.value, modpas: f.modpas.value, modpas_ansyen: f.ansyen.value } });
+          m.className = "msg ok"; m.textContent = "Anrejistre ✓"; f.modpas.value = ""; f.ansyen.value = ""; await chaje(); setTimeout(() => { document.getElementById("sh")?.remove(); TAB = "mwen"; afiche(); }, 900); }
+        catch (e) { m.className = "msg err"; m.textContent = e.message; } };
+      return f;
+    };
+    const ouvri = (fk) => { sheet("Modifye pwofil mwen", fòm()); setTimeout(() => document.getElementById(fk)?.focus(), 50); };
+    const r = (k, t, vl, fk) => { const x = liy(k, t, null, { vl, on: () => ouvri(fk) }); x.dataset.f = k; return x; };
+    v.append(sek("Kont"), grp(r("non", "Non", b.non, "pf-non"), r("tel", "Telefòn", b.tel ? "+" + b.tel : "Ajoute", "pf-tel"), r("imel", "Imèl", b.imel || "Ajoute", "pf-imel"), r("kle", "Modpas", b.gen_modpas ? "••••••••" : "Chwazi youn", "pf-mp")));
+    v.append(sek("Wòl ou"), grp(
+      el("div", { className: "li", style: "cursor:default" }, el("span", { className: "tx" }, el("b", { textContent: b.role_non || b.role || "—" }), b.role_desk ? el("small", { textContent: b.role_desk }) : null)),
+      el("div", { className: "li", style: "cursor:default;display:block" }, el("small", { className: "mute", textContent: `Aksè ou (${(b.akse || []).length})` }),
+        el("div", { className: "chips" }, ...((b.akse || []).length ? b.akse : ["Badj ak espas ou sèlman"]).map((x) => el("span", { textContent: x }))))));
+    if (b.travay) v.append(sek("Travay ou"), el("div", { className: "card", style: "white-space:pre-wrap", textContent: b.travay }));
+    if (AK("eskane")) v.append(el("div", { style: "height:10px" }), grp(liy("skane", "Louvri eskanè a", "Tcheke tikè yo nan pòt la")));
+    v.append(el("div", { style: "height:18px" }), grp(liy("soti", "Soti", null, { dg: true, on: () => soti() })));
   }
 
   // ---- team (super admin): approve sign-ups, give role, job and tasks, deactivate
@@ -548,82 +690,85 @@
   const jou = (iso) => { const d = new Date(iso), t = new Date(); return d.toDateString() === t.toDateString() ? lè(iso) : SB.dat(iso, { day: true }); };
   const bul = (m) => el("div", { className: "bl " + m.sans }, m.sans === "bot" ? "🤖 " : "", m.sans === "staf" ? el("b", { textContent: "Ekip · " }) : "", m.teks || "", m.kreye_le ? el("small", { textContent: lè(m.kreye_le) }) : null);
 
+  const bulk = (m) => el("div", { className: "bl " + m.sans }, m.sans === "bot" ? el("span", { className: "who", textContent: "Asistan" }) : m.sans === "staf" ? el("span", { className: "who", textContent: "Ekip" }) : null,
+    m.teks || "", m.kreye_le ? el("small", { textContent: lè(m.kreye_le) }) : null);
+  // composer like a chat app: grows with the text, Enter sends (Shift+Enter = new line)
+  function konpoze(plas, voye, nt) {
+    const ta = el("textarea", { rows: 1, placeholder: plas, id: "ta" }), b = el("button", { type: "button", className: "snd", "aria-label": "Voye", innerHTML: IK.send, disabled: true });
+    const gw = () => { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 140) + "px"; b.disabled = !ta.value.trim(); };
+    ta.oninput = gw;
+    const ale_ = async () => { const t = ta.value.trim(); if (!t) return; b.disabled = true; ta.value = ""; gw(); try { await voye(t); } catch (e) { alert(e.message); } };
+    b.onclick = ale_; ta.onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey && matchMedia("(min-width: 861px)").matches) { e.preventDefault(); ale_(); } };
+    return { box: el("div", { className: "cmp" }, el("div", { className: "bxi" }, ta, b), nt ? el("p", { className: "nt", textContent: nt }) : null), ta };
+  }
   async function vWa(v) {
     const K = await SB.rpc("staf_wa_konfig", { p_code: KOD });
-    const pare = K.gemini && K.wa_token && K.wa_phone_id && K.app_secret && K.sevè;
-    const st = el("div", { className: "card wst" }, el("span", { className: "dt" + (K.aktif && pare ? " on" : "") }),
-      el("div", {}, el("b", { textContent: !K.aktif ? "Asistan an fèmen" : pare ? "Asistan an ap reponn" : "Asistan an limen, men l poko konekte" }),
-        el("div", { className: "mute small", textContent: pare ? "Tout kle yo la ✓" : "Kle ki manke: " + [!K.gemini && "Gemini", !K.wa_token && "token WhatsApp", !K.wa_phone_id && "Phone number ID", !K.app_secret && "App secret", !K.sevè && "sekrè sèvè a"].filter(Boolean).join(", ") })),
-      el("span", { className: "sp" }),
-      bouton(K.aktif ? "Fèmen l" : "Limen l", async () => { if (!K.aktif && !K.gemini) throw new Error("Mete kle Gemini an anvan (Paramèt)."); await SB.rpc("staf_wa_konfig_mete", { p_code: KOD, p: { aktif: !K.aktif } }); afiche(); }, K.aktif));
-    const tb = el("nav", { className: "tabs3" }, ...[["konv", `Konvèsasyon${K.alet ? ` (${K.alet} bezwen ou)` : ""}`], ["eseye", "Eseye asistan an"], ["param", "Paramèt"]].map(([k, t]) => {
-      const b = el("button", { type: "button", textContent: t }); b.setAttribute("aria-selected", String(WA.sub === k)); b.onclick = () => { WA.sub = k; WA.tel = null; afiche(); }; return b; }));
-    v.append(st, tb);
     if (WA.sub === "param") return waParam(v, K);
-    if (WA.sub === "eseye") return waEseye(v, K);
     if (WA.tel) return waKonv(v, WA.tel);
+    const pare = K.gemini && K.wa_token && K.wa_phone_id && K.app_secret && K.sevè;
+    const tb = el("nav", { className: "tabs3", style: "margin:0" }, ...[["konv", `Konvèsasyon${K.alet ? ` · ${K.alet}` : ""}`], ["eseye", "Asistan"]].map(([k, t]) => {
+      const b = el("button", { type: "button", textContent: t }); b.setAttribute("aria-selected", String(WA.sub === k)); b.onclick = () => { WA.sub = k; afiche(); }; return b; }));
+    const g = el("button", { type: "button", className: "ib", id: "wa-param", "aria-label": "Paramèt WhatsApp", innerHTML: IK.gear }); g.onclick = () => { WA.sub = "param"; afiche(); };
+    v.append(el("div", { className: "wtop" }, tb, el("span", { className: "sp" }),
+      el("span", { className: "st" + (K.aktif && pare ? " on" : ""), id: "wa-st" }, el("i"), !K.aktif ? "Fèmen" : pare ? "Ap reponn" : "Poko konekte"), g));
+    if (WA.sub === "eseye") return waEseye(v, K);
     const L = await SB.rpc("staf_wa_konv", { p_code: KOD });
-    const bx = el("div", { className: "bx" });
-    bx.append(el("h4", {}, "Moun ki ekri yo", el("small", { textContent: L.length + " konvèsasyon" })));
-    if (!L.length) bx.append(el("p", { className: "mute", textContent: "Poko gen mesaj. Lè yon moun ekri nimewo WhatsApp la, l ap parèt la a." }));
-    L.forEach((c) => {
-      const pl = [];
-      if (c.alet) pl.push(el("span", { className: "pl ko", textContent: "Bezwen ou" }));
-      else if (c.eta === "moun") pl.push(el("span", { className: "pl at", textContent: "Ou pran relè" }));
-      else if (c.poze_jiska && new Date(c.poze_jiska) > new Date()) pl.push(el("span", { className: "pl at", textContent: "Asistan an poz" }));
-      if (c.code_court) pl.push(el("span", { className: "pl " + (c.statut === "valide" ? "ok" : "at"), textContent: `${c.code_court} · ${c.statut === "valide" ? "peye" : c.peye ? "peman voye" : "rezève"}` }), " ");
-      const r = el("div", { className: "rw kl" }, ai(c.non || c.telefon),
-        el("div", { className: "tx" }, el("b", { textContent: c.non || "+" + c.telefon }),
-          el("small", { textContent: c.dènye ? (c.dènye.sans === "in" ? "" : c.dènye.sans === "bot" ? "🤖 " : "Ekip: ") + c.dènye.teks : "" }), el("div", {}, ...pl)),
-        el("div", { className: "mt" }, el("small", { className: "mute", textContent: jou(c.denye) }), c.pa_li ? el("span", { className: "nl", textContent: c.pa_li }) : null));
-      r.onclick = () => { WA.tel = c.telefon; afiche(); scrollTo(0, 0); };
-      bx.append(r);
-    });
-    v.append(el("div", { className: "act2", style: "margin:0 0 10px" }, bouton("↻ Mete ajou", () => afiche(), true)), bx);
+    if (!L.length) { v.append(el("div", { className: "em" }, el("h3", { textContent: "Poko gen mesaj" }), el("p", { textContent: "Lè yon moun ekri nimewo WhatsApp la, konvèsasyon an ap parèt isit la." }))); return; }
+    v.append(el("div", { className: "grp cl" }, ...L.map((c) => {
+      const tag = c.alet ? el("span", { className: "pl ko", textContent: "Bezwen ou" }) : c.eta === "moun" ? el("span", { className: "pl at", textContent: "Ou pran relè" }) : c.code_court ? el("span", { className: "pl " + (c.statut === "valide" ? "ok" : "at"), textContent: c.code_court }) : null;
+      const r = el("button", { type: "button", className: "li" }, ai(c.non || c.telefon),
+        el("span", { className: "tx" }, el("b", { textContent: c.non || "+" + c.telefon }), el("small", { textContent: c.dènye ? (c.dènye.sans === "bot" ? "Asistan: " : c.dènye.sans === "staf" ? "Ou: " : "") + c.dènye.teks : "" }), tag ? el("span", { style: "display:block;margin-top:4px" }, tag) : null),
+        el("span", { className: "tm" }, jou(c.denye), c.pa_li ? el("span", { className: "nl", textContent: c.pa_li }) : null));
+      r.dataset.tel = c.telefon; r.onclick = () => { WA.tel = c.telefon; afiche(); scrollTo(0, 0); }; return r; })));
   }
 
   async function waKonv(v, tel) {
+    document.body.classList.add("chat");
     const L = await SB.rpc("staf_wa_konv", { p_code: KOD }), c = L.find((x) => x.telefon === tel) || { telefon: tel };
+    $("#tb-t").textContent = c.non || "+" + tel;
     const ch = el("div", { className: "ch" });
-    const ranpli = async () => { const M = await SB.rpc("staf_wa_mesaj", { p_code: KOD, p_tel: tel }); ch.replaceChildren(...M.map(bul)); ch.scrollTop = ch.scrollHeight; };
-    const tèt = el("div", { className: "row2", style: "align-items:center;margin-bottom:10px" },
-      el("div", { style: "display:flex;gap:10px;align-items:center" }, bouton("←", () => { WA.tel = null; afiche(); }, true),
-        el("div", {}, el("b", { textContent: c.non || "+" + tel }), el("div", { className: "mute small", textContent: "+" + tel + (c.code_court ? ` · ${c.code_court}` : "") }))),
-      lyen("Louvri nan WhatsApp", `https://wa.me/${tel}`));
-    const ak = el("div", { className: "act2", style: "margin:10px 0 0" },
-      c.eta === "moun" ? bouton("🤖 Remèt li bay asistan an", async () => { await SB.rpc("staf_wa_eta", { p_code: KOD, p_tel: tel, p_eta: "bot" }); afiche(); })
-        : bouton("✋ Mwen pran relè", async () => { await SB.rpc("staf_wa_eta", { p_code: KOD, p_tel: tel, p_eta: "moun" }); afiche(); }, true));
-    const ta = el("textarea", { placeholder: "Ekri repons ou…", rows: 2 });
-    const rp = el("div", { className: "rp" }, ta, bouton("Voye", async () => { const t = ta.value.trim(); if (!t) return; await waApi("voye", { tel, teks: t }); ta.value = ""; await ranpli(); }));
-    const bx = el("div", { className: "bx" }, tèt);
-    if (c.alet) bx.append(el("div", { className: "alrt", textContent: "⚠ " + (c.rezon || "Kliyan sa a bezwen yon moun.") + " Asistan an rete trankil jiskaske w remèt li." }));
-    bx.append(ch, rp, el("p", { className: "mute small", style: "margin:6px 0 0", textContent: "Lè w reponn isit la (oswa nan aplikasyon WhatsApp Business la), asistan an rete trankil 24 è nan konvèsasyon sa a." }), ak);
-    v.append(bx);
+    const ranpli = async () => { const M = await SB.rpc("staf_wa_mesaj", { p_code: KOD, p_tel: tel }); ch.replaceChildren(...M.map(bulk)); scrollTo(0, document.body.scrollHeight); };
+    const relè = c.eta === "moun" ? el("button", { type: "button", className: "btn sm light", id: "wa-remet", textContent: "Remèt bay asistan an" }) : el("button", { type: "button", className: "btn sm light", id: "wa-pran", textContent: "Pran relè" });
+    relè.onclick = async () => { await SB.rpc("staf_wa_eta", { p_code: KOD, p_tel: tel, p_eta: c.eta === "moun" ? "bot" : "moun" }); afiche(); };
+    const head = el("div", { className: "chh" }, ai(c.non || tel), el("span", { className: "tx" }, el("b", { textContent: c.non || "+" + tel }), el("small", { textContent: "+" + tel + (c.code_court ? ` · ${c.code_court}` : "") })), relè,
+      el("a", { className: "ib", href: `https://wa.me/${tel}`, target: "_blank", rel: "noopener", "aria-label": "Louvri nan WhatsApp", innerHTML: IK.wa }));
+    const box = el("div", { className: "chv" }, head);
+    if (c.alet) box.append(el("div", { className: "alrt", id: "wa-rezon", textContent: (c.rezon || "Kliyan sa a bezwen yon moun.") + " Asistan an rete trankil jiskaske w remèt li." }));
+    const k = konpoze("Ekri repons ou…", async (t) => { await waApi("voye", { tel, teks: t }); await ranpli(); }, "Lè w reponn, asistan an rete trankil 24 è nan konvèsasyon sa a.");
+    box.append(ch, k.box); v.append(box);
     await ranpli();
-    const t = setInterval(() => { if (!ch.isConnected) return clearInterval(t); if (document.activeElement !== ta || !ta.value) ranpli().catch(() => {}); }, 15000);
+    const t = setInterval(() => { if (!ch.isConnected) return clearInterval(t); if (!k.ta.value) ranpli().catch(() => {}); }, 15000);
   }
 
   function waEseye(v, K) {
     const ch = el("div", { className: "ch" });
-    const montre = () => { ch.replaceChildren(...(WA.test.length ? WA.test.map(bul) : [el("div", { className: "bl zt", textContent: "Ekri tankou yon kliyan pou wè sa asistan an ta reponn. Anyen pa voye sou WhatsApp, e pa gen rezèvasyon ki kreye." })])); ch.scrollTop = ch.scrollHeight; };
-    const ta = el("textarea", { placeholder: "Egz.: Bonjou, konbyen tikè a ye?", rows: 2 });
-    const voye = bouton("Voye", async () => { const t = ta.value.trim(); if (!t) return;
-      WA.test.push({ sans: "in", teks: t }); ta.value = ""; montre();
+    const voye = async (t) => { WA.test.push({ sans: "in", teks: t }); montre();
       try { const r = await waApi("eseye", { istwa: WA.test.filter((m) => m.sans !== "zt") });
-        (r.fe || []).forEach((f) => WA.test.push({ sans: "zt", teks: `🛠 ${f.zouti} (tès)` }));
-        WA.test.push({ sans: "bot", teks: r.teks || "(pa gen repons)" }); }
-      catch (e) { WA.test.push({ sans: "zt", teks: "⚠ " + e.message }); }
-      montre(); });
-    v.append(el("div", { className: "bx" }, el("h4", {}, "Eseye asistan an", el("small", { textContent: K.gemini_model })), ch, el("div", { className: "rp" }, ta, voye),
-      el("div", { className: "act2" }, bouton("Rekòmanse", () => { WA.test = []; montre(); }, true))));
+        (r.fe || []).forEach((f) => WA.test.push({ sans: "zt", teks: `${f.zouti} (tès)` })); WA.test.push({ sans: "bot", teks: r.teks || "(pa gen repons)" }); }
+      catch (e) { WA.test.push({ sans: "zt", teks: e.message }); }
+      montre(); };
+    const montre = () => {
+      if (!WA.test.length) { ch.replaceChildren(el("div", { className: "em" }, el("h3", { textContent: "Pale ak asistan an" }), el("p", { textContent: "Ekri tankou yon kliyan pou wè sa l ta reponn. Anyen pa voye sou WhatsApp." }),
+        el("div", { className: "sg" }, ...["Konbyen tikè a ye?", "Ki kote atelye a ap fèt?", "Mwen vle rezève"].map((q) => { const b = el("button", { type: "button", textContent: q }); b.onclick = () => voye(q); return b; })))); return; }
+      ch.replaceChildren(...WA.test.map(bulk)); scrollTo(0, document.body.scrollHeight); };
+    const k = konpoze("Ekri yon mesaj…", voye, "Mòd tès · " + (K.gemini_model || ""));
+    const rk = el("button", { type: "button", className: "btn sm light", textContent: "Nouvo konvèsasyon" }); rk.onclick = () => { WA.test = []; montre(); };
+    v.append(el("div", { className: "chv" }, el("div", { style: "display:flex;justify-content:flex-end" }, rk), ch, k.box));
     montre();
   }
 
   function waParam(v, K) {
+    const pare = K.gemini && K.wa_token && K.wa_phone_id && K.app_secret && K.sevè;
+    const sw = el("button", { type: "button", className: "btn sm" + (K.aktif ? " light" : ""), id: "wa-sw", textContent: K.aktif ? "Fèmen l" : "Limen l" });
+    sw.onclick = async () => { try { if (!K.aktif && !K.gemini) throw new Error("Mete kle Gemini an anvan."); await SB.rpc("staf_wa_konfig_mete", { p_code: KOD, p: { aktif: !K.aktif } }); afiche(); } catch (e) { alert(e.message); } };
+    v.append(grp(el("div", { className: "li", style: "cursor:default" }, el("span", { className: "st" + (K.aktif && pare ? " on" : "") }, el("i")),
+      el("span", { className: "tx" }, el("b", { id: "wa-eta", textContent: !K.aktif ? "Asistan an fèmen" : pare ? "Asistan an ap reponn" : "Asistan an limen, men l poko konekte" }),
+        el("small", { textContent: pare ? "Tout kle yo la" : "Ki manke: " + [!K.gemini && "Gemini", !K.wa_token && "token WhatsApp", !K.wa_phone_id && "Phone number ID", !K.app_secret && "App secret", !K.sevè && "sekrè sèvè"].filter(Boolean).join(", ") })), sw)),
+      el("div", { style: "height:12px" }));
     const hook = location.origin + "/api/whatsapp";
     const kopi = (val) => { const i = el("input", { value: val, readOnly: true }); return el("div", { className: "cp" }, i, bouton("Kopye", async () => { await navigator.clipboard.writeText(val).catch(() => { i.select(); document.execCommand("copy"); }); })); };
     const f = el("form", { className: "card", style: "padding:18px" });
-    f.innerHTML = `<h3 style="margin-top:0">Sèvo asistan an: Gemini</h3>
+    f.innerHTML = `<h3 style="margin-top:0;font-weight:600">Sèvo asistan an: Gemini</h3>
       <label class="l">Kle API Gemini</label><input name="gemini_kle" type="password" autocomplete="off" placeholder="${K.gemini ? "•••• " + K.gemini_fen + " (kite vid pou kenbe l)" : "AIza…"}">
       <p class="mute small" style="margin:4px 0 0">Jwenn li sou aistudio.google.com → Get API key. Li rete sou sèvè a; pèsonn pa ka li l ankò, menm isit la.</p>
       <label class="l">Modèl</label><input name="gemini_model">
@@ -632,7 +777,7 @@
       <label class="l">Access token (pèmanan)</label><input name="wa_token" type="password" autocomplete="off" placeholder="${K.wa_token ? "•••• anrejistre (kite vid pou kenbe l)" : "EAAG…"}">
       <label class="l">App secret</label><input name="app_secret" type="password" autocomplete="off" placeholder="${K.app_secret ? "•••• anrejistre (kite vid pou kenbe l)" : "32 karaktè"}">
       <h3>Konpòtman</h3>
-      <label class="l">Enstriksyon an plis (ton, sa pou l di, sa pou l pa janm di)</label><textarea name="enstriksyon" rows="4" style="width:100%;font:inherit;border:0;border-radius:10px;background:var(--soft);padding:10px" placeholder="Egz.: Toujou mansyone bonis Claude Pro a. Pa janm pale de ranbousman."></textarea>
+      <label class="l">Enstriksyon an plis (ton, sa pou l di, sa pou l pa janm di)</label><textarea name="enstriksyon" rows="4" placeholder="Egz.: Toujou mansyone bonis Claude Pro a. Pa janm pale de ranbousman."></textarea>
       <label class="l">Mo ki fè l pase relè bay yon moun (separe ak vigil)</label><input name="mo_relais">
       <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Anrejistre</button>`;
     f.gemini_model.value = K.gemini_model || ""; f.wa_phone_id.value = K.wa_phone_id || ""; f.enstriksyon.value = K.enstriksyon || ""; f.mo_relais.value = K.mo_relais || "";
