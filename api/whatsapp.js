@@ -1,5 +1,6 @@
 import { waitUntil } from "@vercel/functions";
 import { reponn, rpc, siyatiMeta, sv, telechaje, voyeWa } from "../lib/wa.js";
+import { ajan } from "../lib/ajan.js";
 
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json" } });
 
@@ -73,10 +74,12 @@ async function yonMesaj(k, m, non) {
   }
 }
 
-// Team actions from /staf (WhatsApp tab), on ?ekip=1: reply to a customer, try the assistant, check the connection.
+// Team actions from /staf on ?ekip=1: the team assistant (any member), and for WhatsApp managers:
+// reply to a customer, try the sales assistant, check the connection.
 async function ekip(req) {
   let b;
   try { b = await req.json(); } catch { return json({ ere: "Demann lan pa bon." }, 400); }
+  if (b.aksyon === "ajan") return ajanEkip(b);
   try { await rpc("staf_wa_konfig", { p_code: b.kod || "" }); } catch (er) { return json({ ere: er.message }, 403); }
   let k;
   try { k = await sv("wa_sv_konfig"); } catch { return json({ ere: "Sèvè a poko konfigire (WA_SEKRE)." }, 500); }
@@ -108,4 +111,14 @@ async function ekip(req) {
     }
     return json({ ere: "Aksyon inkoni." }, 400);
   } catch (er) { return json({ ere: er.message }, 500); }
+}
+
+async function ajanEkip(b) {
+  try { await rpc("staf_konekte", { p_code: b.kod || "" }); } catch (er) { return json({ ere: er.message }, 403); }
+  let k;
+  try { k = await sv("wa_sv_konfig"); } catch { return json({ ere: "Sèvè a poko konfigire (WA_SEKRE)." }, 500); }
+  if (!k.gemini_kle) return json({ ere: "Asistan an poko gen kle Gemini. Yon admin dwe mete l nan WhatsApp → Paramèt." }, 400);
+  const istwa = (Array.isArray(b.istwa) ? b.istwa : []).filter((m) => m && (m.sans === "in" || m.sans === "bot") && m.teks)
+    .slice(-24).map((m) => ({ sans: m.sans, teks: String(m.teks).slice(0, 6000) }));
+  try { return json(await ajan(k, b.kod, istwa)); } catch (er) { console.error("ajan:", er.message); return json({ ere: er.message }, 500); }
 }

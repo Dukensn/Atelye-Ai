@@ -37,13 +37,14 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await rpc("staf_kreye", { p_code: "sekre-admin-123", p_non: "Mika", p_role: "scanneur", p_nouvo_code: "skane-kod-456" });
   const b = await chromium.launch();
   const ctx = await b.newContext({ ...devices["iPhone 13"] });
-  await ctx.route("https://mfxyzjelxpziptlshkfv.supabase.co/rest/v1/rpc/*", async (route) => {
+  const sbRoute = async (route) => {
     const fn = route.request().url().split("/rpc/")[1]; const [st, body] = await rpc(fn, JSON.parse(route.request().postData() || "{}"));
     route.fulfill({ status: st, contentType: "application/json", body: JSON.stringify(body) });
-  });
+  };
+  await ctx.route("https://mfxyzjelxpziptlshkfv.supabase.co/rest/v1/rpc/*", sbRoute);
   const errs = []; ctx.on("page", (p) => p.on("pageerror", (x) => errs.push(x.message)));
   const opened = []; await ctx.exposeBinding("__open", (_, u) => opened.push(u));
-  await ctx.addInitScript(() => { window.open = (u) => { window.__open(u); return null; }; });
+  await ctx.addInitScript(() => { const o = window.open; window.open = (u, ...x) => { if (!u) return o.call(window, u, ...x); window.__open(u); return null; }; });   // links are recorded; blank windows (PDF view) open
   const p = await ctx.newPage(); p.on("pageerror", (x) => errs.push(x.message));
 
   // 1) register
@@ -138,7 +139,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#bn button[data-k=tablo]"); await ale(u, "mwen"); await u.waitForSelector("#wè-badj");
   ok((await u.textContent("#v")).includes("Responsab enskripsyon Leyogàn") && (await u.textContent("#v")).includes("Revoye tikè pèdi"), "member sees job, tasks and access");
   await ale(u, "meni"); await u.waitForSelector("#v .li[data-k=mwen]");
-  ok((await u.locator("#v .li[data-k]:not([data-k=soti]) .tx b").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Pwofil mwen", "member sees only the sections of the role");
+  ok((await u.locator("#v .li[data-k]:not([data-k=soti]) .tx b").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Asistan AI|Anons|Travay|Pwojè|Dokiman|Baz konesans|Pwofil mwen", "member sees the sections of the role plus the team space");
   await u.click("#v .li[data-k=mwen]"); await u.click("#wè-badj"); await u.waitForSelector("#sh .bj2 canvas");
   ok(true, "badge opens behind the eye button"); await u.click("#sh .tabs3 button >> text=Klasik"); await u.waitForSelector("#sh .bj2 canvas"); await u.screenshot({ path: S + "7-badj.png" }); await u.click("#sh .bg", { position: { x: 10, y: 10 } });
   // profile: change name, add a phone, then log in with the phone; a wrong current password blocks a password change
@@ -199,6 +200,62 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await s.screenshot({ path: S + "11-asistan.png" });
   await ale(s, "meni"); await s.waitForSelector("#v .li[data-k=param]"); await s.screenshot({ path: S + "12-meni.png", fullPage: true });
   await ale(s, "mwen"); await s.waitForSelector("#wè-badj"); await s.screenshot({ path: S + "13-pwofil.png", fullPage: true });
+  // 9) team space: a project with themed lists, a checklist item with an amount, my tasks, an announcement, a document, the knowledge base
+  await ale(s, "pwoje"); await s.click("#pj-nv"); await s.fill("#sh [name=tit]", "Konferans 28 novanm"); await s.click("#sh .chips2 button >> text=Pwogram"); await s.click("#sh button.btn:not(.light)");
+  await s.waitForSelector("#v .lh[data-lis=Depans]");
+  ok((await s.locator("#v .lh b").allTextContents()).join(",") === "Lojistik,Depans,Kominikasyon,Pwogram", "project created with 4 themed lists");
+  await s.fill("input[placeholder='Ajoute nan Depans…']", "Lwe pwojektè"); await s.press("input[placeholder='Ajoute nan Depans…']", "Enter");
+  await s.waitForSelector("#v .li.tr >> text=Lwe pwojektè");
+  ok(await s.evaluate(() => document.activeElement && document.activeElement.placeholder === "Ajoute nan Depans…"), "quick add keeps the cursor in the list (type, Enter, type)");
+  await s.fill("input[placeholder='Ajoute nan Depans…']", "Dlo ak manje"); await s.press("input[placeholder='Ajoute nan Depans…']", "Enter"); await s.waitForSelector("#v .li.tr >> text=Dlo ak manje");
+  await s.click("#v .li.tr >> text=Lwe pwojektè"); await s.fill("#sh [name=montan]", "4500"); await s.selectOption("#sh [name=moun]", { label: "Duke (mwen)" }); await s.fill("#sh [name=dat]", "2026-11-20");
+  await s.click("#sh button.btn:not(.light)"); await s.waitForSelector("#sh", { state: "detached" });
+  await s.waitForFunction(() => document.querySelector("#v .lh[data-lis=Depans] small").textContent.includes("4"));
+  ok((await s.locator("#v .lh[data-lis=Depans] small").textContent()).replace(/\s/g, "").includes("4500goud"), "expense list shows its total");
+  await s.locator("#v .li.tr", { hasText: "Dlo ak manje" }).locator(".ck2").click(); await s.waitForSelector("#v .li.tr.fini >> text=Dlo ak manje");
+  ok((await s.textContent("#v .tp3")).includes("1/2"), "checking an item updates the project progress");
+  await s.screenshot({ path: S + "15-pwoje.png", fullPage: true });
+  await s.click("#tb-b"); await s.waitForSelector("#v .li[data-id] >> text=Konferans 28 novanm"); ok((await s.textContent("#v .grp")).includes("1/2 fini"), "project list shows progress");
+  await ale(s, "travay"); await s.waitForSelector("#v .li.tr >> text=Lwe pwojektè");
+  ok((await s.textContent("#v")).includes("Konferans 28 novanm · Depans"), "my tasks show where each one belongs");
+  await s.fill("input[data-ad=tr]", "Rele direktè lekòl la"); await s.press("input[data-ad=tr]", "Enter"); await s.waitForSelector("#v .li.tr >> text=Rele direktè lekòl la");
+  await s.screenshot({ path: S + "16-travay.png", fullPage: true });
+  await ale(s, "anons"); await s.click("#an-nv"); await s.fill("#sh [name=tit]", "Reyinyon ekip samdi"); await s.fill("#sh [name=kontni]", "Samdi 9è nan **sal 2**. Pote lis envite yo.");
+  await s.click("#sh button.btn:not(.light)"); await s.waitForSelector("#v .li >> text=Reyinyon ekip samdi");
+  await s.click("#an-nv"); await s.fill("#sh [name=tit]", "Rapèl jou J"); await s.fill("#sh [name=kontni]", "Rive 8è."); await s.fill("#sh [name=dat]", "2026-11-28T07:00"); await s.click("#sh button.btn:not(.light)");
+  await s.waitForSelector("#v .li >> text=Rapèl jou J"); ok((await s.locator("#v .li", { hasText: "Rapèl jou J" }).textContent()).includes("Pwograme"), "announcement scheduled for a later date");
+  const tokN = (await rpc("staf_login", { p_idantifyan: "nadege@gmail.com", p_modpas: "modpas-nadege" }))[1].token;
+  const zu = (await rpc("staf_zouti", { p_code: tokN }))[1];
+  ok(zu.anons.some((a) => a.tit === "Reyinyon ekip samdi" && a.nouvo) && !zu.anons.some((a) => a.tit === "Rapèl jou J"), "member sees the new announcement, not the scheduled one yet");
+  const ctxN = await b.newContext({ ...devices["iPhone 13"] }); await ctxN.route("https://mfxyzjelxpziptlshkfv.supabase.co/rest/v1/rpc/*", sbRoute); const n = await ctxN.newPage(); n.on("pageerror", (e) => errs.push(e.message));
+  await n.goto("http://localhost:5174/staf"); await n.evaluate((t) => localStorage.setItem("staf-kod", t), tokN); await n.reload();
+  await n.waitForSelector("#bn button[data-k=tablo]"); await n.waitForSelector("#v .li[data-k=anons]");
+  ok((await n.textContent("#v")).includes("1 nouvo anons"), "member's home shows the new announcement");
+  await n.click("#v .li[data-k=anons]"); await n.click("#v .li >> text=Reyinyon ekip samdi"); await n.waitForSelector("#sh .dk b");
+  ok((await n.textContent("#sh .dk b")) === "sal 2" && (await n.locator("#an-nv").count()) === 0, "member reads it (formatted) and cannot publish");
+  await n.screenshot({ path: S + "16b-anons.png" }); await ctxN.close();
+  await ale(s, "dok"); await s.click("#dk-nv"); await s.fill("#dk-tit", "Pwogram jounen an"); await s.fill("#dk-ta", "# Maten\n- 9h30 akèy\n- **10h** ouvèti\n\n# Apremidi\n1. Vann ak AI\n2. Kesyon");
+  await s.click("#dk-ok"); await s.waitForSelector("article.dk h2");
+  ok((await s.locator("article.dk h2").allTextContents()).join("|") === "Maten|Apremidi" && (await s.textContent("article.dk li b")) === "10h", "document saved and shown formatted");
+  await s.screenshot({ path: S + "17-dok.png", fullPage: true });
+  const [wd] = await Promise.all([s.waitForEvent("download"), s.click("#dk-word")]); const wt = fs.readFileSync(await wd.path(), "utf8");
+  ok(wd.suggestedFilename() === "pwogram-jounen-an.doc" && wt.includes("<b>10h</b>") && wt.includes("<ol>"), "document downloads as Word");
+  const [pp] = await Promise.all([s.waitForEvent("popup"), s.click("#dk-pdf")]); await pp.waitForLoadState();
+  ok((await pp.textContent("h1")) === "Pwogram jounen an", "PDF view opens ready to print / save"); await pp.close();
+  await s.click("#dk-mod"); await s.fill("#dk-ta", "# Maten\n- 9h akèy"); await s.click("#dk-ok"); await s.waitForSelector("article.dk >> text=9h akèy"); ok(true, "document edited");
+  await s.click("#tb-b"); await s.waitForSelector("#v .li >> text=Pwogram jounen an"); await s.fill("#v input[type=search]", "zzz"); ok((await s.locator("#v .grp .li").count()) === 0, "document search filters the list");
+  await ale(s, "konesans"); await s.click("#kn-nv"); await s.fill("#sh [name=tit]", "Parking"); await s.fill("#sh [name=kontni]", "Gen parking gratis devan lekòl la.");
+  await s.click("#sh button.btn:not(.light)"); await s.waitForSelector("#v .li >> text=Parking"); ok(true, "knowledge base card added");
+  // 10) team assistant chat (server simulated here; the real one is tested in wa.mjs)
+  await s.route("**/api/whatsapp?ekip=1", async (route) => { const d = JSON.parse(route.request().postData()); if (d.aksyon !== "ajan") return route.fallback();
+    waCalls.push(d); route.fulfill({ contentType: "application/json", body: JSON.stringify({ teks: "**Rapò jodi a**\n- 1 tikè peye\n- 2 travay ouvè\n\nPwochen etap: relanse moun ki poko peye.", fe: [{ zouti: "rapo", ok: true }] }) }); });
+  await ale(s, "asistan"); await s.waitForSelector("#v .sg button"); await s.click("#v .sg button >> nth=0");
+  await s.waitForSelector("#v .am ul li"); ok((await s.textContent("#v .zc")).includes("Rapò") && (await s.textContent("#v .am b")) === "Rapò jodi a", "assistant answer shown formatted with the tools it used");
+  ok(!(await s.textContent("#v .ch")).includes("null"), "no stray text in the chat");
+  ok(waCalls.some((x) => x.aksyon === "ajan" && x.istwa.at(-1).teks === "Fè yon rapò sou atelye a"), "suggestion sends the question");
+  await s.screenshot({ path: S + "18-ai.png" });
+  await ale(s, "tablo"); await ale(s, "asistan"); await s.waitForSelector("#v .am ul li"); ok(true, "conversation kept when coming back");
+  await s.click("#ai-nv"); await s.waitForSelector("#v .sg"); ok(true, "new conversation clears the chat");
   await s.setViewportSize({ width: 1280, height: 820 }); await s.click("#tabs button[data-k=tablo]"); await s.waitForSelector(".k4"); await s.screenshot({ path: S + "14-pc.png" }); ok(await s.locator("#tabs").isVisible(), "side menu on computers");
   console.log("page errors:", errs);
   await b.close(); srv.close(); FEMEN = true; await file; await db.end();
