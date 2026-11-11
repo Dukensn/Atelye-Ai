@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
 <style>
   /* Team space — calm, flat, list-first (like a settings app): warm off-white, hairlines, small controls, serif titles. */
-  :root { --bg: #f8f7f4; --sf: #ffffff; --ln: #e9e6df; --ln2: #f0eee9; --tx: #1e1d1b; --mu: #75716b; --mu2: #9a958d; --ink: #1e1d1b;
+  :root { --bg: #ffffff; --sf: #ffffff; --ln: #e9e6df; --ln2: #f0eee9; --tx: #1e1d1b; --mu: #75716b; --mu2: #9a958d; --ink: #1e1d1b;
     --ok: #237a4b; --okb: #e8f3ec; --wa: #a36109; --wab: #fbf1df; --ko: #b3261e; --kob: #fbeae8; --ac: #c8641f;
     --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif; --r: 12px; }
   html, body { background: var(--bg); }
@@ -26,22 +26,25 @@
   .btn.dg { background: none; border: 1px solid var(--ln); color: var(--ko); }
   .ib { width: 36px; height: 36px; display: grid; place-items: center; border: 0; background: none; border-radius: 10px; color: var(--tx); cursor: pointer; padding: 0; }
   .ib:hover { background: var(--ln2); } .ib svg { width: 21px; height: 21px; }
-  input, textarea, select { width: 100%; font: inherit; font-size: 15px; padding: 10px 12px; border: 1px solid var(--ln); border-radius: 10px; background: var(--sf); color: var(--tx); }
+  input, textarea, select { width: 100%; font: inherit; font-size: 15px; padding: 10px 12px; border: 1px solid var(--ln); border-radius: 10px; background: #fff; color: var(--tx); }
   input:focus, textarea:focus, select:focus { outline: none; border-color: var(--tx); }
   label, label.l { display: block; font-weight: 500; font-size: 13.5px; color: var(--mu); margin: 14px 0 6px; }
   .msg { border-radius: 10px; padding: 10px 12px; margin-top: 12px; font-weight: 500; font-size: 14px; }
   .msg.err { background: var(--kob); color: var(--ko); } .msg.ok { background: var(--okb); color: var(--ok); }
   /* surfaces: hairline, no shadows */
-  .card, .bx, .kt { background: var(--sf); border: 1px solid var(--ln); border-radius: 14px; box-shadow: none; padding: 16px; }
+  .card, .bx { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 4px 0 18px; }
+  .kt { background: none; border: 0; border-left: 1px solid var(--ln2); border-radius: 0; padding: 4px 14px; } .k4 .kt:first-child { border-left: 0; padding-left: 2px; }
   .card + .card { margin-top: 10px; }
-  .bx h4 { margin: 0 0 10px; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; } .bx h4 small { color: var(--mu); font-weight: 500; }
+  .bx h4 { margin: 0 0 10px; font-size: 12.5px; font-weight: 600; color: var(--mu); display: flex; justify-content: space-between; } .bx h4 small { color: var(--mu); font-weight: 500; }
   .sec { font-size: 12.5px; font-weight: 600; color: var(--mu); margin: 22px 4px 8px; }
   .sec:first-child { margin-top: 4px; }
   /* list rows (settings style) */
-  .grp { background: var(--sf); border: 1px solid var(--ln); border-radius: 14px; overflow: hidden; }
-  .li { display: flex; align-items: center; gap: 14px; width: 100%; padding: 13px 16px; border: 0; background: none; font: inherit; color: var(--tx); text-align: left; cursor: pointer; text-decoration: none; }
+  .grp { background: none; border-top: 1px solid var(--ln2); border-bottom: 1px solid var(--ln2); }
+  .li { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 2px; border: 0; background: none; font: inherit; color: var(--tx); text-align: left; cursor: pointer; text-decoration: none; }
   .li + .li { border-top: 1px solid var(--ln2); }
-  .li:hover { background: #fbfaf8; }
+  .li:hover { background: #fafaf9; }
+  .li .ai, .li .av { width: 36px; height: 36px; }
+  .li .mt { text-align: right; font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .li > svg, .li .ic { flex: none; width: 21px; height: 21px; color: var(--tx); }
   .li .tx { flex: 1; min-width: 0; } .li .tx b { display: block; font-weight: 500; font-size: 15px; } .li .tx small { display: block; color: var(--mu); font-size: 13px; line-height: 1.35; }
   .li .vl { color: var(--mu); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%; }
@@ -50,19 +53,19 @@
   .nb { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--ko); color: #fff; font-size: 11.5px; font-weight: 700; display: inline-grid; place-items: center; }
   /* app shell */
   #app { min-height: 100vh; }
-  .tb { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(248,247,244,.94); backdrop-filter: blur(10px); border-bottom: 1px solid transparent; }
+  .tb { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(255,255,255,.94); backdrop-filter: blur(10px); border-bottom: 1px solid transparent; }
   .tb.sc { border-bottom-color: var(--ln); }
   .tb .in { max-width: 1040px; margin: 0 auto; height: 56px; display: flex; align-items: center; gap: 8px; padding: 0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px)); }
   .tb h1 { flex: 1; margin: 0; font: 500 19px/1.2 var(--serif); letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tb .tblg { height: 26px; width: auto; padding: 0; margin: 0; }
-  .av { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 0; padding: 0; background: #e7e2d8 center/cover no-repeat; color: var(--tx); font-weight: 600; font-size: 13px; display: grid; place-items: center; cursor: pointer; }
+  .av { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 0; padding: 0; background: #ecebe7 center/cover no-repeat; color: var(--tx); font-weight: 600; font-size: 13px; display: grid; place-items: center; cursor: pointer; }
   .shell { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start;
     padding: 12px max(16px, env(safe-area-inset-right, 0px)) 120px max(16px, env(safe-area-inset-left, 0px)); }
   #tabs { position: sticky; top: 72px; display: grid; gap: 2px; }
   #tabs button { display: flex; align-items: center; gap: 11px; border: 0; background: none; font: inherit; font-size: 14.5px; color: var(--tx); padding: 8px 10px; border-radius: 9px; cursor: pointer; text-align: left; }
   #tabs button svg { width: 19px; height: 19px; color: var(--mu); } #tabs button .nb { margin-left: auto; }
   #tabs button:hover { background: var(--ln2); }
-  #tabs button[aria-selected="true"] { background: #ece9e2; font-weight: 600; } #tabs button[aria-selected="true"] svg { color: var(--tx); }
+  #tabs button[aria-selected="true"] { background: #f1f0ed; font-weight: 600; } #tabs button[aria-selected="true"] svg { color: var(--tx); }
   #tabs .gt { font-size: 12px; font-weight: 600; color: var(--mu2); padding: 14px 10px 4px; }
   #v { min-width: 0; padding: 0; margin: 0; }
   .pg { max-width: 680px; }
@@ -70,7 +73,7 @@
   @media (max-width: 860px) {
     .shell { display: block; padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
     #tabs { display: none; }
-    .bn { display: flex; position: fixed; z-index: 25; left: 0; right: 0; bottom: 0; background: rgba(248,247,244,.97); backdrop-filter: blur(10px); border-top: 1px solid var(--ln);
+    .bn { display: flex; position: fixed; z-index: 25; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,.97); backdrop-filter: blur(10px); border-top: 1px solid var(--ln);
       padding: 4px max(8px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
     .bn button { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; background: none; font: inherit; font-size: 11px; color: var(--mu); padding: 6px 2px; cursor: pointer; }
     .bn button svg { width: 22px; height: 22px; } .bn button[aria-selected="true"] { color: var(--tx); font-weight: 600; }
@@ -80,12 +83,12 @@
   }
   /* greeting + stats */
   .hel { margin: 6px 4px 18px; } .hel h2 { font: 500 26px/1.15 var(--serif); margin: 0 0 4px; } .hel p { margin: 0; color: var(--mu); }
-  .k4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-  @media (max-width: 860px) { .k4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .k4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 14px; }
+  @media (max-width: 860px) { .k4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .k4 .kt:nth-child(3) { border-left: 0; padding-left: 2px; } }
   .kt { padding: 14px; } .kt .ic { display: none; }
   .kt small { display: block; color: var(--mu); font-size: 13px; } .kt b { display: block; font: 500 24px/1.2 var(--serif); margin-top: 4px; font-variant-numeric: tabular-nums; } .kt b.g { color: var(--ok); }
   .kt em { font-style: normal; font-size: 12.5px; color: var(--mu); }
-  .g2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10px; margin-top: 10px; } @media (max-width: 860px) { .g2 { grid-template-columns: 1fr; } }
+  .g2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; margin-top: 18px; } @media (max-width: 860px) { .g2 { grid-template-columns: 1fr; } }
   .bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; overflow-x: auto; }
   .bars div { flex: 1 0 20px; max-width: 48px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; font-size: 11px; color: var(--mu); }
   .bars i { width: 100%; min-height: 3px; background: var(--ac); border-radius: 4px 4px 2px 2px; display: block; opacity: .85; }
@@ -105,7 +108,7 @@
   .py .act2 .btn { flex: 1 1 130px; }
   .kapti { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
   /* misc used by older screens */
-  .tabs3 { display: inline-flex; gap: 2px; padding: 3px; background: #efece6; border-radius: 10px; margin: 0 0 14px; }
+  .tabs3 { display: inline-flex; gap: 2px; padding: 3px; background: #f1f0ed; border-radius: 10px; margin: 0 0 14px; }
   .tabs3 button { border: 0; background: none; font: inherit; font-size: 13.5px; font-weight: 500; color: var(--mu); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
   .tabs3 button[aria-selected="true"] { background: var(--sf); color: var(--tx); box-shadow: 0 0 0 1px var(--ln); }
   .row2 { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
@@ -136,6 +139,8 @@
   /* bottom sheet */
   .sh { position: fixed; inset: 0; z-index: 70; display: flex; align-items: flex-end; justify-content: center; }
   .sh .bg { position: absolute; inset: 0; background: rgba(20,18,15,.32); }
+  .sh .pn .grp { border-top: 0; } .dt2 { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 14.5px; margin: 8px 0 4px; } .dt2 dt { color: var(--mu); } .dt2 dd { margin: 0; word-break: break-word; }
+  .amt { font: 500 28px/1.2 var(--serif); margin: 10px 0 2px; font-variant-numeric: tabular-nums; }
   .sh .pn { position: relative; width: min(560px, 100%); max-height: 88vh; overflow-y: auto; background: var(--sf); border-radius: 18px 18px 0 0;
     padding: 8px max(18px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); }
   .sh .gr { width: 36px; height: 4px; border-radius: 2px; background: var(--ln); margin: 4px auto 12px; }
@@ -165,6 +170,7 @@
   .sg { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
   .sg button { border: 1px solid var(--ln); background: var(--sf); border-radius: 999px; padding: 7px 13px; font: inherit; font-size: 13.5px; color: var(--tx); cursor: pointer; }
   .cmp { position: sticky; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); background: var(--bg); padding-top: 6px; }
+  .bl.bot { background: #f2f1ee; }
   .cmp .bxi { display: flex; align-items: flex-end; gap: 8px; background: var(--sf); border: 1px solid var(--ln); border-radius: 22px; padding: 6px 6px 6px 16px; }
   .cmp textarea { border: 0; padding: 9px 0; resize: none; max-height: 140px; min-height: 22px; line-height: 1.4; background: none; }
   .cmp textarea:focus { border: 0; }
@@ -240,6 +246,7 @@
     rapel: sv("M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0"), ekip: sv("M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"),
     wol: sv("M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"), param: sv("M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"),
     wa: sv("M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 1 1 21 11.5z"),
+    je: sv("M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"),
     mwen: sv("M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"), meni: sv("M4 6h16M4 12h16M4 18h16"),
     skane: sv("M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"),
     soti: sv("M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"), cv: sv("M9 18l6-6-6-6"),
@@ -389,31 +396,25 @@
 
   // ---- payments to check: oldest first, one clear card each
   function vFile(v) {
-    if (!D.file.length) { v.append(el("div", { className: "bx", style: "text-align:center;padding:30px" }, el("b", { textContent: "Pa gen peman k ap tann ✓" }), el("p", { className: "mute", style: "margin:6px 0 0", textContent: "Nou ap montre w yon notifikasyon lè yon nouvo peman rive." }))); return; }
-    v.append(el("p", { className: "mute small", textContent: "Pi ansyen an anlè. Gade istorik MonCash/NatCash ou: si ou wè menm montan an ak menm nimewo tranzaksyon an, valide." }));
-    D.file.forEach((x) => {
-      const mo = (x.moyen || "").toLowerCase(), k = el("div", { className: "card py" });
-      k.append(el("div", { className: "tp4" }, ai(x.nom), el("div", { className: "tx", style: "flex:1;min-width:0" }, el("b", { textContent: x.nom }), el("br"), el("small", { className: "mute", textContent: `${x.type} · ${x.code_court} · ${SB.dat(x.soumis_le, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}` })),
-        el("span", { className: "pl at", textContent: "Pou verifye" })));
-      k.append(el("div", { className: "mn", textContent: SB.goud(x.montant) }));
-      k.append(el("div", { style: "display:flex;gap:8px;flex-wrap:wrap;align-items:center" }, el("span", { className: "mo " + (mo === "moncash" ? "mc" : mo === "natcash" ? "nc" : "ka"), textContent: mo === "moncash" ? "MonCash" : mo === "natcash" ? "NatCash" : "Kach" }),
-        el("span", { className: "mute small", textContent: "Tranzaksyon" }), el("code", { textContent: x.reference }), el("span", { className: "mute small", textContent: "· " + x.telephone })));
-      const a = el("div", { className: "act2", style: "margin-top:14px" });
-      const vb = bouton("✓ Peman an rive, valide", async () => {
-        const r = await SB.rpc("staf_valide", { p_code: KOD, p_id: x.id });
-        window.open(wa(x.telephone, msgTike(x, r.billet)), "_blank"); tost("✓", "Peman valide", `${x.nom} resevwa tikè a sou WhatsApp`); await chaje();
-      }); vb.classList.add("vrt"); a.append(vb);
-      a.append(bouton("Refize", async () => {
-        const motif = prompt("Poukisa? (moun nan ap wè rezon sa a)"); if (!motif) return;
-        await SB.rpc("staf_refize", { p_code: KOD, p_id: x.id, p_motif: motif });
-        window.open(wa(x.telephone, msgRefi(x, motif)), "_blank"); await chaje();
-      }, true));
-      if (x.capture) a.append(bouton("Wè kapti a", async (b) => {
-        const c = await SB.rpc("staf_kapti", { p_code: KOD, p_id: x.id }); if (!c) return;
-        b.replaceWith(el("img", { className: "kapti", src: `data:${c.type};base64,${c.data}`, alt: "Kapti peman" }));
-      }, true));
-      k.append(a); v.append(k);
-    });
+    if (!D.file.length) { v.append(el("div", { className: "em" }, el("h3", { textContent: "Pa gen peman k ap tann" }), el("p", { textContent: "W ap resevwa yon notifikasyon lè yon nouvo peman rive." }))); return; }
+    v.append(el("p", { className: "mute small", style: "margin:0 2px 10px", textContent: "Pi ansyen an anlè. Konpare ak istorik MonCash/NatCash ou anvan w valide." }));
+    const mn = (x) => { const mo = (x.moyen || "").toLowerCase(); return mo === "moncash" ? "MonCash" : mo === "natcash" ? "NatCash" : "Kach"; };
+    v.append(grp(...D.file.map((x) => { const r = el("button", { type: "button", className: "li" }, ai(x.nom),
+        el("span", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: `${mn(x)} · ${x.reference} · ${SB.dat(x.soumis_le, { dateStyle: true })}` })),
+        el("span", { className: "mt", textContent: SB.goud(x.montant) }));
+      r.dataset.id = x.id; r.onclick = () => detayPeman(x, mn(x)); return r; })));
+  }
+  function detayPeman(x, mn) {
+    const dl = el("dl", { className: "dt2" });
+    [["Tikè", `${x.type} · ${x.code_court}`], ["Peye ak", mn], ["Tranzaksyon", x.reference], ["WhatsApp", x.telephone], ["Voye", SB.dat(x.soumis_le, { day: true, month: true, hour: true })]].forEach(([k, val]) => dl.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
+    const a = el("div", { className: "act2" }); let fèmen;
+    const vb = bouton("Peman an rive, valide", async () => { const r = await SB.rpc("staf_valide", { p_code: KOD, p_id: x.id });
+      window.open(wa(x.telephone, msgTike(x, r.billet)), "_blank"); fèmen(); tost("✓", "Peman valide", `${x.nom} resevwa tikè a sou WhatsApp`); await chaje(); afiche(); }); vb.classList.add("vrt"); vb.style.flex = "1";
+    a.append(vb, bouton("Refize", async () => { const motif = prompt("Poukisa? (moun nan ap wè rezon sa a)"); if (!motif) return;
+      await SB.rpc("staf_refize", { p_code: KOD, p_id: x.id, p_motif: motif }); window.open(wa(x.telephone, msgRefi(x, motif)), "_blank"); fèmen(); await chaje(); afiche(); }, true));
+    const kz = el("div");
+    if (x.capture) kz.append(bouton("Wè kapti a", async (b) => { const c = await SB.rpc("staf_kapti", { p_code: KOD, p_id: x.id }); if (!c) return; b.replaceWith(el("img", { className: "kapti", src: `data:${c.type};base64,${c.data}`, alt: "Kapti peman" })); }, true));
+    fèmen = sheet(x.nom, el("div", { className: "amt", textContent: SB.goud(x.montant) }), dl, kz, a);
   }
 
   // ---- home: key numbers, sign-ups per day, latest sign-ups, seats per ticket
@@ -465,27 +466,31 @@
 
   // ---- full list, search, resend / cancel / refund, CSV
   function vLis(v) {
-    v.append(el("p", { className: "mute small", style: "margin:0 0 8px", textContent: "Yon moun pèdi tikè l? Chèche non l, nimewo WhatsApp li oswa kòd AT-… li, epi klike « Revoye tikè a »: li resevwa l dirèkteman sou WhatsApp." }));
-    const s = el("input", { className: "srch", placeholder: "Chèche non, telefòn oswa kòd…", value: FILT }); v.append(s);
+    v.append(el("p", { className: "mute small", style: "margin:0 2px 10px", textContent: "Yon moun pèdi tikè l? Chèche l, touche non l, epi « Revoye tikè a »." }));
+    const s = el("input", { className: "srch", type: "search", placeholder: "Chèche non, telefòn oswa kòd…", value: FILT }); v.append(s);
     const box = el("div"); v.append(box);
     const rann = () => {
       const q = FILT.toLowerCase();
       const L = D.lis.filter((x) => !q || [x.nom, x.telephone, x.code_court, x.reference].some((y) => String(y || "").toLowerCase().includes(q)));
-      box.replaceChildren(el("p", { className: "mute small", textContent: `${L.length} moun` }), ...L.slice(0, 200).map((x) => {
-        const kv = el("dl", { className: "kv2" });
-        [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Peman", x.reference ? `${(x.moyen || "").toUpperCase()} · ${x.reference}` : "—"], ["Pa", x.valide_par], ["Motif", x.motif], ["Antre", x.scanne_le && SB.dat(x.scanne_le, { timeStyle: "short" })]]
-          .forEach(([k, val]) => val && kv.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
-        const st = x.billet_statut && x.statut === "valide" ? x.billet_statut : x.statut;
-        const a = el("div", { className: "act2" });
-        if (x.billet && x.billet_statut !== "annule") {
-          a.append(lyen("Revoye tikè a", wa(x.telephone, msgTike(x, x.billet))), lyen("Wè tikè a", `/billet/${x.billet}`));
-          if (x.email) a.append(lyen("Imèl", `mailto:${x.email}?subject=${encodeURIComponent("Tikè Atelye AI " + x.code_court)}&body=${encodeURIComponent(msgTike(x, x.billet))}`));
-          if (AK("ranbouse_anile")) a.append(bouton("Anile tikè a", async () => { if (!confirm(`Anile tikè ${x.code_court}?`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: false }); await chaje(); }, true));
-          if (AK("ranbouse_anile")) a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); await chaje(); }, true));
-        }
-        const ps = { valide: ["ok", "Peye"], actif: ["ok", "Tikè aktif"], utilise: ["ok", "Antre ✓"], en_attente: ["at", "An atant"], refuse: ["ko", "Refize"], annule: ["ko", "Anile"], rembourse: ["ko", "Ranbouse"] }[st] || ["at", st];
-        return el("div", { className: "card", style: "padding:14px 16px" }, el("div", { className: "rw", style: "padding:0" }, ai(x.nom), el("div", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: `${x.code_court} · ${x.type}` })), el("span", { className: "pl " + ps[0], textContent: ps[1] })), kv, a);
-      }));
+      const ps = (x) => { const st = x.billet_statut && x.statut === "valide" ? x.billet_statut : x.statut;
+        return { valide: ["ok", "Peye"], actif: ["ok", "Tikè aktif"], utilise: ["ok", "Antre"], en_attente: ["at", "An atant"], refuse: ["ko", "Refize"], annule: ["ko", "Anile"], rembourse: ["ko", "Ranbouse"] }[st] || ["at", st]; };
+      box.replaceChildren(el("p", { className: "mute small", style: "margin:0 2px 6px", textContent: `${L.length} moun` }), grp(...L.slice(0, 300).map((x) => {
+        const p = ps(x), r = el("button", { type: "button", className: "li" }, ai(x.nom), el("span", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: `${x.code_court} · ${x.type} · ${x.telephone}` })),
+          el("span", { className: "pl " + p[0], textContent: p[1] }));
+        r.onclick = () => {
+          const kv = el("dl", { className: "dt2" });
+          [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Peman", x.reference ? `${(x.moyen || "").toUpperCase()} · ${x.reference}` : "—"], ["Valide pa", x.valide_par], ["Motif", x.motif], ["Antre", x.scanne_le && SB.dat(x.scanne_le, { timeStyle: "short" })]]
+            .forEach(([k, val]) => val && kv.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
+          const a = el("div", { className: "act2" });
+          if (x.billet && x.billet_statut !== "annule") {
+            a.append(lyen("Revoye tikè a", wa(x.telephone, msgTike(x, x.billet))), lyen("Wè tikè a", `/billet/${x.billet}`));
+            if (x.email) a.append(lyen("Imèl", `mailto:${x.email}?subject=${encodeURIComponent("Tikè Atelye AI " + x.code_court)}&body=${encodeURIComponent(msgTike(x, x.billet))}`));
+            if (AK("ranbouse_anile")) a.append(bouton("Anile tikè a", async () => { if (!confirm(`Anile tikè ${x.code_court}?`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: false }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
+            if (AK("ranbouse_anile")) a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
+          }
+          sheet(x.nom, el("span", { className: "pl " + p[0], textContent: p[1] }), kv, a);
+        };
+        return r; })));
     };
     s.oninput = () => { FILT = s.value; rann(); }; rann();
     if (AK("lis_enskripsyon")) v.prepend(el("div", { className: "act2", style: "margin:0 0 12px" }, bouton("Ekspòte CSV", async () => {
@@ -536,19 +541,26 @@
   // ---- my space: role, job, tasks, access and the photo badge
   function vMwen(v) {
     const b = { ...ME };
-    let OR = "v"; try { OR = localStorage.getItem("badj-or") || "v"; } catch {}
     const big = el("span", { className: "av big", textContent: b.foto ? "" : (b.non || "?")[0] }); if (b.foto) big.style.backgroundImage = `url(data:image/jpeg;base64,${b.foto})`;
     v.append(el("div", { className: "pf" }, big, el("h2", { textContent: b.non }), el("p", { textContent: [b.role_non || b.role, b.fonksyon].filter(Boolean).join(" · ") })));
-    // the badge, always visible
-    const sw = el("nav", { className: "tabs3", style: "margin:0" });
-    const kad = el("div"); const mete = () => { kad.replaceChildren(BADJ.rann(b, OR)); sw.querySelectorAll("button").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.o === OR))); };
-    [["v", "Pòtre"], ["h", "Orizontal"]].forEach(([o, t]) => { const x = el("button", { type: "button", textContent: t }); x.dataset.o = o; x.onclick = () => { OR = o; try { localStorage.setItem("badj-or", o); } catch {} mete(); }; sw.append(x); });
-    v.append(sek("Badj mwen"), el("div", { className: "card bjw" }, sw, kad)); mete();
+    // the badge stays hidden until asked for: an eye row opens it with its looks, orientation and download
+    const pref = (k, d) => { try { return localStorage.getItem(k) || d; } catch { return d; } }, sav = (k, x) => { try { localStorage.setItem(k, x); } catch {} };
+    const wè = () => {
+      let OR = pref("badj-or", "v"), MD = pref("badj-md", "tek");
+      const kad = el("div", { style: "display:grid;justify-items:center;margin:12px 0" });
+      const seg = (L, cur, set) => { const n = el("nav", { className: "tabs3", style: "margin:0" }); L.forEach(([k, t]) => { const x = el("button", { type: "button", textContent: t }); x.dataset.k = k; x.setAttribute("aria-selected", String(k === cur));
+        x.onclick = () => { set(k); n.querySelectorAll("button").forEach((y) => y.setAttribute("aria-selected", String(y.dataset.k === k))); mete(); }; n.append(x); }); return n; };
+      const mete = () => kad.replaceChildren(BADJ.rann(b, OR, MD));
+      const dl = el("button", { type: "button", className: "btn full", innerHTML: IK.dl.replace("<svg", '<svg width="18" height="18"') }); dl.append(" Telechaje badj la");
+      dl.onclick = async () => { const c = await BADJ.imaj(b, OR, MD); el("a", { download: `badj-${b.non}-${MD}-${OR === "h" ? "orizontal" : "potre"}.png`, href: c.toDataURL("image/png") }).click(); };
+      sheet("Badj mwen", el("div", { style: "display:flex;flex-wrap:wrap;gap:8px;justify-content:center" }, seg(BADJ.MODEL, MD, (k) => { MD = k; sav("badj-md", k); }), seg([["v", "Pòtre"], ["h", "Orizontal"]], OR, (k) => { OR = k; sav("badj-or", k); })), kad, dl,
+        el("p", { className: "mute small", style: "text-align:center;margin:10px 0 0", textContent: `Tit sou badj la: ${b.fonksyon || "Ekip Atelye AI"}. Se admin yo ki chwazi l.` }));
+      mete();
+    };
     const fi = el("input", { type: "file", accept: "image/*", capture: "user", className: "hidden" });
     fi.onchange = async () => { const f = fi.files[0]; if (!f) return; try { await SB.rpc("staf_foto", { p_code: KOD, p_foto: await foto(f) }); await chaje(); TAB = "mwen"; afiche(); } catch (e) { alert(e.message); } };
-    v.append(fi, el("div", { style: "height:10px" }), grp(
-      liy("foto", b.foto ? "Chanje foto a" : "Mete yon foto", "Li parèt sou badj ou", { on: () => fi.click() }),
-      liy("dl", "Telechaje badj la", OR === "h" ? "Imaj orizontal" : "Imaj pòtre", { on: async () => { const c = await BADJ.imaj(b, OR); el("a", { download: `badj-${b.non}-${OR === "h" ? "orizontal" : "potre"}.png`, href: c.toDataURL("image/png") }).click(); } })));
+    const oy = liy("wè", "Wè badj mwen", "Twa modèl, pòtre oswa orizontal, pou telechaje", { ik: "je", on: wè }); oy.id = "wè-badj";
+    v.append(fi, grp(oy, liy("foto", b.foto ? "Chanje foto a" : "Mete yon foto", "Li parèt sou badj ou", { on: () => fi.click() })));
     // account: each row opens the same small form in a sheet
     const fòm = () => {
       const f = el("form");
@@ -586,28 +598,34 @@
     const [L, W] = await Promise.all([SB.rpc("staf_ekip", { p_code: KOD }), SB.rpc("staf_wol", { p_code: KOD })]);
     const atant = L.filter((x) => x.statut === "en_attente");
     v.append(el("p", { className: "mute", textContent: atant.length ? `${atant.length} moun ap tann validasyon.` : "Pa gen moun k ap tann. Voye lyen sa a bay moun k ap travay avè w pou yo kreye kont yo: " + site + "/staf" }));
-    L.forEach((x) => {
-      const c = el("div", { className: "card ek" });
+    const ST = { actif: ["ok", "Aktif"], en_attente: ["at", "An atant"], refuse: ["ko", "Refize"], dezaktive: ["ko", "Dezaktive"] };
+    const fiche = (x) => {
+      const c = el("div", { className: "ek" });
       const av = el("span", { className: "av", textContent: x.foto ? "" : (x.non || "?")[0] }); if (x.foto) av.style.backgroundImage = `url(data:image/jpeg;base64,${x.foto})`;
       const d = el("div");
-      d.append(el("div", { className: "row2" }, el("h3", { style: "margin:0", textContent: x.non + (x.mwen ? " (ou menm)" : "") }), el("span", { className: "bad " + ({ actif: "valide", en_attente: "en_attente" }[x.statut] || "refuse"), textContent: { actif: "aktif", en_attente: "an atant", refuse: "refize", dezaktive: "dezaktive" }[x.statut] || x.statut })));
-      d.append(el("p", { className: "mute small", style: "margin:4px 0 8px", textContent: (x.idantifyan || "kòd ekip") + " · " + SB.dat(x.cree_le, { day: "numeric", month: "short" }) }));
+      d.append(el("p", { className: "mute small", style: "margin:2px 0 4px", textContent: (x.idantifyan || "kòd ekip") + " · depi " + SB.dat(x.cree_le, { day: "numeric", month: "short" }) }));
       const f = el("form");
-      f.innerHTML = `<label class="l">Wòl</label><select name="r">${opsyon(W)}</select><p class="mute small rd" style="margin:6px 0 0"></p>
-        <label class="l">Fonksyon (sou badj la)</label><input name="f" placeholder="Egz. Responsab enskripsyon Leyogàn">
+      f.innerHTML = `<label class="l">Tit sou badj la</label><input name="f" placeholder="Egz. Fòmatè, Sekretè, Kowòdonatè">
+        <label class="l">Wòl (sa li ka fè nan espas la)</label><select name="r">${opsyon(W)}</select><p class="mute small rd" style="margin:6px 0 0"></p>
         <label class="l">Travay li</label><textarea name="t" rows="3" placeholder="Yon travay pa liy"></textarea>`;
       f.r.value = x.role || ""; f.f.value = x.fonksyon || ""; f.t.value = x.travay || "";
       const dk = () => { const w = W.wol.find((y) => y.kle === f.r.value); f.querySelector(".rd").textContent = w ? (w.deskripsyon || "") + (w.akse.length ? " · Aksè: " + w.akse.map((a) => (W.katalog.find((k) => k.kle === a) || {}).non).join(", ") : " · Badj sèlman") : ""; };
       f.r.onchange = dk; dk();
       const mete = (st) => bouton(st === "actif" ? (x.statut === "actif" ? "Anrejistre" : "Valide kont lan") : st === "refuse" ? "Refize" : "Dezaktive", async () => {
         if (st !== "actif" && !confirm(`${st === "refuse" ? "Refize" : "Dezaktive"} ${x.non}?`)) return;
-        await SB.rpc("staf_ekip_mete", { p_code: KOD, p_id: x.id, p_statut: st, p_role: f.r.value || null, p_fonksyon: f.f.value, p_travay: f.t.value }); TAB = "ekip"; afiche(); }, st !== "actif");
+        await SB.rpc("staf_ekip_mete", { p_code: KOD, p_id: x.id, p_statut: st, p_role: f.r.value || null, p_fonksyon: f.f.value, p_travay: f.t.value }); document.getElementById("sh")?.remove(); TAB = "ekip"; afiche(); }, st !== "actif");
       const a = el("div", { className: "act2" }, mete("actif"));
       if (x.statut === "en_attente") a.append(mete("refuse"));
       else if (!x.mwen && x.statut === "actif") a.append(mete("dezaktive"));
       if (x.statut === "actif") a.append(lyen("Wè badj li", `/badj/${x.badj}`));
-      d.append(f, a); c.append(av, d); v.append(c);
-    });
+      d.append(f, a); c.append(av, d); return c;
+    };
+    v.append(grp(...L.map((x) => {
+      const av = el("span", { className: "av", textContent: x.foto ? "" : (x.non || "?")[0] }); if (x.foto) av.style.backgroundImage = `url(data:image/jpeg;base64,${x.foto})`;
+      const st = ST[x.statut] || ["at", x.statut];
+      const r = el("button", { type: "button", className: "li" }, av, el("span", { className: "tx" }, el("b", { textContent: x.non + (x.mwen ? " (ou)" : "") }), el("small", { textContent: [x.fonksyon, x.role_non].filter(Boolean).join(" · ") || "Poko gen wòl" })),
+        el("span", { className: "pl " + st[0], textContent: st[1] }));
+      r.onclick = () => sheet(x.non, fiche(x)); return r; })));
     const g = el("form");
     g.innerHTML = `<h3 style="margin-top:0">Ansyen metòd: yon kòd ekip</h3><p class="mute small">Bay chak moun pwòp kòd li (omwen 10 karaktè).</p>
       <label class="l">Non</label><input name="n" required><label class="l">Wòl</label><select name="r" required>${opsyon(W)}</select>
@@ -615,7 +633,7 @@
     g.onsubmit = async (ev) => { ev.preventDefault(); const m = g.querySelector(".msg");
       try { await SB.rpc("staf_kreye", { p_code: KOD, p_non: g.n.value, p_role: g.r.value, p_nouvo_code: g.k.value }); m.className = "msg ok"; m.textContent = "Kòd la kreye ✓ Voye l bay moun nan an prive."; g.reset(); }
       catch (er) { m.className = "msg err"; m.textContent = er.message; } };
-    v.append(el("details", { className: "card" }, el("summary", { textContent: "Kreye yon kòd ekip (san kont)" }), g));
+    v.append(el("div", { style: "height:14px" }), el("details", { className: "card" }, el("summary", { textContent: "Kreye yon kòd ekip (san kont)" }), g));
   }
 
   // ---- roles: you name them, describe them and tick their access; every super admin approves each change
