@@ -63,7 +63,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await p.locator("#enskri").scrollIntoViewIfNeeded(); await p.screenshot({ path: S + "1-form.png" });
   await p.fill("#non", "Roselande Pierre"); await p.fill("#telefon", "3864 1234"); await p.selectOption("#nivo", { index: 1 }); await p.selectOption("#vle", { index: 1 });
   await p.click("#f1 button"); await p.waitForSelector("#f2:not(.hidden)");
-  const kod = await p.textContent("#p-kod"); ok(/^AT-\d{4}$/.test(kod), "short code shown: " + kod);
+  const kod = await p.evaluate(() => JSON.parse(localStorage.getItem("konf-enskri")).code_court); ok(/^AT-\d{4}$/.test(kod), "booking code kept for the buyer: " + kod);
   ok((await p.textContent("#p-amt")).replace(/\s/g, "").includes("2000goud"), "exact amount shown");
   await p.locator("#f2").screenshot({ path: S + "2-pay.png" });
   // a phone-sized "transfer done" screen as the payment screenshot
@@ -72,7 +72,11 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
     await r.screenshot({ path: S + "resi.png" }); await r.close(); }
   ok(await p.locator("#voye2").isDisabled() && (await p.locator("#ref").count()) === 0, "only a screenshot is asked, send stays off until it is added");
   await p.setInputFiles("#kapti", S + "resi.png"); await p.waitForSelector("#up.ok"); await p.locator("#f2").screenshot({ path: S + "2b-pay.png" });
+  await p.evaluate(() => scrollTo(0, 0)); await p.screenshot({ path: S + "2c-pay-ekran.png" });
+  { const bx = await p.locator("#voye2").boundingBox(); ok(bx && bx.y + bx.height <= 844, "payment step fits on one phone screen, send button visible without scrolling"); }
+  ok(!(await p.textContent("#f2")).includes("nòt"), "no code to put in the transfer note");
   await p.click("#voye2"); await p.waitForSelector("#f3:not(.hidden)");
+  ok((await p.textContent("#p3-kod")) === kod, "code shown after sending, to find the ticket later");
   ok(true, "payment screenshot sent, confirmation shown"); await p.locator("#f3").screenshot({ path: S + "3-ok.png" });
   await p.reload(); await p.waitForSelector("#f3:not(.hidden)"); ok(true, "confirmation kept after reload");
 
