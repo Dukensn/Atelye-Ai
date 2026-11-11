@@ -40,6 +40,14 @@
   #enskri select { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 0; border-radius: 10px; background: var(--soft); color: var(--ink); }
   #enskri input[type=radio] { width: auto; }
   #enskri input[type=file] { padding: 10px; }
+  .etp { margin: 16px 0 10px; font-size: 15px; }
+  .vh { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .up { position: relative; display: flex !important; align-items: center; gap: 14px; margin: 0 !important; padding: 14px; border: 1.5px dashed #cfcfcf; border-radius: 14px; cursor: pointer; font-weight: 400 !important; }
+  .up:hover { border-color: var(--ink); } .up:has(input:focus-visible) { outline: 3px solid #3b82f6; outline-offset: 3px; }
+  .upi { flex: none; width: 48px; height: 48px; border-radius: 12px; background: var(--soft); display: grid; place-items: center; color: var(--ink); }
+  .upt { flex: 1; } .upt b { display: block; font-size: 15px; } .upt small { color: var(--mute); font-size: 13px; }
+  .up.ok { border-style: solid; border-color: var(--ink); } .up.ok .upi { display: none; }
+  #upv { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; flex: none; order: -1; }
   .tip { display: grid; gap: 8px; }
   .tip .tp { margin: 0 !important; display: flex !important; gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
   .tip .tp:has(input:checked) { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink) inset; }
@@ -78,7 +86,7 @@
       <button class="btn full" style="margin-top:18px">Kontinye</button>
     </form>
 
-    <!-- step 2: pay and send the reference -->
+    <!-- step 2: pay, then send a screenshot of the payment -->
     <form id="f2" class="hidden" novalidate>
       <h2 style="margin-top:0">Peye pou w konfime plas ou</h2>
       <div class="pay">
@@ -88,10 +96,13 @@
         <div class="mute small">Non: <span id="p-ben">—</span></div>
         <div class="kod">Mete kòd sa a nan nòt transfè a: <b id="p-kod">AT-0000</b></div>
       </div>
-      <label for="ref">Nimewo tranzaksyon an</label><input id="ref" name="ref" type="text" maxlength="40" placeholder="Nimewo ki nan mesaj MonCash/NatCash la" required>
-      <label for="kapti">Kapti ekran peman an <span class="mute">(si w vle)</span></label><input id="kapti" name="kapti" type="file" accept="image/*">
+      <p class="etp"><b>Apre w fin peye:</b> fè yon kapti ekran mesaj konfimasyon MonCash/NatCash la, epi mete l isit la.</p>
+      <label class="up" for="kapti" id="up"><input id="kapti" name="kapti" type="file" accept="image/*" class="vh">
+        <span class="upi"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></span>
+        <span class="upt"><b>Mete kapti ekran an</b><small>Foto prèv peman an</small></span>
+        <img id="upv" alt="Kapti peman an" hidden></label>
       <div id="m2" class="msg hidden"></div>
-      <button class="btn full" style="margin-top:18px">Voye peman an</button>
+      <button class="btn full" style="margin-top:18px" id="voye2" disabled>Voye prèv la</button>
       <p class="mute small" style="text-align:center"><a href="#" id="rekomanse">Chanje enfòmasyon yo</a></p>
     </form>
 
@@ -169,11 +180,16 @@
       ok(c.toDataURL("image/jpeg", 0.72).split(",")[1]); URL.revokeObjectURL(img.src);
     }; img.onerror = () => ko(new Error("Nou pa ka li foto sa a.")); img.src = URL.createObjectURL(file);
   });
+  let KAPTI = null;
+  $("#kapti").addEventListener("change", async () => { const f = $("#kapti").files[0]; if (!f) return; $("#m2").className = "msg hidden";
+    try { KAPTI = await foto(f); $("#upv").src = "data:image/jpeg;base64," + KAPTI; $("#upv").hidden = false; $("#up").classList.add("ok");
+      $("#up b").textContent = "Kapti a pare ✓"; $("#up small").textContent = "Touche pou chanje l"; $("#voye2").disabled = false; }
+    catch (err) { mesaj($("#m2"), err.message); } });
   $("#f2").addEventListener("submit", async (ev) => {
     ev.preventDefault(); const f = ev.target, b = f.querySelector("button"); $("#m2").className = "msg hidden"; b.disabled = true;
     try {
-      const file = f.kapti.files[0], kapti = file ? await foto(file) : null;
-      await SB.rpc("soumettre_paiement", { p_id: I.id, p_jeton: I.jeton, p_reference: f.ref.value, p_capture: kapti, p_capture_type: "image/jpeg" });
+      if (!KAPTI) throw new Error("Mete kapti ekran peman an anvan.");
+      await SB.rpc("soumettre_paiement", { p_id: I.id, p_jeton: I.jeton, p_reference: "", p_capture: KAPTI, p_capture_type: "image/jpeg" });
       I.fini = true; sere(); $("#p3-kod").textContent = I.code_court; etap(3);
     } catch (err) { mesaj($("#m2"), err.message); }
     b.disabled = false;

@@ -5,12 +5,13 @@ const http = require("http"), fs = require("fs"), path = require("path");
 const S = "/tmp/claude-0/-home-user/f3f252e9-ddde-5a6f-90c9-6cc21f0637e8/scratchpad/e2e/"; fs.mkdirSync(S, { recursive: true });
 const root = "/home/user/atelier-ai/public";
 const db = new Client({ host: "localhost", user: "postgres", password: "pw", database: "levve" });
-let file = Promise.resolve();   // one database connection: run calls one after another, like the real server would isolate them
+let FEMEN = false, file = Promise.resolve();   // one database connection: run calls one after another, like the real server would isolate them
 function dbq(sql, v) { const r = file.then(() => db.query(sql, v)); file = r.catch(() => {}); return r; }
 function rpc(fn, args) { const r = file.then(() => rpc1(fn, args)); file = r.catch(() => {}); return r; }
 async function rpc1(fn, args) {
   const ks = Object.keys(args || {}); const sql = `select public.${fn}(${ks.map((k, i) => `${k} => $${i + 1}`).join(", ")}) as r`;
   const vals = ks.map((k) => (args[k] !== null && typeof args[k] === "object" ? JSON.stringify(args[k]) : args[k]));
+  if (FEMEN) return [503, { message: "closed" }];
   await db.query("begin"); await db.query("set local role anon");
   try { const r = await db.query(sql, vals); await db.query("commit"); return [200, r.rows[0].r]; }
   catch (e) { await db.query("rollback"); return [400, { message: e.message }]; }
@@ -64,11 +65,14 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   const kod = await p.textContent("#p-kod"); ok(/^AT-\d{4}$/.test(kod), "short code shown: " + kod);
   ok((await p.textContent("#p-amt")).replace(/\s/g, "").includes("2000goud"), "exact amount shown");
   await p.locator("#f2").screenshot({ path: S + "2-pay.png" });
-  // a small PNG as payment screenshot
-  fs.writeFileSync(S + "resi.png", Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64"));
-  await p.fill("#ref", "mc-998877"); await p.setInputFiles("#kapti", S + "resi.png");
-  await p.click("#f2 button"); await p.waitForSelector("#f3:not(.hidden)");
-  ok(true, "payment reference sent, confirmation shown"); await p.locator("#f3").screenshot({ path: S + "3-ok.png" });
+  // a phone-sized "transfer done" screen as the payment screenshot
+  { const r = await b.newPage({ viewport: { width: 390, height: 640 } });
+    await r.setContent('<body style="margin:0;font:16px system-ui;background:#f4f4f4"><div style="background:#d0021b;color:#fff;padding:22px 18px;font-weight:700">Transfè</div><div style="margin:16px;background:#fff;border-radius:14px;padding:22px;text-align:center"><div style="font-size:52px;color:#1a9b4a">&#10003;</div><b style="font-size:20px">Transfè reyisi</b><p style="font-size:30px;font-weight:800;margin:14px 0">2 000,00 HTG</p><p>Bay: Dukens Mathieu<br>3864 9724</p><p style="color:#777">Nòt: AT-1234<br>11/11/2026 12:20</p></div></body>');
+    await r.screenshot({ path: S + "resi.png" }); await r.close(); }
+  ok(await p.locator("#voye2").isDisabled() && (await p.locator("#ref").count()) === 0, "only a screenshot is asked, send stays off until it is added");
+  await p.setInputFiles("#kapti", S + "resi.png"); await p.waitForSelector("#up.ok"); await p.locator("#f2").screenshot({ path: S + "2b-pay.png" });
+  await p.click("#voye2"); await p.waitForSelector("#f3:not(.hidden)");
+  ok(true, "payment screenshot sent, confirmation shown"); await p.locator("#f3").screenshot({ path: S + "3-ok.png" });
   await p.reload(); await p.waitForSelector("#f3:not(.hidden)"); ok(true, "confirmation kept after reload");
 
   // 2) same phone again → refused
@@ -83,7 +87,7 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   // 4) staff validates
   const s = await ctx.newPage(); await s.goto("http://localhost:5174/staf"); await s.click("#akod"); await s.fill("#kod", "sekre-admin-123"); await s.click("#fkod button"); await s.waitForSelector("#bn button[data-k=file]");
   await ale(s, "file"); await s.waitForSelector("#v .li[data-id]"); await s.click("#v .li[data-id]");
-  await s.click("text=Wè kapti a"); await s.waitForSelector("img.kapti"); ok(true, "payment screenshot visible to staff");
+  await s.waitForSelector("#sh img.kapti"); await s.waitForTimeout(300); await s.screenshot({ path: S + "3-kapti.png" }); ok(true, "payment screenshot shown at once to staff");
   await s.screenshot({ path: S + "4-queue.png", fullPage: true });
   await s.click("text=Peman an rive, valide"); await s.waitForSelector("text=Pa gen peman k ap tann");
   const link = opened.find((u) => u.includes("wa.me")); ok(!!link && decodeURIComponent(link).includes("/billet/"), "WhatsApp message with the ticket link"); ok(decodeURIComponent(link).includes("chat.whatsapp.com/GwoupTest"), "WhatsApp message invites to the group");
@@ -197,5 +201,5 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await ale(s, "mwen"); await s.waitForSelector("#wè-badj"); await s.screenshot({ path: S + "13-pwofil.png", fullPage: true });
   await s.setViewportSize({ width: 1280, height: 820 }); await s.click("#tabs button[data-k=tablo]"); await s.waitForSelector(".k4"); await s.screenshot({ path: S + "14-pc.png" }); ok(await s.locator("#tabs").isVisible(), "side menu on computers");
   console.log("page errors:", errs);
-  await b.close(); srv.close(); await db.end();
+  await b.close(); srv.close(); FEMEN = true; await file; await db.end();
 })().catch(async (e) => { console.error("ERROR", e.message); process.exit(1); });
