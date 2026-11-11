@@ -132,7 +132,16 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await kat.locator("button", { hasText: "Valide kont lan" }).click(); await s.locator("#v .ek", { hasText: "Nadège" }).locator(".bad.valide").waitFor(); ok(true, "super admin approves with role, job and tasks");
   await u.fill("#lm", "modpas-nadege"); await u.click("#fk button"); await u.waitForSelector("#tabs button[data-k=mwen]"); await u.click("#tabs button[data-k=mwen]"); await u.waitForSelector("#v .bj2");
   ok((await u.textContent("#v")).includes("Responsab enskripsyon Leyogàn") && (await u.textContent("#v")).includes("Revoye tikè pèdi"), "member sees job, tasks and access");
-  ok((await u.locator("#tabs button").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Badj mwen", "member sees only the tabs of the role");
+  ok((await u.locator("#tabs button").allTextContents()).join("|") === "Enskri yon moun|Jwenn yon tikè|Pwofil mwen", "member sees only the tabs of the role");
+  // profile: change name, add a phone, then log in with the phone; a wrong current password blocks a password change
+  await u.fill("#pf-non", "Nadège Pòl Jean"); await u.fill("#pf-tel", "3711 2233"); await u.click("#v form.card button.full"); await u.waitForSelector("#v form.card .msg.ok");
+  const me2 = (await rpc("staf_mwen", { p_code: await u.evaluate(() => localStorage.getItem("staf-kod")) }))[1];
+  ok(me2.non === "Nadège Pòl Jean" && me2.tel === "50937112233" && me2.imel === "nadege@gmail.com", "member edits name and adds a phone");
+  await u.fill("#pf-mp", "nouvo-modpas-9"); await u.fill("#pf-ma", "pa-bon-ditou"); await u.click("#v form.card button.full"); await u.waitForSelector("#v form.card .msg.err");
+  ok((await u.textContent("#v form.card .msg")).includes("aktyèl"), "password change needs the current password");
+  const lg = await rpc("staf_login", { p_idantifyan: "+509 3711-2233", p_modpas: "modpas-nadege" }); ok(lg[0] === 200 && !!lg[1].token, "log in with the phone number");
+  const lg2 = await rpc("staf_login", { p_idantifyan: "Nadege@Gmail.com", p_modpas: "modpas-nadege" }); ok(lg2[0] === 200, "log in with the email (any case)");
+  const np = await rpc("staf_enskri", { p_non: "Wilnick", p_idantifyan: "wilnick@yahoo.fr", p_modpas: "modpas-wilnick", p_foto: null }); ok(np[0] === 200, "sign up without a photo");
   const bj = await rpc("staf_mwen", { p_code: await u.evaluate(() => localStorage.getItem("staf-kod")) });
   await u.screenshot({ path: S + "7-badj.png", fullPage: true });
   await u.goto("http://localhost:5174/badj/" + bj[1].badj); await u.waitForSelector(".ver.ok"); ok(true, "badge QR page says valid");
