@@ -234,12 +234,12 @@
       <div class="msg hidden"></div><button class="btn full" style="margin-top:16px">Antre ak kòd la</button>
     </form>
     <form id="fe" class="hidden">
-      <p class="mute small" style="margin:0">Kreye kont ou. Super admin lan ap valide l epi ba w wòl ou.</p>
+      <p class="mute small" style="margin:0" id="fe-in">Kreye kont ou. Super admin lan ap valide l epi ba w wòl ou.</p>
       <label class="l" for="en">Non konplè</label><input id="en" autocomplete="name" required>
       <label class="l" for="ei">Nimewo telefòn oswa imèl</label><input id="ei" autocomplete="username" required>
       <label class="l" for="em">Modpas (omwen 8 karaktè)</label><input id="em" type="password" autocomplete="new-password" minlength="8" required>
       <label class="l">Foto pou badj ou <span class="mute">(si w vle)</span></label>
-      <div class="fot"><span id="fp"></span><label class="btn sm light" for="ef" style="margin:0;color:var(--tx)">Pran yon foto</label><input id="ef" type="file" accept="image/*" capture="user" class="hidden"></div>
+      <div class="fot"><span id="fp"></span><label class="btn sm light" for="ef" style="margin:0;color:var(--tx)">Mete yon foto</label><input id="ef" type="file" accept="image/*" class="hidden"></div>
       <div class="msg hidden"></div><button class="btn full" style="margin-top:16px">Voye demann lan</button>
     </form>
   </div>
@@ -367,10 +367,20 @@
       c.getContext("2d").drawImage(i, (i.width - s) / 2, (i.height - s) / 2, s, s, 0, 0, 480, 480);
       ok(c.toDataURL("image/jpeg", 0.8).split(",")[1]); URL.revokeObjectURL(i.src); };
     i.onerror = () => ko(new Error("Nou pa ka li foto sa a.")); i.src = URL.createObjectURL(file); });
+  // payment proofs: keep the whole picture, at most 1280 px
+  const kaptiFoto = (file) => new Promise((ok, ko) => { const i = new Image(); i.onload = () => {
+      const k = Math.min(1, 1280 / Math.max(i.width, i.height)), c = document.createElement("canvas"); c.width = Math.round(i.width * k); c.height = Math.round(i.height * k);
+      c.getContext("2d").drawImage(i, 0, 0, c.width, c.height); ok(c.toDataURL("image/jpeg", 0.82).split(",")[1]); URL.revokeObjectURL(i.src); };
+    i.onerror = () => ko(new Error("Nou pa ka li foto sa a.")); i.src = URL.createObjectURL(file); });
+  // open the phone's picker (gallery or camera) and hand back the file
+  const chwaziFoto = () => new Promise((ok) => { const i = el("input", { type: "file", accept: "image/*" }); i.onchange = () => ok(i.files[0] || null); i.click(); });
   let FOTO = null;
   $("#ef").onchange = async () => { const f = $("#ef").files[0]; if (!f) return; FOTO = await foto(f); $("#fp").style.backgroundImage = `url(data:image/jpeg;base64,${FOTO})`; };
   $("#fe").onsubmit = async (ev) => { ev.preventDefault(); const f = ev.target, m = f.querySelector(".msg"); m.className = "msg hidden";
-    try { await SB.rpc("staf_enskri", { p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO || null });
+    try {
+      if (ENV) { const r = await SB.rpc("staf_enskri_envit", { p_token: ENV, p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO || null });
+        history.replaceState(null, "", "/staf"); ENV = null; await antre(r.token); return; }
+      await SB.rpc("staf_enskri", { p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO || null });
       f.reset(); FOTO = null; $("#fp").style.backgroundImage = ""; m.className = "msg ok"; m.textContent = "Demann lan voye ✓ Super admin lan ap valide kont ou. Apre sa, konekte ak nimewo/Gmail ou ak modpas ou."; }
     catch (e) { erè(f, e); } };
   const soti = async () => { try { await SB.rpc("staf_soti", { p_code: KOD }); } catch {} try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} location.reload(); };
@@ -381,7 +391,17 @@
     else if (TAB === "dok" && SUB.dok) { if (SUB.edit && SUB.dok !== "nouvo") SUB.edit = false; else { SUB.dok = null; SUB.edit = false; } afiche(); }
     else ale("meni"); };
   addEventListener("scroll", () => document.querySelector(".tb").classList.toggle("sc", scrollY > 4), { passive: true });
-  if (KOD) antre(KOD).catch(() => { try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} });
+  // invitation link (/staf?envit=…): sign-up form, active at once, valid 24 h and once
+  let ENV = new URLSearchParams(location.search).get("envit");
+  if (ENV) SB.rpc("staf_envit_tcheke", { p_token: ENV }).then((r) => {
+    $("#lt").classList.add("hidden"); $("#fk").classList.add("hidden");
+    if (!r.ok) { ENV = null; $("#fe").classList.add("hidden"); const m = $("#fk").querySelector(".msg"); $("#fk").classList.remove("hidden"); $("#lt").classList.remove("hidden");
+      m.className = "msg err"; m.textContent = r.rezon + " Mande admin lan yon nouvo lyen."; return; }
+    $("#fe").classList.remove("hidden"); $(".lgh h2").textContent = "Byenvini nan ekip la";
+    $("#fe-in").textContent = `Ou envite kòm ${[r.fonksyon, r.role_non].filter(Boolean).join(" · ")}. Kreye kont ou: ou ka travay touswit, san tann validasyon.`;
+    $("#fe button.full").textContent = "Kreye kont mwen";
+  }).catch(() => {});
+  else if (KOD) antre(KOD).catch(() => { try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} });
 
   const bouton = (t, f, light) => { const b = el("button", { type: "button", className: "btn sm" + (light ? " light" : ""), textContent: t }); b.onclick = async () => { b.disabled = true; try { await f(b); } catch (e) { alert(e.message); } b.disabled = false; }; return b; };
   const lyen = (t, href) => el("a", { className: "btn sm light", href, target: "_blank", rel: "noopener", textContent: t });
@@ -457,6 +477,10 @@
         el("span", { className: "mt", textContent: SB.goud(x.montant) }));
       r.dataset.id = x.id; r.onclick = () => detayPeman(x, mn(x)); return r; })));
   }
+  // the team adds a payment proof received another way (WhatsApp, in person)
+  const metKapti = (x, apre) => { const b = bouton("Mete kapti peman an", async () => { const f = await chwaziFoto(); if (!f) return;
+      await SB.rpc("staf_kapti_mete", { p_code: KOD, p_id: x.id, p_capture: await kaptiFoto(f), p_type: "image/jpeg" }); tost("✓", "Kapti a ajoute", x.nom); await apre(); }, true);
+    b.classList.add("kp-m"); return b; };
   function detayPeman(x, mn) {
     const dl = el("dl", { className: "dt2" });
     [["Tikè", `${x.type} · ${x.code_court}`], ["Peye ak", mn], ...(/^FOTO-/.test(x.reference) ? [] : [["Tranzaksyon", x.reference]]), ["WhatsApp", x.telephone], ["Voye", SB.dat(x.soumis_le, { day: true, month: true, hour: true })]].forEach(([k, val]) => dl.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
@@ -472,7 +496,7 @@
         const i = el("img", { className: "kapti", src: `data:${c.type};base64,${c.data}`, alt: "Kapti peman " + x.nom });
         i.onclick = () => { const z = el("div", { className: "zm" }, el("img", { src: i.src, alt: i.alt })); z.onclick = () => z.remove(); document.body.append(z); };
         kz.replaceChildren(i); }).catch(() => kz.replaceChildren(el("p", { className: "mute small", textContent: "Nou pa ka chaje kapti a." }))); }
-    else kz.append(el("p", { className: "mute small", textContent: "Moun nan pa voye kapti." }));
+    else kz.append(el("p", { className: "mute small", textContent: "Moun nan pa voye kapti." }), el("div", { className: "act2", style: "margin-top:6px" }, metKapti(x, async () => { fèmen(); await chaje(); afiche(); })));
     fèmen = sheet(x.nom, kz, el("div", { className: "amt", textContent: SB.goud(x.montant) }), dl, a);
   }
 
@@ -551,6 +575,7 @@
             if (AK("ranbouse_anile")) a.append(bouton("Anile tikè a", async () => { if (!confirm(`Anile tikè ${x.code_court}?`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: false }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
             if (AK("ranbouse_anile")) a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
           }
+          if (x.statut === "en_attente" && AK("valide_peman")) a.append(metKapti(x, async () => { document.getElementById("sh")?.remove(); await chaje(); afiche(); }));
           sheet(x.nom, el("span", { className: "pl " + p[0], textContent: p[1] }), kv, a);
         };
         return r; })));
@@ -620,7 +645,7 @@
         el("p", { className: "mute small", style: "text-align:center;margin:10px 0 0", textContent: `Tit sou badj la: ${b.fonksyon || "Ekip Atelye AI"}. Se admin yo ki chwazi l.` }));
       mete();
     };
-    const fi = el("input", { type: "file", accept: "image/*", capture: "user", className: "hidden" });
+    const fi = el("input", { type: "file", accept: "image/*", className: "hidden" });
     fi.onchange = async () => { const f = fi.files[0]; if (!f) return; try { await SB.rpc("staf_foto", { p_code: KOD, p_foto: await foto(f) }); await chaje(); TAB = "mwen"; afiche(); } catch (e) { alert(e.message); } };
     const oy = liy("wè", "Wè badj mwen", "Twa modèl, pòtre oswa orizontal, pou telechaje", { ik: "je", on: wè }); oy.id = "wè-badj";
     v.append(fi, grp(oy, liy("foto", b.foto ? "Chanje foto a" : "Mete yon foto", "Li parèt sou badj ou", { on: () => fi.click() })));
@@ -660,7 +685,16 @@
   async function vEkip(v) {
     const [L, W] = await Promise.all([SB.rpc("staf_ekip", { p_code: KOD }), SB.rpc("staf_wol", { p_code: KOD })]);
     const atant = L.filter((x) => x.statut === "en_attente");
-    v.append(el("p", { className: "mute", textContent: atant.length ? `${atant.length} moun ap tann validasyon.` : "Pa gen moun k ap tann. Voye lyen sa a bay moun k ap travay avè w pou yo kreye kont yo: " + site + "/staf" }));
+    v.append(el("div", { className: "wtop" }, el("p", { className: "mute small", style: "margin:0;flex:1", textContent: atant.length ? `${atant.length} moun ap tann validasyon.` : "Envite moun yo ak yon lyen: kont yo aktif touswit." }),
+      bPlis("Envite", "ek-env", () => envite(W))));
+    const EV = await SB.rpc("staf_envit_lis", { p_code: KOD }).catch(() => []);
+    if (EV.length) v.append(sek("Lyen envitasyon"), grp(...EV.map((e) => { const rt = Math.max(0, Math.round((new Date(e.expire) - Date.now()) / 3600e3));
+      const r = el("div", { className: "li", style: "cursor:default", innerHTML: IK.kle }, el("span", { className: "tx" }, el("b", { textContent: [e.fonksyon, e.role_non].filter(Boolean).join(" · ") }),
+        el("small", { textContent: e.itilize_le ? `Itilize pa ${e.itilize_pa || "?"} · ${SB.dat(e.itilize_le, { day: true, month: true })}` : `Ekspire nan ${rt} è · pa ${e.pa || "?"}` })));
+      if (e.itilize_le) r.append(el("span", { className: "pl ok", textContent: "Itilize" }));
+      else r.append(dg(bouton("Anile", async () => { if (!confirm("Anile lyen sa a?")) return; await SB.rpc("staf_envit_anile", { p_code: KOD, p_id: e.id }); afiche(); }, true)));
+      r.dataset.env = e.id; return r; })));
+    v.append(sek("Manm yo"));
     const ST = { actif: ["ok", "Aktif"], en_attente: ["at", "An atant"], refuse: ["ko", "Refize"], dezaktive: ["ko", "Dezaktive"] };
     const fiche = (x) => {
       const c = el("div", { className: "ek" });
@@ -681,6 +715,9 @@
       if (x.statut === "en_attente") a.append(mete("refuse"));
       else if (!x.mwen && x.statut === "actif") a.append(mete("dezaktive"));
       if (x.statut === "actif") a.append(lyen("Wè badj li", `/badj/${x.badj}`));
+      const fb = bouton(x.foto ? "Chanje foto li" : "Mete foto li", async () => { const fl = await chwaziFoto(); if (!fl) return;
+        await SB.rpc("staf_ekip_foto", { p_code: KOD, p_id: x.id, p_foto: await foto(fl) }); document.getElementById("sh")?.remove(); tost("✓", "Foto a anrejistre", x.non); TAB = "ekip"; afiche(); }, true);
+      fb.classList.add("ek-foto"); a.append(fb);
       d.append(f, a); c.append(av, d); return c;
     };
     v.append(grp(...L.map((x) => {
@@ -697,6 +734,23 @@
       try { await SB.rpc("staf_kreye", { p_code: KOD, p_non: g.n.value, p_role: g.r.value, p_nouvo_code: g.k.value }); m.className = "msg ok"; m.textContent = "Kòd la kreye ✓ Voye l bay moun nan an prive."; g.reset(); }
       catch (er) { m.className = "msg err"; m.textContent = er.message; } };
     v.append(el("div", { style: "height:14px" }), el("details", { className: "card" }, el("summary", { textContent: "Kreye yon kòd ekip (san kont)" }), g));
+  }
+
+  // an invitation link: the role and badge title are set now; the link works once, for 24 hours
+  function envite(W) {
+    const f = fòm("Envite yon manm", `<label class="l">Wòl (sa li ka fè nan espas la)</label><select name="r" required>${opsyon(W)}</select>
+      <label class="l">Tit sou badj la</label><input name="f" maxlength="60" placeholder="Egz. Fòmatè, Sekretè, Kowòdonatè">
+      <p class="mute small" style="margin:10px 0 0">Lyen an mache yon sèl fwa, pandan 24 è. Moun nan kreye kont li epi li ka travay touswit.</p>`, "Kreye lyen an",
+      async (f) => { const r = await SB.rpc("staf_envit_kreye", { p_code: KOD, p_role: f.r.value, p_fonksyon: f.f.value });
+        const u = `${site}/staf?envit=${r.token}`, w = (W.wol.find((x) => x.kle === f.r.value) || {}).non || "";
+        const msg = `Bonjou! Mwen envite w nan ekip Atelye AI${f.f.value ? " kòm " + f.f.value : ""}. Kreye kont ou isit la (lyen an valid 24 è, yon sèl fwa):\n${u}`;
+        const i = el("input", { value: u, readOnly: true, id: "env-lyen" });
+        f.replaceChildren(el("p", { style: "margin:0 0 10px", textContent: `Lyen pou ${[f.f.value, w].filter(Boolean).join(" · ")} pare.` }),
+          el("div", { className: "cp" }, i, bouton("Kopye", async (b) => { await navigator.clipboard.writeText(u).catch(() => { i.select(); document.execCommand("copy"); }); b.textContent = "Kopye ✓"; })),
+          el("div", { className: "act2" }, Object.assign(lyen("Voye sou WhatsApp", `https://wa.me/?text=${encodeURIComponent(msg)}`), { id: "env-wa" })),
+          el("p", { className: "mute small", style: "margin:10px 0 0", textContent: "Valid 24 è, yon sèl fwa. Ou ka anile l nan lis la." }));
+        TAB = "ekip"; afiche(); return false; });
+    if (ME.role !== "admin") [...f.r.options].forEach((o) => { if (o.value === "admin") o.remove(); });
   }
 
   // ---- roles: you name them, describe them and tick their access; every super admin approves each change

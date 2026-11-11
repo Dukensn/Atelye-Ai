@@ -250,6 +250,42 @@ const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) process
   await s.click("#tb-b"); await s.waitForSelector("#v .li >> text=Pwogram jounen an"); await s.fill("#v input[type=search]", "zzz"); ok((await s.locator("#v .grp .li").count()) === 0, "document search filters the list");
   await ale(s, "konesans"); await s.click("#kn-nv"); await s.fill("#sh [name=tit]", "Parking"); await s.fill("#sh [name=kontni]", "Gen parking gratis devan lekòl la.");
   await s.click("#sh button.btn:not(.light)"); await s.waitForSelector("#v .li >> text=Parking"); ok(true, "knowledge base card added");
+  // 11) invitation link: role and title set by the admin, active at once, works once, expires after 24 h
+  await ale(s, "ekip"); await s.click("#ek-env"); await s.selectOption("#sh [name=r]", "vandeur"); await s.fill("#sh [name=f]", "Sekretè");
+  await s.click("#sh button.btn:not(.light)"); await s.waitForSelector("#env-lyen");
+  const lyenEnv = await s.inputValue("#env-lyen"); ok(/\/staf\?envit=[a-f0-9]{36}$/.test(lyenEnv), "invitation link created");
+  ok(decodeURIComponent(await s.getAttribute("#env-wa", "href")).includes(lyenEnv) && (await s.textContent("#sh")).includes("24 è"), "link ready to send on WhatsApp, says it lasts 24 h");
+  await s.click("#sh .bg", { position: { x: 10, y: 10 } }); await s.waitForSelector("#v .li[data-env]");
+  const ctxI = await b.newContext({ ...devices["iPhone 13"] }); await ctxI.route("https://mfxyzjelxpziptlshkfv.supabase.co/rest/v1/rpc/*", sbRoute);
+  const iv = await ctxI.newPage(); iv.on("pageerror", (e) => errs.push(e.message));
+  await iv.goto(lyenEnv.replace(/^https?:\/\/[^/]+/, "http://localhost:5174")); await iv.waitForSelector("#fe:not(.hidden)");
+  ok((await iv.textContent("#fe-in")).includes("Sekretè") && await iv.locator("#lt").isHidden(), "invitation page shows the role and title");
+  await iv.screenshot({ path: S + "19-envit.png" });
+  await iv.fill("#en", "Wiski Joseph"); await iv.fill("#ei", "3722 4455"); await iv.fill("#em", "modpas-wiski"); await iv.click("#fe button.full");
+  await iv.waitForSelector("#bn button[data-k=tablo]"); ok(!iv.url().includes("envit"), "invited member is in at once (no waiting), link removed from the address");
+  const mw = (await rpc("staf_mwen", { p_code: await iv.evaluate(() => localStorage.getItem("staf-kod")) }))[1];
+  ok(mw.role === "vandeur" && mw.fonksyon === "Sekretè" && mw.tel === "50937224455", "invited member gets the role and badge title");
+  await iv.evaluate(() => localStorage.clear()); await iv.goto(lyenEnv.replace(/^https?:\/\/[^/]+/, "http://localhost:5174")); await iv.waitForSelector("#fk .msg.err");
+  ok((await iv.textContent("#fk .msg")).includes("deja itilize"), "a used link does not work a second time"); await ctxI.close();
+  const e2tok = (await rpc("staf_envit_kreye", { p_code: "sekre-admin-123", p_role: "vandeur", p_fonksyon: "" }))[1].token;
+  await dbq("update staf_envit set expire = now() - interval '1 minute' where kreye_le = (select max(kreye_le) from staf_envit)");
+  const ex = (await rpc("staf_envit_tcheke", { p_token: e2tok }))[1]; const ex2 = await rpc("staf_enskri_envit", { p_token: e2tok, p_non: "Ta Ta", p_idantifyan: "3722 9999", p_modpas: "modpas-tata", p_foto: null });
+  ok(!ex.ok && ex.rezon.includes("ekspire") && ex2[0] === 400, "a link older than 24 h is refused");
+  const nv = await rpc("staf_envit_kreye", { p_code: tokN, p_role: "admin", p_fonksyon: "" }); ok(nv[0] === 400, "a member without team rights cannot create invitations");
+  // 12) photos uploaded by the team: a member's profile photo, a payment proof received on WhatsApp
+  await ale(s, "ekip"); await s.click("#v button.li >> text=Wiski Joseph"); await s.waitForSelector("#sh .ek-foto");
+  const [fc] = await Promise.all([s.waitForEvent("filechooser"), s.click("#sh .ek-foto")]); await fc.setFiles(root + "/art/e1.jpg");
+  await s.waitForSelector("#sh", { state: "detached" }); await s.waitForFunction(() => [...document.querySelectorAll("#v button.li")].some((l) => l.textContent.includes("Wiski") && (l.querySelector(".av")?.style.backgroundImage || "").includes("base64")));
+  ok(true, "admin uploads a member's photo (gallery or camera)");
+  const tLb = (await dbq("select id from types_billets where nom = 'Lève-bonè'")).rows[0].id;
+  const ins = (await rpc("inscrire", { p_type: tLb, p_nom: "Jak Pyè", p_telephone: "3755 1212", p_email: null, p_reponses: {}, p_moyen: "moncash" }));
+  ok(ins[0] === 200, "a person books without paying on the site");
+  await ale(s, "lis"); await s.fill("#v input[type=search]", "Jak Pyè").catch(() => {}); await s.click("#v .li >> text=Jak Pyè"); await s.waitForSelector("#sh .kp-m");
+  const [fc2] = await Promise.all([s.waitForEvent("filechooser"), s.click("#sh .kp-m")]); await fc2.setFiles(S + "resi.png");
+  await s.waitForSelector("#sh", { state: "detached" });
+  await ale(s, "file"); await s.click("#v .li >> text=Jak Pyè"); await s.waitForSelector("#sh img.kapti");
+  ok(true, "proof added by the team joins the payment queue with its screenshot"); await s.click("#sh .bg", { position: { x: 10, y: 10 } });
+
   // 10) team assistant chat (server simulated here; the real one is tested in wa.mjs)
   await s.route("**/api/whatsapp?ekip=1", async (route) => { const d = JSON.parse(route.request().postData()); if (d.aksyon !== "ajan") return route.fallback();
     waCalls.push(d); route.fulfill({ contentType: "application/json", body: JSON.stringify({ teks: "**Rapò jodi a**\n- 1 tikè peye\n- 2 travay ouvè\n\nPwochen etap: relanse moun ki poko peye.", fe: [{ zouti: "rapo", ok: true }] }) }); });
