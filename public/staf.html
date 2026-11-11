@@ -106,7 +106,9 @@
   .py .mo.mc { background: #fbe9e7; color: #b3261e; } .py .mo.nc { background: #fdf0e3; color: #b9560f; } .py .mo.ka { background: var(--okb); color: var(--ok); }
   .py code { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; font-weight: 600; }
   .py .act2 .btn { flex: 1 1 130px; }
-  .kapti { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
+  .kapti { display: block; max-width: 100%; max-height: 46vh; margin: 8px auto 4px; border-radius: 12px; border: 1px solid var(--ln); cursor: zoom-in; }
+  .kzv { height: 120px; display: grid; place-items: center; color: var(--mu); font-size: 13.5px; background: #f6f6f4; border-radius: 12px; margin-top: 8px; }
+  .zm { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,.88); display: grid; place-items: center; padding: 16px; cursor: zoom-out; } .zm img { max-width: 100%; max-height: 100%; border-radius: 8px; }
   /* misc used by older screens */
   .tabs3 { display: inline-flex; gap: 2px; padding: 3px; background: #f1f0ed; border-radius: 10px; margin: 0 0 14px; }
   .tabs3 button { border: 0; background: none; font: inherit; font-size: 13.5px; font-weight: 500; color: var(--mu); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
@@ -400,21 +402,27 @@
     v.append(el("p", { className: "mute small", style: "margin:0 2px 10px", textContent: "Pi ansyen an anlè. Konpare ak istorik MonCash/NatCash ou anvan w valide." }));
     const mn = (x) => { const mo = (x.moyen || "").toLowerCase(); return mo === "moncash" ? "MonCash" : mo === "natcash" ? "NatCash" : "Kach"; };
     v.append(grp(...D.file.map((x) => { const r = el("button", { type: "button", className: "li" }, ai(x.nom),
-        el("span", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: `${mn(x)} · ${x.reference} · ${SB.dat(x.soumis_le, { dateStyle: true })}` })),
+        el("span", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: `${mn(x)} · ${/^FOTO-/.test(x.reference) ? "kapti ekran" : x.reference} · ${SB.dat(x.soumis_le, { dateStyle: true })}` })),
         el("span", { className: "mt", textContent: SB.goud(x.montant) }));
       r.dataset.id = x.id; r.onclick = () => detayPeman(x, mn(x)); return r; })));
   }
   function detayPeman(x, mn) {
     const dl = el("dl", { className: "dt2" });
-    [["Tikè", `${x.type} · ${x.code_court}`], ["Peye ak", mn], ["Tranzaksyon", x.reference], ["WhatsApp", x.telephone], ["Voye", SB.dat(x.soumis_le, { day: true, month: true, hour: true })]].forEach(([k, val]) => dl.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
+    [["Tikè", `${x.type} · ${x.code_court}`], ["Peye ak", mn], ...(/^FOTO-/.test(x.reference) ? [] : [["Tranzaksyon", x.reference]]), ["WhatsApp", x.telephone], ["Voye", SB.dat(x.soumis_le, { day: true, month: true, hour: true })]].forEach(([k, val]) => dl.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
     const a = el("div", { className: "act2" }); let fèmen;
     const vb = bouton("Peman an rive, valide", async () => { const r = await SB.rpc("staf_valide", { p_code: KOD, p_id: x.id });
       window.open(wa(x.telephone, msgTike(x, r.billet)), "_blank"); fèmen(); tost("✓", "Peman valide", `${x.nom} resevwa tikè a sou WhatsApp`); await chaje(); afiche(); }); vb.classList.add("vrt"); vb.style.flex = "1";
     a.append(vb, bouton("Refize", async () => { const motif = prompt("Poukisa? (moun nan ap wè rezon sa a)"); if (!motif) return;
       await SB.rpc("staf_refize", { p_code: KOD, p_id: x.id, p_motif: motif }); window.open(wa(x.telephone, msgRefi(x, motif)), "_blank"); fèmen(); await chaje(); afiche(); }, true));
-    const kz = el("div");
-    if (x.capture) kz.append(bouton("Wè kapti a", async (b) => { const c = await SB.rpc("staf_kapti", { p_code: KOD, p_id: x.id }); if (!c) return; b.replaceWith(el("img", { className: "kapti", src: `data:${c.type};base64,${c.data}`, alt: "Kapti peman" })); }, true));
-    fèmen = sheet(x.nom, el("div", { className: "amt", textContent: SB.goud(x.montant) }), dl, kz, a);
+    // the payment screenshot, shown straight away; tap to see it full screen
+    const kz = el("div", { className: "kz" });
+    if (x.capture) { kz.append(el("div", { className: "kzv", textContent: "Ap chaje kapti a…" }));
+      SB.rpc("staf_kapti", { p_code: KOD, p_id: x.id }).then((c) => { if (!c) return kz.replaceChildren(el("p", { className: "mute small", textContent: "Pa gen kapti." }));
+        const i = el("img", { className: "kapti", src: `data:${c.type};base64,${c.data}`, alt: "Kapti peman " + x.nom });
+        i.onclick = () => { const z = el("div", { className: "zm" }, el("img", { src: i.src, alt: i.alt })); z.onclick = () => z.remove(); document.body.append(z); };
+        kz.replaceChildren(i); }).catch(() => kz.replaceChildren(el("p", { className: "mute small", textContent: "Nou pa ka chaje kapti a." }))); }
+    else kz.append(el("p", { className: "mute small", textContent: "Moun nan pa voye kapti." }));
+    fèmen = sheet(x.nom, kz, el("div", { className: "amt", textContent: SB.goud(x.montant) }), dl, a);
   }
 
   // ---- home: key numbers, sign-ups per day, latest sign-ups, seats per ticket

@@ -1,9 +1,9 @@
 // Team badge, worn on a lanyard at workshops and conferences. One canvas drawing is both the preview and the PNG download.
-// Three looks: "tek" (dark, faint AI network in the background), "klasik" (white with a dark header), "minimal" (all white).
+// Four looks: "tek" (dark, faint AI network), "blan" (the same network on white), "klasik" (white with a dark header), "minimal" (all white).
 // The title on the badge is the job the admins give the member (Fòmatè, Sekretè…), never the access role.
 (() => {
   const SIT = "atelye-ai.vercel.app";
-  const MODEL = [["tek", "Teknoloji"], ["klasik", "Klasik"], ["minimal", "Minimal"]];
+  const MODEL = [["tek", "Teknoloji"], ["blan", "Teknoloji blan"], ["klasik", "Klasik"], ["minimal", "Minimal"]];
   const ACC = "#d7ff3a", ACC2 = "#ffc83d";
   const inisyal = (n) => String(n || "?").split(/\s+/).filter(Boolean).map((x) => x[0]).join("").slice(0, 2).toUpperCase();
   const id = (c) => String(c || "").replace(/(.{4})(?=.)/g, "$1-");
@@ -52,6 +52,9 @@
     if (nuit) { const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, "#0b0f17"); bg.addColorStop(1, "#141a26"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
       const gl = g.createRadialGradient(W * .85, H * .1, 0, W * .85, H * .1, W * .8); gl.addColorStop(0, "rgba(215,255,58,.16)"); gl.addColorStop(1, "rgba(215,255,58,0)"); g.fillStyle = gl; g.fillRect(0, 0, W, H);
       rezo(g, 0, 0, W, H, "#9fb4ff", .16, 7); }
+    else if (m === "blan") { g.fillStyle = "#fff"; g.fillRect(0, 0, W, H);
+      const gl = g.createRadialGradient(W * .85, H * .1, 0, W * .85, H * .1, W * .9); gl.addColorStop(0, "rgba(190,230,20,.20)"); gl.addColorStop(1, "rgba(190,230,20,0)"); g.fillStyle = gl; g.fillRect(0, 0, W, H);
+      rezo(g, 0, 0, W, H, "#27365a", .16, 7); }
     else { g.fillStyle = "#fff"; g.fillRect(0, 0, W, H); rezo(g, 0, 0, W, H, "#1e2a44", m === "minimal" ? .045 : .06, 11); }
     if (m === "klasik") { const hh = H0 ? H * .24 : H * .2; g.fillStyle = "#101010"; g.fillRect(0, 0, W, hh); rezo(g, 0, 0, W, hh, "#9fb4ff", .2, 3);
       const lg = g.createLinearGradient(0, 0, W, 0); lg.addColorStop(0, ACC); lg.addColorStop(1, ACC2); g.fillStyle = lg; g.fillRect(0, hh - .9 * u, W, .9 * u); }
@@ -67,7 +70,7 @@
     let pw, ph, px, py, tx, tw, ty, al;
     if (H0) { pw = 33 * u; ph = pw * 1.18; px = 7 * u; py = H * .27; tx = px + pw + 6 * u; tw = W - tx - 7 * u; ty = py + 11 * u; al = "left"; }
     else { pw = 44 * u; ph = pw * 1.18; px = W / 2 - pw / 2; py = H * (m === "minimal" ? .2 : .24); tx = W / 2; tw = W - 14 * u; ty = py + ph + 12 * u; al = "center"; }
-    if (m === "tek") { g.save(); g.shadowColor = "rgba(215,255,58,.55)"; g.shadowBlur = 5 * u; g.strokeStyle = ACC; g.lineWidth = .9 * u; rond(g, px - 1.2 * u, py - 1.2 * u, pw + 2.4 * u, ph + 2.4 * u, 5.4 * u); g.stroke(); g.restore(); }
+    if (m === "tek" || m === "blan") { g.save(); g.shadowColor = m === "tek" ? "rgba(215,255,58,.55)" : "rgba(150,190,0,.45)"; g.shadowBlur = 5 * u; g.strokeStyle = m === "tek" ? ACC : "#a8d400"; g.lineWidth = .9 * u; rond(g, px - 1.2 * u, py - 1.2 * u, pw + 2.4 * u, ph + 2.4 * u, 5.4 * u); g.stroke(); g.restore(); }
     else if (m === "klasik") { g.fillStyle = "#fff"; rond(g, px - 1.4 * u, py - 1.4 * u, pw + 2.8 * u, ph + 2.8 * u, 5.6 * u); g.fill(); }
     foto(g, ft, px, py, pw, ph, 4.6 * u, b, nuit ? "#1f2735" : "#efefef", nuit ? "#8a96ad" : "#b5b5b5");
     g.textAlign = al; g.fillStyle = ink; g.font = F(800, nf);
