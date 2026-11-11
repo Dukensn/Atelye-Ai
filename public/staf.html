@@ -125,7 +125,7 @@
     <h2 style="margin-top:0">Espas ekip la</h2>
     <nav class="tabs3" id="lt"><button type="button" data-m="k" aria-selected="true">Konekte</button><button type="button" data-m="e" aria-selected="false">Kreye kont</button></nav>
     <form id="fk">
-      <label class="l" for="li">Nimewo WhatsApp oswa Gmail</label><input id="li" autocomplete="username" required>
+      <label class="l" for="li">Nimewo telefòn oswa imèl</label><input id="li" autocomplete="username" required>
       <label class="l" for="lm">Modpas</label><input id="lm" type="password" autocomplete="current-password" required>
       <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Antre</button>
       <p class="mute small" style="text-align:center;margin:12px 0 0"><a href="#" id="akod">Mwen gen yon kòd ekip</a></p>
@@ -137,9 +137,9 @@
     <form id="fe" class="hidden">
       <p class="mute small" style="margin:0">Kreye kont ou. Super admin lan ap valide l epi ba w wòl ou.</p>
       <label class="l" for="en">Non konplè</label><input id="en" autocomplete="name" required>
-      <label class="l" for="ei">Nimewo WhatsApp oswa Gmail</label><input id="ei" autocomplete="username" required>
+      <label class="l" for="ei">Nimewo telefòn oswa imèl</label><input id="ei" autocomplete="username" required>
       <label class="l" for="em">Modpas (omwen 8 karaktè)</label><input id="em" type="password" autocomplete="new-password" minlength="8" required>
-      <label class="l">Foto w (pou badj la)</label>
+      <label class="l">Foto w pou badj la <span class="mute">(si w vle, ou ka mete l pita)</span></label>
       <div class="fot"><span id="fp"></span><label class="btn sm light" for="ef">📷 Pran yon foto</label><input id="ef" type="file" accept="image/*" capture="user" class="hidden"></div>
       <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Voye demann lan</button>
     </form>
@@ -204,13 +204,12 @@
       AK("chif") && ["tablo", "Akèy"], AK("valide_peman") && ["file", "Peman"], AK("whatsapp") && ["wa", "WhatsApp"],
       AK("enskri_sou_plas") && ["kach", "Enskri yon moun"],
       (AK("lis_enskripsyon") || AK("jwenn_tike")) && ["lis", AK("lis_enskripsyon") ? "Enskripsyon" : "Jwenn yon tikè"], AK("rapel") && ["rapel", "Rapèl"],
-      AK("jere_ekip") && ["ekip", "Ekip"], AK("jere_ekip") && ["wol", "Wòl"], AK("pri_evenman") && ["param", "Paramèt"], ["mwen", "Badj mwen"]].filter(Boolean);
+      AK("jere_ekip") && ["ekip", "Ekip"], AK("jere_ekip") && ["wol", "Wòl"], AK("pri_evenman") && ["param", "Paramèt"], ["mwen", "Pwofil mwen"]].filter(Boolean);
     const nwa = AK("whatsapp") ? ((await SB.rpc("staf_wa_konfig", { p_code: KOD }).catch(() => null)) || {}).alet || 0 : 0;
     if (nwa > NWA && !PREMYE) tost("!", "Yon kliyan WhatsApp bezwen ou", "Asistan an pase w relè. Gade nan WhatsApp.");
     NWA = nwa;
     NEK = AK("jere_ekip") ? (await SB.rpc("staf_ekip", { p_code: KOD }).catch(() => [])).filter((x) => x.statut === "en_attente").length : 0;
     nouvo();
-    if (!ME.foto && !VI) TAB = "mwen";   // first screen asks for the badge photo
     VI = true;
     if (!T.some(([k]) => k === TAB)) TAB = T[0][0];
     $("#tabs").replaceChildren(...T.map(([k, t]) => { const b = el("button", { type: "button", innerHTML: IK[k] || "" }); b.append(el("span", { textContent: t }));
@@ -247,8 +246,7 @@
   let FOTO = null;
   $("#ef").onchange = async () => { const f = $("#ef").files[0]; if (!f) return; FOTO = await foto(f); $("#fp").style.backgroundImage = `url(data:image/jpeg;base64,${FOTO})`; };
   $("#fe").onsubmit = async (ev) => { ev.preventDefault(); const f = ev.target, m = f.querySelector(".msg"); m.className = "msg hidden";
-    if (!FOTO) return erè(f, new Error("Pran yon foto w pou badj la."));
-    try { await SB.rpc("staf_enskri", { p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO });
+    try { await SB.rpc("staf_enskri", { p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO || null });
       f.reset(); FOTO = null; $("#fp").style.backgroundImage = ""; m.className = "msg ok"; m.textContent = "Demann lan voye ✓ Super admin lan ap valide kont ou. Apre sa, konekte ak nimewo/Gmail ou ak modpas ou."; }
     catch (e) { erè(f, e); } };
   $("#soti").onclick = async () => { try { await SB.rpc("staf_soti", { p_code: KOD }); } catch {} try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} location.reload(); };
@@ -400,7 +398,7 @@
   function vMwen(v) {
     const b = { ...ME };
     let OR = "v"; try { OR = localStorage.getItem("badj-or") || "v"; } catch {}
-    if (!b.foto) v.append(el("div", { className: "alrt", textContent: "📷 Pran foto w kounye a: li obligatwa pou badj ou." }));
+    if (!b.foto) v.append(el("div", { className: "alrt", textContent: "📷 Mete yon foto lè w vle: li parèt sou badj ou." }));
     const kol = el("div", { className: "grid2", style: "display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start" });
     const gch = el("div"), drt = el("div", { className: "card mw" });
     const sw = el("nav", { className: "tabs3", style: "justify-content:center" });
@@ -414,18 +412,28 @@
       bouton("Telechaje badj la", async () => { const c = await BADJ.imaj(b, OR); const a = el("a", { download: `badj-${b.non}-${OR === "h" ? "orizontal" : "potre"}.png`, href: c.toDataURL("image/png") }); a.click(); }, true)));
     drt.append(el("h3", { style: "margin-top:0", textContent: b.non }));
     const kv = el("dl", { className: "kv2" });
-    [["Wòl", b.role_non || b.role], ["Fonksyon", b.fonksyon || "—"], ["Konekte ak", b.idantifyan || "kòd ekip"]].forEach(([k, x]) => kv.append(el("dt", { textContent: k }), el("dd", { textContent: x })));
+    [["Wòl", b.role_non || b.role], ["Fonksyon", b.fonksyon || "—"], ["Telefòn", b.tel || "—"], ["Imèl", b.imel || "—"]].forEach(([k, x]) => kv.append(el("dt", { textContent: k }), el("dd", { textContent: x })));
     drt.append(kv, el("b", { textContent: "Aksè ou" }), el("ul", {}, ...(b.akse || []).map((x) => el("li", { textContent: x }))));
     drt.append(el("b", { textContent: "Travay ou" }), el("div", { className: "tr", textContent: b.travay || "Super admin lan poko ba w travay." }));
     if (b.role_desk) drt.append(el("p", { className: "mute small", style: "margin:0 0 10px", textContent: b.role_desk }));
     if (AK("eskane")) drt.append(el("div", { className: "act2" }, bouton("Louvri eskanè a", async () => { try { localStorage.setItem("skane-kod", JSON.stringify(KOD)); } catch {} location.href = "/skane"; })));
-    if (!b.idantifyan) {
-      const f = el("form", { style: "margin-top:16px" });
-      f.innerHTML = `<b>Konekte ak nimewo/Gmail ou</b><p class="mute small" style="margin:4px 0 0">Pou w pa bezwen kòd ekip la ankò.</p><label class="l">Nimewo WhatsApp oswa Gmail</label><input name="i" required><label class="l">Modpas (omwen 8 karaktè)</label><input name="m" type="password" minlength="8" required><div class="msg hidden"></div><button class="btn sm" style="margin-top:10px">Anrejistre</button>`;
-      f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg");
-        try { await SB.rpc("staf_mete_kont", { p_code: KOD, p_idantifyan: f.i.value, p_modpas: f.m.value }); m.className = "msg ok"; m.textContent = "Anrejistre ✓"; } catch (e) { m.className = "msg err"; m.textContent = e.message; } };
-      drt.append(f);
-    }
+    // my profile: name, phone, email, password (the photo uses the button under the badge)
+    const f = el("form", { className: "card", style: "padding:18px;margin-top:16px" });
+    f.innerHTML = `<h3 style="margin-top:0">Modifye pwofil mwen</h3>
+      <label class="l" for="pf-non">Non</label><input id="pf-non" name="non" autocomplete="name" required>
+      <label class="l" for="pf-tel">Nimewo telefòn</label><input id="pf-tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX">
+      <label class="l" for="pf-imel">Imèl</label><input id="pf-imel" name="imel" type="email" autocomplete="email" placeholder="non@gmail.com">
+      <p class="mute small" style="margin:6px 0 0">Ou ka konekte ak nimewo a oswa ak imèl la, menm modpas la.</p>
+      <label class="l" for="pf-mp">${b.gen_modpas ? "Nouvo modpas (kite vid pou kenbe ansyen an)" : "Chwazi yon modpas (omwen 8 karaktè)"}</label><input id="pf-mp" name="modpas" type="password" autocomplete="new-password" minlength="8">
+      <div id="pf-ans" class="hidden"><label class="l" for="pf-ma">Modpas aktyèl ou</label><input id="pf-ma" name="ansyen" type="password" autocomplete="current-password"></div>
+      <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Anrejistre</button>`;
+    f.non.value = b.non || ""; f.tel.value = b.tel || ""; f.imel.value = b.imel || "";
+    f.modpas.oninput = () => f.querySelector("#pf-ans").classList.toggle("hidden", !(b.gen_modpas && f.modpas.value));
+    f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden";
+      try { await SB.rpc("staf_pwofil", { p_code: KOD, p: { non: f.non.value, tel: f.tel.value, imel: f.imel.value, modpas: f.modpas.value, modpas_ansyen: f.ansyen.value } });
+        m.className = "msg ok"; m.textContent = "Anrejistre ✓"; f.modpas.value = ""; f.ansyen.value = ""; await chaje(); TAB = "mwen"; setTimeout(() => afiche(), 900); }
+      catch (e) { m.className = "msg err"; m.textContent = e.message; } };
+    drt.append(f);
     kol.append(gch, drt); v.append(kol);
   }
 
