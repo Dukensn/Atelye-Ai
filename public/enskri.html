@@ -40,14 +40,24 @@
   #enskri select { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 0; border-radius: 10px; background: var(--soft); color: var(--ink); }
   #enskri input[type=radio] { width: auto; }
   #enskri input[type=file] { padding: 10px; }
-  .etp { margin: 16px 0 10px; font-size: 15px; }
+  /* step 2: compact, everything on one phone screen */
+  .p2h { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 12px; } .p2h h2 { margin: 0; font-size: 24px; letter-spacing: -0.02em; } .p2h span { color: var(--mute); font-size: 13px; }
+  .pz { border: 1px solid var(--line); border-radius: 14px; padding: 0 14px; }
+  .pr { display: flex; align-items: center; gap: 10px; min-height: 50px; } .pr + .pr { border-top: 1px solid var(--line); }
+  .pr span { color: var(--mute); font-size: 14px; width: 74px; flex: none; } .pr b { flex: 1; font-size: 17px; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+  #p-amt { font-size: 19px; white-space: nowrap; } #p-amt small { font-size: 13px; font-weight: 500; color: var(--mute); }
+  .cpy { flex: none; width: 34px; height: 34px; border: 0; border-radius: 9px; background: none; color: var(--mute); display: grid; place-items: center; cursor: pointer; padding: 0; }
+  .cpy:hover { background: var(--soft); color: var(--ink); } .cpy.ok { color: #1a9b4a; }
+  .stp { margin: 14px 0 12px; padding-left: 20px; font-size: 14.5px; color: var(--ink); line-height: 1.45; } .stp li + li { margin-top: 4px; }
+  #voye2 { margin-top: 14px; } .chj { text-align: center; margin: 10px 0 0; font-size: 13.5px; } .chj a { color: var(--mute); }
+  @media (max-width: 600px) { #enskri { padding-top: 10px; } #enskri .card { padding: 18px 16px; } }
   .vh { position: absolute; width: 1px; height: 1px; opacity: 0; }
-  .up { position: relative; display: flex !important; align-items: center; gap: 14px; margin: 0 !important; padding: 14px; border: 1.5px dashed #cfcfcf; border-radius: 14px; cursor: pointer; font-weight: 400 !important; }
+  .up { position: relative; display: flex !important; align-items: center; gap: 12px; margin: 0 !important; padding: 10px 12px; border: 1.5px dashed #cfcfcf; border-radius: 14px; cursor: pointer; font-weight: 400 !important; }
   .up:hover { border-color: var(--ink); } .up:has(input:focus-visible) { outline: 3px solid #3b82f6; outline-offset: 3px; }
-  .upi { flex: none; width: 48px; height: 48px; border-radius: 12px; background: var(--soft); display: grid; place-items: center; color: var(--ink); }
+  .upi { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--soft); display: grid; place-items: center; color: var(--ink); }
   .upt { flex: 1; } .upt b { display: block; font-size: 15px; } .upt small { color: var(--mute); font-size: 13px; }
   .up.ok { border-style: solid; border-color: var(--ink); } .up.ok .upi { display: none; }
-  #upv { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; flex: none; order: -1; }
+  #upv { width: 44px; height: 44px; object-fit: cover; border-radius: 10px; flex: none; order: -1; }
   .tip { display: grid; gap: 8px; }
   .tip .tp { margin: 0 !important; display: flex !important; gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
   .tip .tp:has(input:checked) { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink) inset; }
@@ -88,22 +98,20 @@
 
     <!-- step 2: pay, then send a screenshot of the payment -->
     <form id="f2" class="hidden" novalidate>
-      <h2 style="margin-top:0">Peye pou w konfime plas ou</h2>
-      <div class="pay">
-        <div class="mute small">Voye egzakteman</div>
-        <b class="big" id="p-amt">—</b>
-        <div style="margin-top:8px">sou <b id="p-met">MonCash</b> nan nimewo <b class="nb" id="p-nb">—</b></div>
-        <div class="mute small">Non: <span id="p-ben">—</span></div>
-        <div class="kod">Mete kòd sa a nan nòt transfè a: <b id="p-kod">AT-0000</b></div>
+      <div class="p2h"><h2>Peye</h2><span>Etap 2 / 2</span></div>
+      <div class="pz">
+        <div class="pr"><span>Montan</span><b id="p-amt">—</b><button type="button" class="cpy" data-k="amt" aria-label="Kopye montan an"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></div>
+        <div class="pr"><span id="p-met">MonCash</span><b id="p-nb">—</b><button type="button" class="cpy" data-k="nb" aria-label="Kopye nimewo a"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></div>
+        <div class="pr"><span>Non</span><b id="p-ben">—</b></div>
       </div>
-      <p class="etp"><b>Apre w fin peye:</b> fè yon kapti ekran mesaj konfimasyon MonCash/NatCash la, epi mete l isit la.</p>
+      <ol class="stp"><li>Voye montan egzak la sou nimewo a.</li><li>Fè yon <b>kapti ekran</b> konfimasyon an, epi mete l anba a.</li></ol>
       <label class="up" for="kapti" id="up"><input id="kapti" name="kapti" type="file" accept="image/*" class="vh">
-        <span class="upi"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></span>
+        <span class="upi"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></span>
         <span class="upt"><b>Mete kapti ekran an</b><small>Foto prèv peman an</small></span>
         <img id="upv" alt="Kapti peman an" hidden></label>
       <div id="m2" class="msg hidden"></div>
-      <button class="btn full" style="margin-top:18px" id="voye2" disabled>Voye prèv la</button>
-      <p class="mute small" style="text-align:center"><a href="#" id="rekomanse">Chanje enfòmasyon yo</a></p>
+      <button class="btn full" id="voye2" disabled>Voye prèv la</button>
+      <p class="chj"><a href="#" id="rekomanse">Chanje enfòmasyon yo</a></p>
     </form>
 
     <!-- step 3: received -->
@@ -145,11 +153,11 @@
     if (chwa) chwa.checked = true;
   }
   function montrePeman() {
-    $("#p-amt").textContent = SB.goud(I.montant) + (I.prix_usd ? ` (${SB.dola(I.prix_usd)})` : "");
+    $("#p-amt").textContent = SB.goud(I.montant);
+    if (I.prix_usd) { const u = document.createElement("small"); u.textContent = SB.dola(I.prix_usd); $("#p-amt").append(" ", u); }
     $("#p-met").textContent = I.moyen === "natcash" ? "NatCash" : "MonCash";
     $("#p-nb").textContent = (I.moyen === "natcash" ? K.natcash : K.moncash) || "—";
     $("#p-ben").textContent = K.benefisye || "—";
-    $("#p-kod").textContent = I.code_court;
   }
   const sere = () => { try { localStorage.setItem("konf-enskri", JSON.stringify(I)); } catch {} };
 
@@ -180,6 +188,11 @@
       ok(c.toDataURL("image/jpeg", 0.72).split(",")[1]); URL.revokeObjectURL(img.src);
     }; img.onerror = () => ko(new Error("Nou pa ka li foto sa a.")); img.src = URL.createObjectURL(file);
   });
+  // copy the amount (digits only, ready to paste in MonCash/NatCash) or the number
+  document.querySelectorAll(".cpy").forEach((b) => b.onclick = async () => {
+    const t = b.dataset.k === "amt" ? String(I.montant) : $("#p-nb").textContent.replace(/\s/g, "");
+    try { await navigator.clipboard.writeText(t); } catch { return; }
+    b.classList.add("ok"); setTimeout(() => b.classList.remove("ok"), 1500); });
   let KAPTI = null;
   $("#kapti").addEventListener("change", async () => { const f = $("#kapti").files[0]; if (!f) return; $("#m2").className = "msg hidden";
     try { KAPTI = await foto(f); $("#upv").src = "data:image/jpeg;base64," + KAPTI; $("#upv").hidden = false; $("#up").classList.add("ok");

@@ -99,4 +99,44 @@ const ks = JSON.stringify(k);
 ok(k && k.gemini === true && !ks.includes("AIzaFAKE") && !ks.includes("EAAG") && !ks.includes(SEKRE_APP), "staff screen never receives the keys");
 const [st2] = await rpc("wa_sv_konfig", { p_sekre: "nope" });
 ok(st2 === 400, "server config refused without the server secret");
+
+// 7) knowledge base reaches the WhatsApp assistant (not the internal-only cards)
+await rpc("staf_konesans_mete", { p_code: "sekre-admin-123", p: { tit: "Parking", kontni: "Gen parking gratis devan lekòl la.", pou: "tou_de" } });
+await rpc("staf_konesans_mete", { p_code: "sekre-admin-123", p: { tit: "Kòd pòt ekip", kontni: "Antre pa pòt dèyè a.", pou: "ekip" } });
+gem.length = 0; plan = [{ text: "Wi, gen parking gratis." }];
+await post(msg("w8", "509444" + T + "4", "Èske gen parking?")); await tann(() => gem.length === 1);
+const si2 = gem[0]?.systemInstruction.parts[0].text || "";
+ok(si2.includes("parking gratis") && !si2.includes("pòt dèyè"), "WhatsApp assistant reads the knowledge base, not internal cards");
+ok(si2.includes("kapti ekran") && !/mande l voye nimewo tranzaksyon/.test(si2), "WhatsApp assistant asks for a payment screenshot, not a transaction number");
+
+// 8) team assistant: report, project with themed lists, an expense task, a scheduled announcement — all through the member's session
+const ekip = async (b) => { const r = await POST(new Request("http://x/api/whatsapp?ekip=1", { method: "POST", body: JSON.stringify(b), headers: { "content-type": "application/json" } })); return [r.status, await r.json()]; };
+const [s0] = await ekip({ aksyon: "ajan", kod: "pa-bon", istwa: [{ sans: "in", teks: "rapò" }] });
+ok(s0 === 403, "team assistant refuses a bad session");
+gem.length = 0;
+plan = [{ functionCall: { name: "rapo", args: {} } },
+  { functionCall: { name: "kreye_pwoje", args: { tit: "Seminè AI desanm", lis: ["Lojistik", "Depans"] } } },
+  { functionCall: { name: "kreye_travay", args: { tit: "Lwe pwojektè", pwoje: "semine ai", lis: "depans", montan: 4500, moun: "duke", dat: "2026-11-20" } } },
+  { functionCall: { name: "voye_anons", args: { tit: "Reyinyon ekip", kontni: "Samdi 9è, sal 2.", pou: "tout", dat: "2026-12-01T08:00:00-05:00" } } },
+  { functionCall: { name: "ekri_dokiman", args: { tit: "Rapò jodi a", kontni: "# Rapò\n- 1 peye" } } },
+  { text: "Fè: rapò, pwojè, travay, anons pwograme ak dokiman." }];
+const [s1, r1] = await ekip({ aksyon: "ajan", kod: "sekre-admin-123", istwa: [{ sans: "in", teks: "Prepare konferans lan pou mwen" }] });
+ok(s1 === 200 && r1.teks.includes("pwojè") && r1.fe.length === 5 && r1.fe.every((f) => f.ok), "team assistant runs 5 tools and answers");
+const sa = gem[0]?.systemInstruction.parts[0].text || "";
+ok(sa.includes("Duke") && sa.includes("pòt dèyè") && !sa.includes("AIzaFAKE"), "team assistant knows who asks and the internal knowledge, never the keys");
+const rapo = gem[1]?.contents.at(-1).parts[0].functionResponse.response;
+ok(rapo && rapo.chif && typeof rapo.chif.inscrits === "number", "report tool returns live numbers");
+const pj = (await db.query("select p.id, array_agg(l.tit order by l.ordre) lis from ekip_pwoje p join ekip_lis l on l.pwoje_id = p.id where p.tit = 'Seminè AI desanm' group by p.id")).rows[0];
+ok(pj && pj.lis.join(",") === "Lojistik,Depans", "project created with its themed lists");
+const tr = (await db.query("select t.montan, t.dat::text, l.tit, s.non from ekip_travay t join ekip_lis l on l.id = t.lis_id join staf s on s.id = t.moun where t.tit = 'Lwe pwojektè' and t.montan = 4500 and s.non = 'Duke' and t.dat = '2026-11-20' and l.pwoje_id = (select id from ekip_pwoje where tit = 'Seminè AI desanm')")).rows[0];
+ok(tr && Number(tr.montan) === 4500 && tr.tit === "Depans" && tr.non === "Duke" && tr.dat === "2026-11-20", "expense task in the right list, owner and date (names matched loosely)");
+const an = (await db.query("select pou, pibliye_le > now() pwograme from ekip_anons where tit = 'Reyinyon ekip'")).rows[0];
+ok(an && an.pou === "tout" && an.pwograme, "announcement scheduled for a future date");
+ok((await db.query("select 1 from ekip_dokiman where tit = 'Rapò jodi a'")).rowCount === 1, "report saved as a team document");
+// a member without the right cannot publish: the database refuses, the assistant reports it
+await db.query("insert into staf (non, role, statut, actif, idantifyan, modpas_hash, badj) values ('Asistan Tès', 'asistan', 'actif', true, 'asistantes@x.ht', extensions.crypt('modpas-asistan', extensions.gen_salt('bf', 4)), 'ASTES0000001') on conflict do nothing");
+const [, lgA] = await rpc("staf_login", { p_idantifyan: "asistantes@x.ht", p_modpas: "modpas-asistan" });
+plan = [{ functionCall: { name: "voye_anons", args: { tit: "Tès", kontni: "x" } } }, { text: "Ou pa gen aksè pou pibliye anons." }];
+const [, r2] = await ekip({ aksyon: "ajan", kod: lgA.token, istwa: [{ sans: "in", teks: "Voye yon anons" }] });
+ok(r2.fe?.[0]?.ok === false && (await db.query("select 1 from ekip_anons where tit = 'Tès'")).rowCount === 0, "member without the announcement right cannot publish through the assistant");
 await db.end();

@@ -180,6 +180,37 @@
   .snd:disabled { background: #d8d3ca; cursor: default; } .snd svg { width: 18px; height: 18px; }
   .cmp .nt { font-size: 12px; color: var(--mu2); text-align: center; margin: 6px 0 0; }
   .chh { display: flex; align-items: center; gap: 10px; padding: 4px 0 10px; border-bottom: 1px solid var(--ln); margin-bottom: 8px; } .chh .tx { flex: 1; min-width: 0; } .chh b { display: block; font-weight: 600; } .chh small { color: var(--mu); }
+  /* team space: tasks, projects, announcements, documents, assistant */
+  .ck2 { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #c9c4ba; background: none; display: grid; place-items: center; cursor: pointer; padding: 0; color: transparent; }
+  .ck2 svg { width: 13px; height: 13px; } .ck2:hover { border-color: var(--tx); } .ck2.on { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .li.tr { padding: 10px 2px; } .li.fini .tx b { text-decoration: line-through; color: var(--mu); font-weight: 400; }
+  .li .dt { flex: none; font-size: 12.5px; color: var(--mu); font-variant-numeric: tabular-nums; } .li .dt.late { color: var(--ko); font-weight: 600; } .li .dt.jd { color: var(--wa); font-weight: 600; }
+  .li.ad { cursor: text; padding: 6px 2px; } .li.ad > svg { color: var(--mu2); width: 20px; height: 20px; } .li.ad:hover { background: none; }
+  .li.ad input { border: 0; padding: 6px 0; font-size: 15px; background: none; } .li.ad input:focus { border: 0; }
+  .li .ex { display: block; color: var(--mu); font-size: 13px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .li .pb, .pb { display: block; height: 3px; background: var(--ln2); border-radius: 2px; overflow: hidden; margin-top: 7px; max-width: 220px; } .pb i { display: block; height: 100%; background: var(--ok); }
+  .ph { display: flex; align-items: center; gap: 8px; margin: 2px 2px 4px; } .ph h2 { flex: 1; margin: 0; font: 500 25px/1.2 var(--serif); }
+  .lh { display: flex; align-items: center; gap: 8px; margin: 24px 2px 4px; } .lh b { font-size: 14px; font-weight: 600; } .lh small { color: var(--mu); font-size: 12.5px; } .lh .sp { flex: 1; }
+  .ib.sm2 { width: 30px; height: 30px; } .ib.sm2 svg { width: 18px; height: 18px; }
+  .btn.light svg { width: 16px; height: 16px; } .btn.dg { color: var(--ko); }
+  .chips2 { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; } .chips2 button { border: 1px solid var(--ln); background: #fff; border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 13.5px; cursor: pointer; color: var(--tx); }
+  .chips2 button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .g2c { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+  .dkb { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 0 0 10px; border-bottom: 1px solid var(--ln2); margin-bottom: 10px; } .dkb .sp { flex: 1; } .dkb > .mute:first-child { flex-basis: 100%; }
+  .dk { font-size: 15.5px; line-height: 1.65; overflow-wrap: anywhere; } .dk h1, .dk h2, .dk h3, .dk h4 { font-family: var(--serif); font-weight: 500; line-height: 1.25; margin: 1.2em 0 .4em; }
+  .dk h1 { font-size: 28px; margin-top: .4em; } .dk h2 { font-size: 22px; } .dk h3 { font-size: 18px; } .dk p { margin: .5em 0; } .dk ul, .dk ol { padding-left: 22px; margin: .4em 0; } .dk li { margin: .2em 0; }
+  .dk code { font-family: ui-monospace, Menlo, monospace; font-size: .9em; background: var(--ln2); padding: 1px 5px; border-radius: 5px; } .dk a { color: var(--tx); }
+  .dtt { border: 0; padding: 4px 0; font: 500 26px/1.25 var(--serif); } .dtt:focus { border: 0; }
+  .dta { border: 0; padding: 4px 0; font-size: 15.5px; line-height: 1.65; resize: none; min-height: 320px; } .dta:focus { border: 0; }
+  .ai2 .em { padding-top: 56px; }
+  .bl.me { align-self: flex-end; background: #f1f0ed; border-bottom-right-radius: 5px; }
+  .am { align-self: stretch; padding: 2px 2px 6px; font-size: 15.5px; line-height: 1.6; overflow-wrap: anywhere; }
+  .am > :first-child { margin-top: 0; } .am p { margin: .45em 0; } .am ul, .am ol { padding-left: 20px; margin: .4em 0; } .am h2, .am h3, .am h4 { font: 600 16px/1.3 inherit; margin: .8em 0 .3em; }
+  .am code { font-family: ui-monospace, Menlo, monospace; font-size: .9em; background: var(--ln2); padding: 1px 5px; border-radius: 5px; } .am a { color: var(--tx); }
+  .zc { display: flex; flex-wrap: wrap; gap: 6px; } .zc span { font-size: 12px; color: var(--mu); background: var(--ln2); padding: 3px 9px; border-radius: 999px; } .zc span.ko { color: var(--ko); background: var(--kob); }
+  .dots { display: inline-flex; gap: 4px; padding: 8px 0; } .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--mu2); animation: dt 1s infinite ease-in-out; } .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes dt { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+  .srch2 { flex: 1; min-width: 0; padding: 8px 12px; font-size: 14.5px; }
   /* login */
   #login { max-width: 400px; margin: 8vh auto 40px; padding: 0 16px; }
   #login .lgh { text-align: center; margin-bottom: 18px; } #login .lgh img { height: 40px; width: auto; margin: 0 auto 14px; } #login .lgh h2 { font: 500 26px/1.2 var(--serif); margin: 0; }
@@ -203,12 +234,12 @@
       <div class="msg hidden"></div><button class="btn full" style="margin-top:16px">Antre ak kòd la</button>
     </form>
     <form id="fe" class="hidden">
-      <p class="mute small" style="margin:0">Kreye kont ou. Super admin lan ap valide l epi ba w wòl ou.</p>
+      <p class="mute small" style="margin:0" id="fe-in">Kreye kont ou. Super admin lan ap valide l epi ba w wòl ou.</p>
       <label class="l" for="en">Non konplè</label><input id="en" autocomplete="name" required>
       <label class="l" for="ei">Nimewo telefòn oswa imèl</label><input id="ei" autocomplete="username" required>
       <label class="l" for="em">Modpas (omwen 8 karaktè)</label><input id="em" type="password" autocomplete="new-password" minlength="8" required>
       <label class="l">Foto pou badj ou <span class="mute">(si w vle)</span></label>
-      <div class="fot"><span id="fp"></span><label class="btn sm light" for="ef" style="margin:0;color:var(--tx)">Pran yon foto</label><input id="ef" type="file" accept="image/*" capture="user" class="hidden"></div>
+      <div class="fot"><span id="fp"></span><label class="btn sm light" for="ef" style="margin:0;color:var(--tx)">Mete yon foto</label><input id="ef" type="file" accept="image/*" class="hidden"></div>
       <div class="msg hidden"></div><button class="btn full" style="margin-top:16px">Voye demann lan</button>
     </form>
   </div>
@@ -232,6 +263,10 @@
   const $ = (q) => document.querySelector(q);
   const el = (t, p = {}, ...c) => { const e = Object.assign(document.createElement(t), p); e.append(...c.filter((x) => x != null)); return e; };
   let GR = [], KOD = "", D = null, ME = null, TAB = "tablo", FILT = "", VI = false, PREMYE = true;
+  // team space state: tools data, unread announcements, sub-screens (open project / document), field to focus after a re-render
+  let ZT = { manm: [], wol: [], pwoje: [], travay: [], anons: [], dokiman: [] }, NAN = 0, ANV = null, FOK = null;
+  const SUB = { pwoje: null, dok: null, edit: false, tf: "mwen" };
+  const jodiIso = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Port-au-Prince" }).format(new Date());
   try { KOD = localStorage.getItem("staf-kod") || sessionStorage.getItem("staf-kod") || ""; } catch {}
   const site = location.origin;
   const tel = (t) => { const d = String(t || "").replace(/\D/g, ""); return d.length === 8 ? "509" + d : d; };
@@ -255,6 +290,10 @@
     kle: sv("M15 7a4 4 0 1 1-3.4 6.1L4 20.7V17h3v-3h3l1.6-1.6A4 4 0 0 1 15 7z"), tel: sv("M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"),
     imel: sv("M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6"), non: sv("M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"),
     foto: sv("M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"),
+    asistan: sv("M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2zM19 2v4M21 4h-4"), anons: sv("M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1zM16 8.5a4.5 4.5 0 0 1 0 7M19 5.5a8.5 8.5 0 0 1 0 13"),
+    travay: sv("M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"), pwoje: sv("M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"),
+    dok: sv("M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h6"), konesans: sv("M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"),
+    plis: sv("M12 5v14M5 12h14"), pin: sv("M12 17v5M9 3h6l-1 7 4 3H6l4-3z"), chk: sv("M5 12l5 5 9-10"), dots: sv("M5 12h.01M12 12h.01M19 12h.01"),
     dl: sv("M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"), send: sv("M12 19V5M5 12l7-7 7 7"), gear: sv("M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z") };
   // notifications: a new payment to check or a new sign-up since the last refresh
   let VI2 = null, NEK = 0, NWA = 0;
@@ -281,15 +320,21 @@
       ["Travay", [AK("valide_peman") && ["file", "Peman", "Valide peman MonCash ak NatCash"], AK("enskri_sou_plas") && ["kach", "Enskri yon moun", "Vann yon tikè sou plas"],
         (AK("lis_enskripsyon") || AK("jwenn_tike")) && ["lis", AK("lis_enskripsyon") ? "Enskripsyon" : "Jwenn yon tikè", "Chèche, revoye oswa anile yon tikè"],
         AK("rapel") && ["rapel", "Rapèl", "Mesaj WhatsApp J-7, J-1 ak maten an"], AK("eskane") && ["skane", "Eskanè", "Tcheke tikè yo nan pòt la"]]],
+      ["Espas ekip", [["asistan", "Asistan AI", "Rapò, anons, analiz, pwogram"], ["anons", "Anons", "Mesaj pou ekip la"], ["travay", "Travay", "Sa pou fè, ki moun, ki lè"],
+        ["pwoje", "Pwojè", "Lis pa tèm: lojistik, depans…"], ["dok", "Dokiman", "Li, modifye, PDF ak Word"]]],
       ["Kominikasyon", [AK("whatsapp") && ["wa", "WhatsApp", "Konvèsasyon kliyan ak asistan an"]]],
       ["Ekip", [AK("jere_ekip") && ["ekip", "Manm yo", "Valide kont, bay wòl ak travay"], AK("jere_ekip") && ["wol", "Wòl ak aksè", "Kreye ak modifye wòl yo"]]],
-      ["Paramèt", [AK("pri_evenman") && ["param", "Evènman ak tikè", "Dat, kote, pri, gwoup WhatsApp"]]],
+      ["Paramèt", [AK("pri_evenman") && ["param", "Evènman ak tikè", "Dat, kote, pri, gwoup WhatsApp"], ["konesans", "Baz konesans", "Sa asistan yo konnen"]]],
       ["Kont", [["mwen", "Pwofil mwen", "Badj, non, foto, modpas"]]],
     ].map(([g, L]) => [g, L.filter(Boolean)]).filter(([, L]) => L.length);
     const nwa = AK("whatsapp") ? ((await SB.rpc("staf_wa_konfig", { p_code: KOD }).catch(() => null)) || {}).alet || 0 : 0;
     if (nwa > NWA && !PREMYE) tost("!", "Yon kliyan WhatsApp bezwen ou", "Asistan an pase w relè. Gade nan WhatsApp.");
     NWA = nwa;
     NEK = AK("jere_ekip") ? (await SB.rpc("staf_ekip", { p_code: KOD }).catch(() => [])).filter((x) => x.statut === "en_attente").length : 0;
+    await zt().catch(() => {});
+    const na = ZT.anons.filter((a) => a.nouvo);
+    if (ANV && !PREMYE) na.filter((a) => !ANV.has(a.id)).slice(0, 2).forEach((a) => tost("📣", "Nouvo anons", a.tit));
+    ANV = new Set(na.map((a) => a.id));
     nouvo();
     VI = true;
     const ok = ["tablo", "meni", ...GR.flatMap(([, L]) => L.map((x) => x[0]))];
@@ -322,27 +367,51 @@
       c.getContext("2d").drawImage(i, (i.width - s) / 2, (i.height - s) / 2, s, s, 0, 0, 480, 480);
       ok(c.toDataURL("image/jpeg", 0.8).split(",")[1]); URL.revokeObjectURL(i.src); };
     i.onerror = () => ko(new Error("Nou pa ka li foto sa a.")); i.src = URL.createObjectURL(file); });
+  // payment proofs: keep the whole picture, at most 1280 px
+  const kaptiFoto = (file) => new Promise((ok, ko) => { const i = new Image(); i.onload = () => {
+      const k = Math.min(1, 1280 / Math.max(i.width, i.height)), c = document.createElement("canvas"); c.width = Math.round(i.width * k); c.height = Math.round(i.height * k);
+      c.getContext("2d").drawImage(i, 0, 0, c.width, c.height); ok(c.toDataURL("image/jpeg", 0.82).split(",")[1]); URL.revokeObjectURL(i.src); };
+    i.onerror = () => ko(new Error("Nou pa ka li foto sa a.")); i.src = URL.createObjectURL(file); });
+  // open the phone's picker (gallery or camera) and hand back the file
+  const chwaziFoto = () => new Promise((ok) => { const i = el("input", { type: "file", accept: "image/*" }); i.onchange = () => ok(i.files[0] || null); i.click(); });
   let FOTO = null;
   $("#ef").onchange = async () => { const f = $("#ef").files[0]; if (!f) return; FOTO = await foto(f); $("#fp").style.backgroundImage = `url(data:image/jpeg;base64,${FOTO})`; };
   $("#fe").onsubmit = async (ev) => { ev.preventDefault(); const f = ev.target, m = f.querySelector(".msg"); m.className = "msg hidden";
-    try { await SB.rpc("staf_enskri", { p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO || null });
+    try {
+      if (ENV) { const r = await SB.rpc("staf_enskri_envit", { p_token: ENV, p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO || null });
+        history.replaceState(null, "", "/staf"); ENV = null; await antre(r.token); return; }
+      await SB.rpc("staf_enskri", { p_non: $("#en").value, p_idantifyan: $("#ei").value, p_modpas: $("#em").value, p_foto: FOTO || null });
       f.reset(); FOTO = null; $("#fp").style.backgroundImage = ""; m.className = "msg ok"; m.textContent = "Demann lan voye ✓ Super admin lan ap valide kont ou. Apre sa, konekte ak nimewo/Gmail ou ak modpas ou."; }
     catch (e) { erè(f, e); } };
   const soti = async () => { try { await SB.rpc("staf_soti", { p_code: KOD }); } catch {} try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} location.reload(); };
   window.__soti = soti;
   $("#av2").onclick = () => ale("mwen");
-  $("#tb-b").onclick = () => { if (TAB === "wa" && (WA.tel || WA.sub === "param")) { WA.tel = null; WA.sub = WA.sub === "param" ? "konv" : WA.sub; afiche(); } else ale("meni"); };
+  $("#tb-b").onclick = () => { if (TAB === "wa" && (WA.tel || WA.sub === "param")) { WA.tel = null; WA.sub = WA.sub === "param" ? "konv" : WA.sub; afiche(); }
+    else if (TAB === "pwoje" && SUB.pwoje) { SUB.pwoje = null; afiche(); }
+    else if (TAB === "dok" && SUB.dok) { if (SUB.edit && SUB.dok !== "nouvo") SUB.edit = false; else { SUB.dok = null; SUB.edit = false; } afiche(); }
+    else ale("meni"); };
   addEventListener("scroll", () => document.querySelector(".tb").classList.toggle("sc", scrollY > 4), { passive: true });
-  if (KOD) antre(KOD).catch(() => { try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} });
+  // invitation link (/staf?envit=…): sign-up form, active at once, valid 24 h and once
+  let ENV = new URLSearchParams(location.search).get("envit");
+  if (ENV) SB.rpc("staf_envit_tcheke", { p_token: ENV }).then((r) => {
+    $("#lt").classList.add("hidden"); $("#fk").classList.add("hidden");
+    if (!r.ok) { ENV = null; $("#fe").classList.add("hidden"); const m = $("#fk").querySelector(".msg"); $("#fk").classList.remove("hidden"); $("#lt").classList.remove("hidden");
+      m.className = "msg err"; m.textContent = r.rezon + " Mande admin lan yon nouvo lyen."; return; }
+    $("#fe").classList.remove("hidden"); $(".lgh h2").textContent = "Byenvini nan ekip la";
+    $("#fe-in").textContent = `Ou envite kòm ${[r.fonksyon, r.role_non].filter(Boolean).join(" · ")}. Kreye kont ou: ou ka travay touswit, san tann validasyon.`;
+    $("#fe button.full").textContent = "Kreye kont mwen";
+  }).catch(() => {});
+  else if (KOD) antre(KOD).catch(() => { try { localStorage.removeItem("staf-kod"); sessionStorage.removeItem("staf-kod"); } catch {} });
 
   const bouton = (t, f, light) => { const b = el("button", { type: "button", className: "btn sm" + (light ? " light" : ""), textContent: t }); b.onclick = async () => { b.disabled = true; try { await f(b); } catch (e) { alert(e.message); } b.disabled = false; }; return b; };
   const lyen = (t, href) => el("a", { className: "btn sm light", href, target: "_blank", rel: "noopener", textContent: t });
 
   const TIT = () => Object.fromEntries([["tablo", "Akèy"], ["meni", "Meni"], ...GR.flatMap(([, L]) => L.map((x) => [x[0], x[1]]))]);
-  const konte = (k) => ({ file: D ? D.file.length : 0, ekip: NEK, wa: NWA }[k] || 0);
+  const konte = (k) => ({ file: D ? D.file.length : 0, ekip: NEK, wa: NWA, anons: NAN, travay: ZT.travay.filter((t) => !t.fini && t.moun === ZT.mwen && t.dat && t.dat <= jodiIso()).length }[k] || 0);
   function ale(k) {
     if (k === "skane") { try { localStorage.setItem("skane-kod", JSON.stringify(KOD)); } catch {} location.href = "/skane"; return; }
     if (k === "wa") { WA.tel = null; if (WA.sub === "param") WA.sub = "konv"; }
+    if (k === "pwoje") SUB.pwoje = null; if (k === "dok") { SUB.dok = null; SUB.edit = false; }
     TAB = k; afiche(); scrollTo(0, 0); if (k !== "meni") chaje().catch(() => {});
   }
   window.__ale = ale;
@@ -353,23 +422,25 @@
     const sd = [btn("tablo", "Akèy")];
     GR.forEach(([g, L]) => { sd.push(el("div", { className: "gt", textContent: g })); L.forEach((x) => sd.push(btn(x[0], x[1]))); });
     $("#tabs").replaceChildren(...sd);
-    const pri = ["file", "wa", "kach", "lis"].filter((k) => GR.some(([, L]) => L.some((x) => x[0] === k))).slice(0, 2);
+    const pri = ["file", "wa", "kach", "lis", "asistan", "travay"].filter((k) => GR.some(([, L]) => L.some((x) => x[0] === k))).slice(0, 2);
     const T = TIT();
-    $("#bn").replaceChildren(btn("tablo", "Akèy"), ...pri.map((k) => btn(k, k === "lis" ? "Tikè" : k === "kach" ? "Enskri" : T[k])), btn("meni", "Meni"));
+    $("#bn").replaceChildren(btn("tablo", "Akèy"), ...pri.map((k) => btn(k, k === "lis" ? "Tikè" : k === "kach" ? "Enskri" : k === "asistan" ? "Asistan" : T[k])), btn("meni", "Meni"));
     BN = ["tablo", "meni", ...pri];
   }
   let BN = ["tablo", "meni"];
   function afiche() {
     document.querySelectorAll("#tabs button, #bn button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.k === TAB || (b.dataset.k === "meni" && !BN.includes(TAB)))));
     document.body.classList.remove("chat");
-    const sub = TAB === "wa" && (WA.tel || WA.sub === "param");
+    const sub = (TAB === "wa" && (WA.tel || WA.sub === "param")) || (TAB === "pwoje" && SUB.pwoje) || (TAB === "dok" && SUB.dok);
     $("#tb-t").textContent = TAB === "wa" && WA.sub === "param" ? "Paramèt WhatsApp" : TIT()[TAB] || "Akèy";
     const back = sub || !BN.includes(TAB);
     $("#tb-b").classList.toggle("hidden", !back); $("#tb-l").classList.toggle("hidden", back);
     if (matchMedia("(min-width: 861px)").matches && !sub) { $("#tb-b").classList.add("hidden"); $("#tb-l").classList.remove("hidden"); }
     const v = el("div", { className: TAB === "tablo" || TAB === "wa" ? "" : "pg" }); $("#v").replaceChildren(v);   // a fresh box each time, so a slower earlier render cannot add a second copy
-    if (!D.evenement && !["mwen", "ekip", "wol", "wa", "meni", "tablo"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
-    ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, wol: vWol, wa: vWa, mwen: vMwen, meni: vMeni }[TAB] || vTablo)(v);
+    if (!D.evenement && !["mwen", "ekip", "wol", "wa", "meni", "tablo", "asistan", "anons", "travay", "pwoje", "dok", "konesans"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
+    ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, wol: vWol, wa: vWa, mwen: vMwen, meni: vMeni,
+      asistan: vAsistan, anons: vAnons, travay: vTravay, pwoje: vPwoje, dok: vDok, konesans: vKonesans }[TAB] || vTablo)(v);
+    if (FOK) { const x = document.querySelector(`[data-ad="${FOK}"]`); FOK = null; if (x) x.focus(); }
   }
   // a list row: icon, label, small text, value or count, chevron
   const liy = (k, t, sub, o = {}) => { const r = el(o.href ? "a" : "button", { type: o.href ? undefined : "button", className: "li" + (o.dg ? " dg" : ""), innerHTML: IK[o.ik || k] || "" });
@@ -406,6 +477,10 @@
         el("span", { className: "mt", textContent: SB.goud(x.montant) }));
       r.dataset.id = x.id; r.onclick = () => detayPeman(x, mn(x)); return r; })));
   }
+  // the team adds a payment proof received another way (WhatsApp, in person)
+  const metKapti = (x, apre) => { const b = bouton("Mete kapti peman an", async () => { const f = await chwaziFoto(); if (!f) return;
+      await SB.rpc("staf_kapti_mete", { p_code: KOD, p_id: x.id, p_capture: await kaptiFoto(f), p_type: "image/jpeg" }); tost("✓", "Kapti a ajoute", x.nom); await apre(); }, true);
+    b.classList.add("kp-m"); return b; };
   function detayPeman(x, mn) {
     const dl = el("dl", { className: "dt2" });
     [["Tikè", `${x.type} · ${x.code_court}`], ["Peye ak", mn], ...(/^FOTO-/.test(x.reference) ? [] : [["Tranzaksyon", x.reference]]), ["WhatsApp", x.telephone], ["Voye", SB.dat(x.soumis_le, { day: true, month: true, hour: true })]].forEach(([k, val]) => dl.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
@@ -421,7 +496,7 @@
         const i = el("img", { className: "kapti", src: `data:${c.type};base64,${c.data}`, alt: "Kapti peman " + x.nom });
         i.onclick = () => { const z = el("div", { className: "zm" }, el("img", { src: i.src, alt: i.alt })); z.onclick = () => z.remove(); document.body.append(z); };
         kz.replaceChildren(i); }).catch(() => kz.replaceChildren(el("p", { className: "mute small", textContent: "Nou pa ka chaje kapti a." }))); }
-    else kz.append(el("p", { className: "mute small", textContent: "Moun nan pa voye kapti." }));
+    else kz.append(el("p", { className: "mute small", textContent: "Moun nan pa voye kapti." }), el("div", { className: "act2", style: "margin-top:6px" }, metKapti(x, async () => { fèmen(); await chaje(); afiche(); })));
     fèmen = sheet(x.nom, kz, el("div", { className: "amt", textContent: SB.goud(x.montant) }), dl, a);
   }
 
@@ -434,8 +509,12 @@
     if (D.file.length && AK("valide_peman")) fè.push(liy("file", `${D.file.length} peman pou verifye`, "Pi ansyen an anlè", { n: D.file.length }));
     if (NWA && AK("whatsapp")) fè.push(liy("wa", `${NWA} kliyan WhatsApp bezwen ou`, "Asistan an pase w relè", { n: NWA }));
     if (NEK && AK("jere_ekip")) fè.push(liy("ekip", `${NEK} manm ap tann validasyon`, "Valide kont yo epi ba yo wòl", { n: NEK }));
+    if (NAN) fè.push(liy("anons", NAN > 1 ? `${NAN} nouvo anons` : "1 nouvo anons", ZT.anons.find((a) => a.nouvo)?.tit, { n: NAN }));
     if (fè.length) v.append(sek("Pou fè kounye a"), grp(...fè));
-    if (ME.travay) v.append(sek("Travay ou"), el("div", { className: "card", style: "white-space:pre-wrap" , textContent: ME.travay }));
+    const mt = ZT.travay.filter((t) => !t.fini && t.moun === ZT.mwen).sort((a, b) => String(a.dat || "9").localeCompare(String(b.dat || "9")));
+    if (mt.length || ME.travay) { v.append(sek("Travay ou"));
+      if (ME.travay) v.append(el("p", { className: "mute small", style: "white-space:pre-wrap;margin:0 2px 8px", textContent: ME.travay }));
+      if (mt.length) v.append(grp(...mt.slice(0, 4).map((t) => rowT(t)), mt.length > 4 ? liy("travay", `Wè tout (${mt.length})`, null) : null)); }
     if (AK("chif") && D.chif) { v.append(sek("Chif yo")); vChif(v); }
     const rap = GR.flatMap(([, L]) => L).filter((x) => x[0] !== "mwen").slice(0, 6);
     if (rap.length) v.append(sek("Aksè rapid"), grp(...rap.map((x) => liy(x[0], x[1], x[2]))));
@@ -496,6 +575,7 @@
             if (AK("ranbouse_anile")) a.append(bouton("Anile tikè a", async () => { if (!confirm(`Anile tikè ${x.code_court}?`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: false }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
             if (AK("ranbouse_anile")) a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
           }
+          if (x.statut === "en_attente" && AK("valide_peman")) a.append(metKapti(x, async () => { document.getElementById("sh")?.remove(); await chaje(); afiche(); }));
           sheet(x.nom, el("span", { className: "pl " + p[0], textContent: p[1] }), kv, a);
         };
         return r; })));
@@ -565,7 +645,7 @@
         el("p", { className: "mute small", style: "text-align:center;margin:10px 0 0", textContent: `Tit sou badj la: ${b.fonksyon || "Ekip Atelye AI"}. Se admin yo ki chwazi l.` }));
       mete();
     };
-    const fi = el("input", { type: "file", accept: "image/*", capture: "user", className: "hidden" });
+    const fi = el("input", { type: "file", accept: "image/*", className: "hidden" });
     fi.onchange = async () => { const f = fi.files[0]; if (!f) return; try { await SB.rpc("staf_foto", { p_code: KOD, p_foto: await foto(f) }); await chaje(); TAB = "mwen"; afiche(); } catch (e) { alert(e.message); } };
     const oy = liy("wè", "Wè badj mwen", "Twa modèl, pòtre oswa orizontal, pou telechaje", { ik: "je", on: wè }); oy.id = "wè-badj";
     v.append(fi, grp(oy, liy("foto", b.foto ? "Chanje foto a" : "Mete yon foto", "Li parèt sou badj ou", { on: () => fi.click() })));
@@ -605,7 +685,16 @@
   async function vEkip(v) {
     const [L, W] = await Promise.all([SB.rpc("staf_ekip", { p_code: KOD }), SB.rpc("staf_wol", { p_code: KOD })]);
     const atant = L.filter((x) => x.statut === "en_attente");
-    v.append(el("p", { className: "mute", textContent: atant.length ? `${atant.length} moun ap tann validasyon.` : "Pa gen moun k ap tann. Voye lyen sa a bay moun k ap travay avè w pou yo kreye kont yo: " + site + "/staf" }));
+    v.append(el("div", { className: "wtop" }, el("p", { className: "mute small", style: "margin:0;flex:1", textContent: atant.length ? `${atant.length} moun ap tann validasyon.` : "Envite moun yo ak yon lyen: kont yo aktif touswit." }),
+      bPlis("Envite", "ek-env", () => envite(W))));
+    const EV = await SB.rpc("staf_envit_lis", { p_code: KOD }).catch(() => []);
+    if (EV.length) v.append(sek("Lyen envitasyon"), grp(...EV.map((e) => { const rt = Math.max(0, Math.round((new Date(e.expire) - Date.now()) / 3600e3));
+      const r = el("div", { className: "li", style: "cursor:default", innerHTML: IK.kle }, el("span", { className: "tx" }, el("b", { textContent: [e.fonksyon, e.role_non].filter(Boolean).join(" · ") }),
+        el("small", { textContent: e.itilize_le ? `Itilize pa ${e.itilize_pa || "?"} · ${SB.dat(e.itilize_le, { day: true, month: true })}` : `Ekspire nan ${rt} è · pa ${e.pa || "?"}` })));
+      if (e.itilize_le) r.append(el("span", { className: "pl ok", textContent: "Itilize" }));
+      else r.append(dg(bouton("Anile", async () => { if (!confirm("Anile lyen sa a?")) return; await SB.rpc("staf_envit_anile", { p_code: KOD, p_id: e.id }); afiche(); }, true)));
+      r.dataset.env = e.id; return r; })));
+    v.append(sek("Manm yo"));
     const ST = { actif: ["ok", "Aktif"], en_attente: ["at", "An atant"], refuse: ["ko", "Refize"], dezaktive: ["ko", "Dezaktive"] };
     const fiche = (x) => {
       const c = el("div", { className: "ek" });
@@ -626,6 +715,9 @@
       if (x.statut === "en_attente") a.append(mete("refuse"));
       else if (!x.mwen && x.statut === "actif") a.append(mete("dezaktive"));
       if (x.statut === "actif") a.append(lyen("Wè badj li", `/badj/${x.badj}`));
+      const fb = bouton(x.foto ? "Chanje foto li" : "Mete foto li", async () => { const fl = await chwaziFoto(); if (!fl) return;
+        await SB.rpc("staf_ekip_foto", { p_code: KOD, p_id: x.id, p_foto: await foto(fl) }); document.getElementById("sh")?.remove(); tost("✓", "Foto a anrejistre", x.non); TAB = "ekip"; afiche(); }, true);
+      fb.classList.add("ek-foto"); a.append(fb);
       d.append(f, a); c.append(av, d); return c;
     };
     v.append(grp(...L.map((x) => {
@@ -642,6 +734,23 @@
       try { await SB.rpc("staf_kreye", { p_code: KOD, p_non: g.n.value, p_role: g.r.value, p_nouvo_code: g.k.value }); m.className = "msg ok"; m.textContent = "Kòd la kreye ✓ Voye l bay moun nan an prive."; g.reset(); }
       catch (er) { m.className = "msg err"; m.textContent = er.message; } };
     v.append(el("div", { style: "height:14px" }), el("details", { className: "card" }, el("summary", { textContent: "Kreye yon kòd ekip (san kont)" }), g));
+  }
+
+  // an invitation link: the role and badge title are set now; the link works once, for 24 hours
+  function envite(W) {
+    const f = fòm("Envite yon manm", `<label class="l">Wòl (sa li ka fè nan espas la)</label><select name="r" required>${opsyon(W)}</select>
+      <label class="l">Tit sou badj la</label><input name="f" maxlength="60" placeholder="Egz. Fòmatè, Sekretè, Kowòdonatè">
+      <p class="mute small" style="margin:10px 0 0">Lyen an mache yon sèl fwa, pandan 24 è. Moun nan kreye kont li epi li ka travay touswit.</p>`, "Kreye lyen an",
+      async (f) => { const r = await SB.rpc("staf_envit_kreye", { p_code: KOD, p_role: f.r.value, p_fonksyon: f.f.value });
+        const u = `${site}/staf?envit=${r.token}`, w = (W.wol.find((x) => x.kle === f.r.value) || {}).non || "";
+        const msg = `Bonjou! Mwen envite w nan ekip Atelye AI${f.f.value ? " kòm " + f.f.value : ""}. Kreye kont ou isit la (lyen an valid 24 è, yon sèl fwa):\n${u}`;
+        const i = el("input", { value: u, readOnly: true, id: "env-lyen" });
+        f.replaceChildren(el("p", { style: "margin:0 0 10px", textContent: `Lyen pou ${[f.f.value, w].filter(Boolean).join(" · ")} pare.` }),
+          el("div", { className: "cp" }, i, bouton("Kopye", async (b) => { await navigator.clipboard.writeText(u).catch(() => { i.select(); document.execCommand("copy"); }); b.textContent = "Kopye ✓"; })),
+          el("div", { className: "act2" }, Object.assign(lyen("Voye sou WhatsApp", `https://wa.me/?text=${encodeURIComponent(msg)}`), { id: "env-wa" })),
+          el("p", { className: "mute small", style: "margin:10px 0 0", textContent: "Valid 24 è, yon sèl fwa. Ou ka anile l nan lis la." }));
+        TAB = "ekip"; afiche(); return false; });
+    if (ME.role !== "admin") [...f.r.options].forEach((o) => { if (o.value === "admin") o.remove(); });
   }
 
   // ---- roles: you name them, describe them and tick their access; every super admin approves each change
@@ -701,6 +810,273 @@
       v.append(d);
     });
     v.append(fòm(null));
+  }
+
+  // ================================================================ team space
+  const zt = async () => { ZT = await SB.rpc("staf_zouti", { p_code: KOD }); NAN = ZT.anons.filter((a) => a.nouvo).length; return ZT; };
+  const rechaje = async () => { await zt(); nav(); afiche(); };
+  const fd = (d) => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-HT", { day: "numeric", month: "short" }) : "";
+  const nonM = (id) => (ZT.manm.find((m) => m.id === id) || {}).non || "";
+  const kotLis = (id) => { for (const p of ZT.pwoje) { const l = p.lis.find((x) => x.id === id); if (l) return { p, l }; } return null; };
+  const esc = (x) => String(x ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  // small Markdown (titles, lists, bold, italics, code, links) → safe HTML: everything is escaped first
+  function md(t) {
+    const enl = (x) => esc(x).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/(^|[\s(])\*([^*\s][^*]*?)\*(?=[\s).,!?:;]|$)/g, "$1<i>$2</i>").replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+    const out = []; let lis = null;
+    const fèmen = () => { if (lis) { out.push(`</${lis}>`); lis = null; } };
+    for (const l of String(t || "").replace(/\r/g, "").split("\n")) {
+      let m;
+      if ((m = l.match(/^(#{1,4})\s+(.*)/))) { fèmen(); const n = Math.min(m[1].length + 1, 4); out.push(`<h${n}>${enl(m[2])}</h${n}>`); }
+      else if ((m = l.match(/^\s*[-*•]\s+(.*)/))) { if (lis !== "ul") { fèmen(); out.push("<ul>"); lis = "ul"; } out.push(`<li>${enl(m[1])}</li>`); }
+      else if ((m = l.match(/^\s*\d+[.)]\s+(.*)/))) { if (lis !== "ol") { fèmen(); out.push("<ol>"); lis = "ol"; } out.push(`<li>${enl(m[1])}</li>`); }
+      else if (!l.trim()) fèmen();
+      else { fèmen(); out.push(`<p>${enl(l)}</p>`); }
+    }
+    fèmen(); return out.join("");
+  }
+  const vid = (v, tit, tx) => v.append(el("div", { className: "em" }, el("h3", { textContent: tit }), el("p", { textContent: tx })));
+  const bPlis = (t, id, f) => { const b = el("button", { type: "button", className: "btn sm light", id, innerHTML: IK.plis }); b.append(el("span", { textContent: t })); b.onclick = f; return b; };
+  const dg = (b) => { b.classList.add("dg"); return b; };
+  // a form in a bottom sheet: fields (HTML), a main button, extra buttons; save(f) returns false to keep the sheet open
+  function fòm(tit, html, bt, save, ...lot) {
+    const f = el("form"); f.innerHTML = html + '<div class="msg hidden"></div>';
+    const ok = el("button", { className: "btn sm", textContent: bt }); f.append(el("div", { className: "act2" }, ok, ...lot));
+    let fèmen;
+    f.onsubmit = async (e) => { e.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden"; ok.disabled = true;
+      try { if ((await save(f)) !== false) fèmen(); } catch (er) { m.className = "msg err"; m.textContent = er.message; } ok.disabled = false; };
+    fèmen = sheet(tit, f); f.fèmen = () => fèmen(); return f;
+  }
+
+  // ---- tasks: a round check, the title, where it belongs and who does it, the due date
+  const chk = (on, f) => { const b = el("button", { type: "button", className: "ck2" + (on ? " on" : ""), "aria-label": on ? "Make l pa fini" : "Make l fini", innerHTML: IK.chk });
+    b.onclick = async (e) => { e.stopPropagation(); b.classList.toggle("on"); try { await f(!on); } catch (er) { b.classList.toggle("on"); alert(er.message); } }; return b; };
+  function rowT(t, o = {}) {
+    const d = jodiIso(), late = !t.fini && t.dat && t.dat < d, k = kotLis(t.lis_id);
+    const meta = [o.lis !== false && k ? `${k.p.tit} · ${k.l.tit}` : null, t.moun ? nonM(t.moun) : null].filter(Boolean).join(" · ") || t.nota;
+    const r = el("div", { className: "li tr" + (t.fini ? " fini" : ""), role: "button", tabIndex: 0 },
+      chk(t.fini, async (v) => { await SB.rpc("staf_travay_mete", { p_code: KOD, p: { id: t.id, fini: v } }); await rechaje(); }),
+      el("span", { className: "tx" }, el("b", { textContent: t.tit }), meta ? el("small", { textContent: meta }) : null),
+      t.montan != null ? el("span", { className: "mt", textContent: SB.goud(Number(t.montan)) }) : null,
+      t.dat ? el("span", { className: "dt" + (late ? " late" : t.dat === d ? " jd" : ""), textContent: t.dat === d ? "Jodi a" : fd(t.dat) }) : null);
+    r.dataset.id = t.id; r.onclick = () => fòmT(t); return r;
+  }
+  // quick add, like a checklist: type, Enter, keep typing
+  function ajout(plas, f, kle) {
+    const i = el("input", { placeholder: plas, enterKeyHint: "done", autocomplete: "off" }); i.dataset.ad = kle;
+    i.onkeydown = async (e) => { if (e.key !== "Enter" || !i.value.trim()) return; e.preventDefault(); const t = i.value.trim(); i.disabled = true;
+      try { await f(t); FOK = kle; await rechaje(); } catch (er) { i.disabled = false; alert(er.message); } };
+    const r = el("label", { className: "li ad", innerHTML: IK.plis }); r.append(i); return r;
+  }
+  function fòmT(t = {}, def = {}) {
+    const v = { ...def, ...t };
+    const ef = t.id ? dg(bouton("Efase", async () => { if (!confirm("Efase travay sa a?")) return; await SB.rpc("staf_travay_mete", { p_code: KOD, p: { id: t.id, efase: true } }); f.fèmen(); await rechaje(); }, true)) : null;
+    const f = fòm(t.id ? "Travay" : "Nouvo travay", `<label class="l">Travay</label><input name="tit" required maxlength="300">
+      <label class="l">Nòt</label><textarea name="nota" rows="2"></textarea>
+      <div class="g2c"><div><label class="l">Ki moun</label><select name="moun"><option value="">Pèsonn</option></select></div><div><label class="l">Dat limit</label><input name="dat" type="date"></div></div>
+      <label class="l">Montan (goud)</label><input name="montan" inputmode="decimal" placeholder="Pou depans yo">
+      <label class="l">Pwojè · lis</label><select name="lis_id"><option value="">Okenn (travay apa)</option></select>`, t.id ? "Anrejistre" : "Ajoute",
+      async (f) => { await SB.rpc("staf_travay_mete", { p_code: KOD, p: { id: t.id || "", tit: f.tit.value, nota: f.nota.value, moun: f.moun.value, dat: f.dat.value, montan: f.montan.value, lis_id: f.lis_id.value } }); await rechaje(); }, ef);
+    ZT.manm.forEach((m) => f.moun.append(el("option", { value: m.id, textContent: m.non + (m.id === ZT.mwen ? " (mwen)" : "") })));
+    ZT.pwoje.filter((p) => !p.achive || p.lis.some((l) => l.id === v.lis_id)).forEach((p) => p.lis.forEach((l) => f.lis_id.append(el("option", { value: l.id, textContent: `${p.tit} · ${l.tit}` }))));
+    f.tit.value = v.tit || ""; f.nota.value = v.nota || ""; f.moun.value = v.moun || ""; f.dat.value = v.dat || ""; f.montan.value = v.montan ?? ""; f.lis_id.value = v.lis_id || "";
+    if (!t.id) f.tit.focus();
+  }
+  function vTravay(v) {
+    const d = jodiIso(), tf = SUB.tf;
+    const tb = el("nav", { className: "tabs3", style: "margin:0" }, ...[["mwen", "Pou mwen"], ["tout", "Tout"], ["fini", "Fini"]].map(([k, t]) => {
+      const b = el("button", { type: "button", textContent: t }); b.dataset.tf = k; b.setAttribute("aria-selected", String(tf === k)); b.onclick = () => { SUB.tf = k; afiche(); }; return b; }));
+    v.append(el("div", { className: "wtop" }, tb, el("span", { className: "sp" }), bPlis("Nouvo", "tr-nv", () => fòmT({}, { moun: tf === "mwen" ? ZT.mwen : "" }))));
+    let L = ZT.travay.filter((t) => (tf === "fini") === t.fini);
+    if (tf === "mwen") L = L.filter((t) => t.moun === ZT.mwen);
+    if (tf !== "fini") v.append(grp(ajout(tf === "mwen" ? "Ajoute yon travay pou mwen…" : "Ajoute yon travay…", (tit) => SB.rpc("staf_travay_mete", { p_code: KOD, p: { tit, moun: tf === "mwen" ? ZT.mwen : "" } }), "tr")));
+    if (!L.length) return vid(v, tf === "fini" ? "Poko gen travay fini" : "Anyen pou fè", tf === "mwen" ? "Travay yo ba ou yo ap parèt isit la." : "Ajoute yon travay anlè a, oswa mande asistan an.");
+    if (tf === "fini") return v.append(grp(...L.map((t) => rowT(t))));
+    [["An reta", (t) => t.dat && t.dat < d], ["Jodi a", (t) => t.dat === d], ["Pita", (t) => t.dat && t.dat > d], ["San dat", (t) => !t.dat]].forEach(([n, f]) => {
+      const X = L.filter(f).sort((a, b) => String(a.dat).localeCompare(String(b.dat))); if (X.length) v.append(sek(`${n} · ${X.length}`), grp(...X.map((t) => rowT(t)))); });
+  }
+
+  // ---- projects: several themed lists in one project (logistics, expenses, communication…), each a checklist
+  const TEM = ["Lojistik", "Depans", "Kominikasyon", "Pwogram", "Envite", "Materyèl"];
+  const statPj = (p) => { const ids = new Set(p.lis.map((l) => l.id)), T = ZT.travay.filter((t) => ids.has(t.lis_id)); return { T, n: T.length, f: T.filter((t) => t.fini).length }; };
+  function vPwoje(v) {
+    const p0 = SUB.pwoje && ZT.pwoje.find((p) => p.id === SUB.pwoje);
+    if (p0) return pwojeDet(v, p0);
+    SUB.pwoje = null;
+    v.append(el("div", { className: "wtop" }, el("p", { className: "mute small", style: "margin:0;flex:1", textContent: "Planifye chak konferans: lis pa tèm nan yon sèl pwojè." }), bPlis("Nouvo pwojè", "pj-nv", () => fòmPj())));
+    if (!ZT.pwoje.length) return vid(v, "Poko gen pwojè", "Egz.: « Konferans 28 novanm » ak lis Lojistik, Depans, Kominikasyon.");
+    const row = (p) => { const s = statPj(p);
+      const r = el("button", { type: "button", className: "li", innerHTML: IK.pwoje }, el("span", { className: "tx" }, el("b", { textContent: p.tit }),
+        el("small", { textContent: `${p.lis.length} lis · ${s.f}/${s.n} fini` }), s.n ? el("span", { className: "pb" }, el("i", { style: `width:${Math.round((100 * s.f) / s.n)}%` })) : null));
+      r.insertAdjacentHTML("beforeend", IK.cv.replace("<svg", '<svg class="cv"')); r.dataset.id = p.id; r.onclick = () => { SUB.pwoje = p.id; afiche(); scrollTo(0, 0); }; return r; };
+    const ak = ZT.pwoje.filter((p) => !p.achive), ac = ZT.pwoje.filter((p) => p.achive);
+    if (ak.length) v.append(grp(...ak.map(row)));
+    if (ac.length) v.append(sek("Achive"), grp(...ac.map(row)));
+  }
+  function pwojeDet(v, p) {
+    $("#tb-t").textContent = p.tit;
+    const s = statPj(p);
+    const mo = el("button", { type: "button", className: "ib", id: "pj-mo", "aria-label": "Opsyon pwojè", innerHTML: IK.dots }); mo.onclick = () => fòmPj(p);
+    v.append(el("div", { className: "ph" }, el("h2", { textContent: p.tit }), mo));
+    if (p.deskripsyon) v.append(el("p", { className: "mute", style: "margin:0 2px 6px", textContent: p.deskripsyon }));
+    v.append(el("div", { className: "tp3", style: "margin:6px 2px 0" }, el("span", { className: "tr2" }, el("i", { style: `width:${s.n ? Math.round((100 * s.f) / s.n) : 0}%;background:var(--ok)` })), el("span", { textContent: `${s.f}/${s.n} fini` })));
+    p.lis.forEach((l) => {
+      const X = s.T.filter((t) => t.lis_id === l.id).sort((a, b) => (a.fini - b.fini) || (a.ordre - b.ordre));
+      const tot = X.reduce((x, t) => x + (t.montan != null ? Number(t.montan) : 0), 0), pye = X.filter((t) => t.fini && t.montan != null).reduce((x, t) => x + Number(t.montan), 0);
+      const lm = el("button", { type: "button", className: "ib sm2", "aria-label": "Opsyon lis " + l.tit, innerHTML: IK.dots }); lm.onclick = () => fòmLis(p, l);
+      const h = el("div", { className: "lh" }, el("b", { textContent: l.tit }), el("small", { textContent: `${X.filter((t) => t.fini).length}/${X.length}` + (tot ? ` · ${SB.goud(tot)}${pye ? ` (${SB.goud(pye)} fèt)` : ""}` : "") }), el("span", { className: "sp" }), lm);
+      h.dataset.lis = l.tit;
+      v.append(h, grp(...X.map((t) => rowT(t, { lis: false })), ajout(`Ajoute nan ${l.tit}…`, (tit) => SB.rpc("staf_travay_mete", { p_code: KOD, p: { tit, lis_id: l.id } }), "l" + l.id)));
+    });
+    v.append(el("div", { style: "margin-top:18px" }, bPlis("Nouvo lis", "pj-nl", () => fòmLis(p))));
+  }
+  function fòmPj(p) {
+    const ch = new Set(["Lojistik", "Depans", "Kominikasyon"]);
+    const lot = p ? [bouton(p.achive ? "Retire nan achiv" : "Achive", async () => { await SB.rpc("staf_pwoje_mete", { p_code: KOD, p: { id: p.id, achive: !p.achive } }); f.fèmen(); await rechaje(); }, true),
+      dg(bouton("Efase", async () => { if (!confirm("Efase pwojè a ak tout lis li yo?")) return; await SB.rpc("staf_pwoje_mete", { p_code: KOD, p: { id: p.id, efase: true } }); f.fèmen(); SUB.pwoje = null; await rechaje(); }, true))] : [];
+    const f = fòm(p ? "Pwojè" : "Nouvo pwojè", `<label class="l">Non pwojè a</label><input name="tit" required maxlength="120" placeholder="Egz. Konferans 28 novanm">
+      <label class="l">Deskripsyon</label><textarea name="deskripsyon" rows="2" placeholder="Objektif, dat, kote…"></textarea>` +
+      (p ? "" : `<label class="l">Lis pa tèm</label><div class="chips2" id="pj-tem"></div><input name="lot" placeholder="Lòt tèm (separe ak vigil)">`), p ? "Anrejistre" : "Kreye pwojè a",
+      async (f) => { const lis = p ? null : [...TEM.filter((t) => ch.has(t)), ...f.lot.value.split(",").map((x) => x.trim()).filter(Boolean)];
+        const r = await SB.rpc("staf_pwoje_mete", { p_code: KOD, p: { id: p ? p.id : "", tit: f.tit.value, deskripsyon: f.deskripsyon.value, ...(lis ? { lis } : {}) } });
+        SUB.pwoje = r.id; await rechaje(); scrollTo(0, 0); }, ...lot);
+    f.tit.value = p ? p.tit : ""; f.deskripsyon.value = (p && p.deskripsyon) || "";
+    if (!p) { TEM.forEach((t) => { const b = el("button", { type: "button", textContent: t, className: ch.has(t) ? "on" : "" }); b.onclick = () => { ch.has(t) ? ch.delete(t) : ch.add(t); b.classList.toggle("on"); }; f.querySelector("#pj-tem").append(b); }); f.tit.focus(); }
+  }
+  function fòmLis(p, l) {
+    const lot = l ? [dg(bouton("Efase lis la", async () => { if (!confirm(`Efase « ${l.tit} » ak tout sa ki ladan l?`)) return; await SB.rpc("staf_lis_mete", { p_code: KOD, p: { id: l.id, efase: true } }); f.fèmen(); await rechaje(); }, true))] : [];
+    const f = fòm(l ? "Lis" : "Nouvo lis", `<label class="l">Tèm lis la</label><input name="tit" required maxlength="80" placeholder="Egz. Lojistik">` + (l ? "" : '<div class="chips2" id="ls-tem"></div>'),
+      l ? "Anrejistre" : "Ajoute lis la", async (f) => { await SB.rpc("staf_lis_mete", { p_code: KOD, p: { id: l ? l.id : "", pwoje_id: p.id, tit: f.tit.value } }); await rechaje(); }, ...lot);
+    f.tit.value = l ? l.tit : "";
+    if (!l) TEM.filter((t) => !p.lis.some((x) => x.tit === t)).forEach((t) => { const b = el("button", { type: "button", textContent: t }); b.onclick = () => { f.tit.value = t; }; f.querySelector("#ls-tem").append(b); });
+  }
+
+  // ---- announcements: to everyone, a role or one person; a future date schedules them
+  const pouTeks = (pou) => pou === "tout" ? "Tout ekip la" : pou.startsWith("wol:") ? (ZT.wol.find((w) => w.kle === pou.slice(4)) || {}).non || "Yon wòl" : pou.startsWith("moun:") ? nonM(pou.slice(5)) || "Yon manm" : pou;
+  function vAnons(v) {
+    if (NAN) { SB.rpc("staf_anons_vi", { p_code: KOD }).catch(() => {}); NAN = 0; nav(); }
+    if (ZT.pe_anons) v.append(el("div", { className: "wtop" }, el("span", { className: "sp" }), bPlis("Nouvo anons", "an-nv", () => fòmAn())));
+    if (!ZT.anons.length) return vid(v, "Pa gen anons", "Mesaj pou ekip la ap parèt isit la.");
+    v.append(grp(...ZT.anons.map((a) => { const r = el("button", { type: "button", className: "li", innerHTML: a.epeng ? IK.pin : IK.anons },
+        el("span", { className: "tx" }, el("b", { textContent: a.tit }),
+          el("small", { textContent: [a.pa, a.pwograme ? "pou " + SB.dat(a.pibliye_le, { day: true, month: true, hour: true }) : SB.dat(a.pibliye_le, { day: true, month: true }), pouTeks(a.pou)].filter(Boolean).join(" · ") }),
+          a.kontni ? el("span", { className: "ex", textContent: a.kontni }) : null),
+        a.pwograme ? el("span", { className: "pl at", textContent: "Pwograme" }) : a.nouvo ? el("span", { className: "pl ok", textContent: "Nouvo" }) : null);
+      r.dataset.id = a.id; r.onclick = () => wèAn(a); return r; })));
+  }
+  function wèAn(a) {
+    const act = ZT.pe_anons ? el("div", { className: "act2" }, bouton("Modifye", async () => { fèmen(); fòmAn(a); }, true),
+      dg(bouton("Efase", async () => { if (!confirm("Efase anons sa a?")) return; await SB.rpc("staf_anons_mete", { p_code: KOD, p: { id: a.id, efase: true } }); fèmen(); await rechaje(); }, true))) : null;
+    const fèmen = sheet(a.tit, el("p", { className: "mute small", style: "margin:0 0 8px", textContent: [a.pa, SB.dat(a.pibliye_le, { day: true, month: true, hour: true }), pouTeks(a.pou)].filter(Boolean).join(" · ") }),
+      el("div", { className: "dk", innerHTML: md(a.kontni) }), act);
+  }
+  function fòmAn(a) {
+    const f = fòm(a ? "Modifye anons lan" : "Nouvo anons", `<label class="l">Tit</label><input name="tit" required maxlength="160">
+      <label class="l">Mesaj</label><textarea name="kontni" rows="6"></textarea>
+      <label class="l">Pou ki moun</label><select name="pou"><option value="tout">Tout ekip la</option><optgroup label="Yon wòl"></optgroup><optgroup label="Yon manm"></optgroup></select>
+      <label class="l">Lè pou l parèt <span class="mute">(vid = kounye a)</span></label><input name="dat" type="datetime-local">
+      <label class="ck" style="margin-top:14px"><input type="checkbox" name="epeng"> Epengle l anlè</label>`, a ? "Anrejistre" : "Pibliye",
+      async (f) => { const r = await SB.rpc("staf_anons_mete", { p_code: KOD, p: { id: a ? a.id : "", tit: f.tit.value, kontni: f.kontni.value, pou: f.pou.value, epeng: f.epeng.checked, ...(f.dat.value ? { pibliye_le: f.dat.value + ":00-05:00" } : a ? {} : { pibliye_le: "" }) } });
+        tost("📣", r.pwograme ? "Anons pwograme" : "Anons pibliye", f.tit.value); await rechaje(); });
+    const [w, m] = f.querySelectorAll("optgroup");
+    ZT.wol.forEach((x) => w.append(el("option", { value: "wol:" + x.kle, textContent: x.non })));
+    ZT.manm.forEach((x) => m.append(el("option", { value: "moun:" + x.id, textContent: x.non })));
+    if (a) { f.tit.value = a.tit; f.kontni.value = a.kontni; f.pou.value = a.pou; f.epeng.checked = a.epeng;
+      if (a.pwograme) f.dat.value = new Date(new Date(a.pibliye_le).getTime() - 5 * 3600e3).toISOString().slice(0, 16); }
+  }
+
+  // ---- documents: list, read, edit (Markdown), download as PDF or Word
+  function vDok(v) {
+    if (SUB.dok) return dokDet(v);
+    const q = el("input", { type: "search", className: "srch2", placeholder: "Chèche yon dokiman…" });
+    v.append(el("div", { className: "wtop" }, q, bPlis("Nouvo", "dk-nv", () => { SUB.dok = "nouvo"; SUB.edit = true; afiche(); })));
+    if (!ZT.dokiman.length) return vid(v, "Poko gen dokiman", "Pwogram, lis envite, pwosè-vèbal, rapò… Ekri l isit la oswa mande asistan an.");
+    const g = grp(); v.append(g);
+    const montre = () => { const n = q.value.trim().toLowerCase();
+      g.replaceChildren(...ZT.dokiman.filter((d) => !n || (d.tit + " " + d.ekstre).toLowerCase().includes(n)).map((d) => {
+        const r = el("button", { type: "button", className: "li", innerHTML: IK.dok }, el("span", { className: "tx" }, el("b", { textContent: d.tit }),
+          el("small", { textContent: [d.pa, SB.dat(d.modifye_le, { day: true, month: true })].filter(Boolean).join(" · ") })));
+        r.insertAdjacentHTML("beforeend", IK.cv.replace("<svg", '<svg class="cv"')); r.dataset.id = d.id; r.onclick = () => { SUB.dok = d.id; SUB.edit = false; afiche(); scrollTo(0, 0); }; return r; })); };
+    q.oninput = montre; montre();
+  }
+  async function dokDet(v) {
+    const nouvo = SUB.dok === "nouvo";
+    const d = nouvo ? { tit: "", kontni: "" } : await SB.rpc("staf_dokiman", { p_code: KOD, p_id: SUB.dok });
+    if (!v.isConnected) return;
+    $("#tb-t").textContent = nouvo ? "Nouvo dokiman" : d.tit;
+    if (SUB.edit) {
+      const tt = el("input", { className: "dtt", id: "dk-tit", value: d.tit, placeholder: "Tit dokiman an" });
+      const ta = el("textarea", { className: "dta", id: "dk-ta", value: d.kontni, placeholder: "Ekri isit la…\n\n# Yon tit\n- yon pwen\n**gra**" });
+      const gw = () => { ta.style.height = "auto"; ta.style.height = Math.max(ta.scrollHeight, 320) + "px"; }; ta.oninput = gw;
+      const ok = bouton("Anrejistre", async () => { const r = await SB.rpc("staf_dokiman_mete", { p_code: KOD, p: { id: nouvo ? "" : d.id, tit: tt.value, kontni: ta.value } });
+        SUB.dok = r.id; SUB.edit = false; tost("✓", "Dokiman anrejistre", tt.value); await rechaje(); }); ok.id = "dk-ok";
+      v.append(el("div", { className: "dkb" }, el("span", { className: "mute small", textContent: "# tit · - lis · **gra**" }), el("span", { className: "sp" }),
+        bouton("Anile", async () => { SUB.edit = false; if (nouvo) SUB.dok = null; afiche(); }, true), ok), tt, ta);
+      setTimeout(gw); if (nouvo) tt.focus(); return;
+    }
+    const mod = bouton("Modifye", async () => { SUB.edit = true; afiche(); }, true); mod.id = "dk-mod";
+    const pdf = bouton("PDF", async () => ekspòPdf(d), true); pdf.id = "dk-pdf";
+    const wd = bouton("Word", async () => ekspòWord(d), true); wd.id = "dk-word";
+    const a = el("div", { className: "dkb" }, el("span", { className: "mute small", textContent: [d.pa, SB.dat(d.modifye_le, { day: true, month: true, hour: true })].filter(Boolean).join(" · ") }), el("span", { className: "sp" }), mod, pdf, wd);
+    if (d.pe_efase) a.append(dg(bouton("Efase", async () => { if (!confirm("Efase dokiman sa a?")) return; await SB.rpc("staf_dokiman_mete", { p_code: KOD, p: { id: d.id, efase: true } }); SUB.dok = null; await rechaje(); }, true)));
+    v.append(a, el("article", { className: "dk", innerHTML: `<h1>${esc(d.tit)}</h1>` + md(d.kontni) }));
+  }
+  const dokHtml = (d) => `<!doctype html><html><head><meta charset="utf-8"><title>${esc(d.tit)}</title><style>body{font:12pt/1.55 Georgia,serif;color:#1e1d1b;max-width:720px;margin:32px auto;padding:0 20px}h1{font-size:22pt;margin:0 0 12pt}h2{font-size:16pt}h3{font-size:13pt}code{font-family:monospace}a{color:#1e1d1b}.ft{margin-top:28pt;color:#888;font:9pt sans-serif}</style></head><body><h1>${esc(d.tit)}</h1>${md(d.kontni)}<p class="ft">Atelye AI · ${esc(SB.dat(d.modifye_le || new Date().toISOString(), { day: true, month: true }))}</p></body></html>`;
+  const slug = (x) => String(x).normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "dokiman";
+  function ekspòWord(d) { const u = URL.createObjectURL(new Blob(["﻿", dokHtml(d)], { type: "application/msword" })); const a = el("a", { href: u, download: slug(d.tit) + ".doc" });
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000); }
+  function ekspòPdf(d) { const w = window.open("", "_blank"); if (!w) throw new Error("Navigatè a bloke fenèt la. Pèmèt popup yo pou sit la.");
+    w.document.write(dokHtml(d).replace("</body>", "<script>onload=()=>setTimeout(()=>print(),250)<\/script></body>")); w.document.close(); }
+
+  // ---- knowledge base: what both assistants know (WhatsApp sales + team)
+  const BAZ_POU = { wa: "WhatsApp", ekip: "Ekip", tou_de: "WhatsApp · Ekip" };
+  async function vKonesans(v) {
+    const L = await SB.rpc("staf_konesans", { p_code: KOD }); if (!v.isConnected) return;
+    v.append(el("div", { className: "wtop" }, el("p", { className: "mute small", style: "margin:0;flex:1", textContent: "Sa asistan WhatsApp la ak asistan ekip la konnen: parking, sa pou pote, repons pou kesyon ki souvan… Chak fich ale dirèk nan tèt yo." }),
+      ZT.pe_konesans ? bPlis("Nouvo fich", "kn-nv", () => fòmKn()) : null));
+    if (!L.length) return vid(v, "Baz la vid", "Ajoute premye fich la: egz. « Parking », « Sa pou pote », « Pri gwoup ».");
+    v.append(grp(...L.map((b) => { const r = el("button", { type: "button", className: "li", innerHTML: IK.konesans }, el("span", { className: "tx" }, el("b", { textContent: b.tit }), el("small", { textContent: BAZ_POU[b.pou] }), el("span", { className: "ex", textContent: b.kontni })));
+      r.dataset.id = b.id; r.onclick = () => ZT.pe_konesans ? fòmKn(b) : sheet(b.tit, el("div", { className: "dk", innerHTML: md(b.kontni) })); return r; })));
+  }
+  function fòmKn(b) {
+    const lot = b ? [dg(bouton("Efase", async () => { if (!confirm("Efase fich sa a?")) return; await SB.rpc("staf_konesans_mete", { p_code: KOD, p: { id: b.id, efase: true } }); f.fèmen(); afiche(); }, true))] : [];
+    const f = fòm(b ? "Fich" : "Nouvo fich", `<label class="l">Tit</label><input name="tit" required maxlength="120" placeholder="Egz. Parking">
+      <label class="l">Sa asistan yo dwe konnen</label><textarea name="kontni" rows="7" maxlength="8000" placeholder="Egz. Gen parking gratis devan lekòl la. Motosiklèt yo ka antre nan lakou a."></textarea>
+      <label class="l">Pou ki asistan</label><select name="pou"><option value="tou_de">Tou de (WhatsApp ak ekip)</option><option value="wa">WhatsApp sèlman (kliyan)</option><option value="ekip">Ekip sèlman (entèn)</option></select>`,
+      b ? "Anrejistre" : "Ajoute", async (f) => { await SB.rpc("staf_konesans_mete", { p_code: KOD, p: { id: b ? b.id : "", tit: f.tit.value, kontni: f.kontni.value, pou: f.pou.value } }); afiche(); }, ...lot);
+    if (b) { f.tit.value = b.tit; f.kontni.value = b.kontni; f.pou.value = b.pou; } else f.tit.focus();
+  }
+
+  // ---- team assistant: a chat that can report, plan, write and schedule, with the member's own access
+  const AI = { istwa: null, ap: false };
+  const ZN = { rapo: "Rapò", lis_enskripsyon: "Enskripsyon", analize_whatsapp: "Analiz WhatsApp", lis_travay: "Travay", kreye_travay: "Travay kreye", mete_ajou_travay: "Travay mete ajou",
+    kreye_pwoje: "Pwojè kreye", voye_anons: "Anons pibliye", ekri_dokiman: "Dokiman anrejistre", li_dokiman: "Dokiman li", ajoute_konesans: "Baz konesans mete ajou" };
+  function vAsistan(v) {
+    const kle = "ai-istwa-" + ME.id;
+    if (!AI.istwa) { try { AI.istwa = JSON.parse(localStorage.getItem(kle) || "[]"); } catch { AI.istwa = []; } }
+    const sere = () => { try { localStorage.setItem(kle, JSON.stringify(AI.istwa.slice(-60))); } catch {} };
+    const SUG = ["Fè yon rapò sou atelye a", "Ki travay ki an reta?", AK("whatsapp") && "Analize mesaj WhatsApp semèn nan", ZT.pe_anons && "Pwograme yon anons pou ekip la demen 8è", "Kreye yon pwojè pou konferans lan"].filter(Boolean);
+    const ch = el("div", { className: "ch ai2" });
+    const montre = () => {
+      if (!AI.istwa.length && !AI.ap) { ch.replaceChildren(el("div", { className: "em" }, el("h3", { textContent: `Kisa m ka fè pou ou, ${premye(ME.non)}?` }),
+        el("p", { textContent: "Rapò, travay, anons pwograme, analiz WhatsApp, dokiman… Mwen travay ak aksè ou yo." }),
+        el("div", { className: "sg" }, ...SUG.map((q) => { const b = el("button", { type: "button", textContent: q }); b.onclick = () => voye(q); return b; })))); return; }
+      ch.replaceChildren(...AI.istwa.map((m) => m.sans === "in" ? el("div", { className: "bl me", textContent: m.teks })
+        : m.sans === "zt" ? el("div", { className: "zc" }, ...m.z.map((z) => el("span", { className: z.ok ? "" : "ko", textContent: (z.ok ? "✓ " : "✗ ") + (ZN[z.zouti] || z.zouti) })))
+        : m.sans === "ere" ? el("div", { className: "alrt", textContent: m.teks }) : el("div", { className: "am", innerHTML: md(m.teks) })),
+        ...(AI.ap ? [el("div", { className: "am", id: "ai-ap" }, el("span", { className: "dots" }, el("i"), el("i"), el("i")))] : []));
+      scrollTo(0, document.body.scrollHeight); };
+    const voye = async (t) => { if (AI.ap) return; AI.istwa.push({ sans: "in", teks: t }); AI.ap = true; montre();
+      try { const r = await waApi("ajan", { istwa: AI.istwa.filter((m) => m.sans === "in" || m.sans === "bot") });
+        if (r.fe && r.fe.length) AI.istwa.push({ sans: "zt", z: r.fe });
+        AI.istwa.push({ sans: "bot", teks: r.teks || "…" });
+        if ((r.fe || []).some((f) => /^(kreye|mete|voye|ekri|ajoute)/.test(f.zouti))) zt().then(nav).catch(() => {}); }
+      catch (e) { AI.istwa.push({ sans: "ere", teks: e.message }); }
+      AI.ap = false; sere(); if (ch.isConnected) montre(); };
+    const k = konpoze("Mande asistan an…", voye, "Asistan an ka fè erè. Verifye chif ki enpòtan yo.");
+    const rk = el("button", { type: "button", className: "btn sm light", id: "ai-nv", textContent: "Nouvo konvèsasyon" }); rk.onclick = () => { AI.istwa = []; sere(); montre(); };
+    v.append(el("div", { className: "chv" }, el("div", { style: "display:flex;justify-content:flex-end" }, rk), ch, k.box)); montre();
   }
 
   // ---- event, ticket types (prices, quotas, early-bird date)
