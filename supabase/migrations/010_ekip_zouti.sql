@@ -58,6 +58,13 @@ create table if not exists public.baz_konesans (
   modifye_le timestamptz default now());
 
 alter table public.staf add column if not exists anons_vi timestamptz;   -- last time this member opened the announcements
+-- deleting from the app only marks a row (it can be brought back); every read skips marked rows
+alter table public.ekip_pwoje add column if not exists efase_le timestamptz;
+alter table public.ekip_lis add column if not exists efase_le timestamptz;
+alter table public.ekip_travay add column if not exists efase_le timestamptz;
+alter table public.ekip_anons add column if not exists efase_le timestamptz;
+alter table public.ekip_dokiman add column if not exists efase_le timestamptz;
+alter table public.baz_konesans add column if not exists efase_le timestamptz;
 
 create index if not exists ekip_pwoje_kreye_pa on public.ekip_pwoje (kreye_pa);
 create index if not exists ekip_lis_pwoje on public.ekip_lis (pwoje_id);
@@ -121,21 +128,22 @@ begin
       from public.staf st where st.statut = 'actif' and st.actif), '[]'),
     'wol', coalesce((select jsonb_agg(jsonb_build_object('kle', w.kle, 'non', w.non) order by w.non) from public.wol w), '[]'),
     'pwoje', coalesce((select jsonb_agg(jsonb_build_object('id', p.id, 'tit', p.tit, 'deskripsyon', p.deskripsyon, 'achive', p.achive, 'kreye_pa', p.kreye_pa, 'kreye_le', p.kreye_le,
-        'lis', coalesce((select jsonb_agg(jsonb_build_object('id', l.id, 'tit', l.tit, 'ordre', l.ordre) order by l.ordre, l.kreye_le) from public.ekip_lis l where l.pwoje_id = p.id), '[]'))
-      order by p.achive, p.kreye_le desc) from public.ekip_pwoje p), '[]'),
+        'lis', coalesce((select jsonb_agg(jsonb_build_object('id', l.id, 'tit', l.tit, 'ordre', l.ordre) order by l.ordre, l.kreye_le) from public.ekip_lis l where l.pwoje_id = p.id and l.efase_le is null), '[]'))
+      order by p.achive, p.kreye_le desc) from public.ekip_pwoje p where p.efase_le is null), '[]'),
     'travay', coalesce((select jsonb_agg(jsonb_build_object('id', t.id, 'lis_id', t.lis_id, 'tit', t.tit, 'nota', t.nota, 'moun', t.moun, 'dat', t.dat,
         'montan', t.montan, 'fini', t.fini, 'ordre', t.ordre, 'kreye_pa', t.kreye_pa, 'kreye_le', t.kreye_le) order by t.fini, t.ordre, t.kreye_le)
-      from public.ekip_travay t), '[]'),
+      from public.ekip_travay t where t.efase_le is null and (t.lis_id is null or exists (select 1 from public.ekip_lis l join public.ekip_pwoje p on p.id = l.pwoje_id
+        where l.id = t.lis_id and l.efase_le is null and p.efase_le is null))), '[]'),
     'anons', coalesce((select jsonb_agg(x order by (x->>'epeng')::boolean desc, x->>'pibliye_le' desc) from (
         select jsonb_build_object('id', a.id, 'tit', a.tit, 'kontni', a.kontni, 'pou', a.pou, 'pibliye_le', a.pibliye_le, 'epeng', a.epeng,
           'pa', st.non, 'pa_id', a.kreye_pa, 'pwograme', a.pibliye_le > now(),
           'nouvo', a.pibliye_le <= now() and a.pibliye_le > coalesce(s.anons_vi, '-infinity'::timestamptz) and a.kreye_pa is distinct from s.id) x
         from public.ekip_anons a left join public.staf st on st.id = a.kreye_pa
-        where (a.pibliye_le <= now() and public._anons_pou(s, a)) or (pa and a.pibliye_le > now())
+        where a.efase_le is null and ((a.pibliye_le <= now() and public._anons_pou(s, a)) or (pa and a.pibliye_le > now()))
         order by a.pibliye_le desc limit 150) y), '[]'),
     'dokiman', coalesce((select jsonb_agg(jsonb_build_object('id', d.id, 'tit', d.tit, 'ekstre', left(regexp_replace(d.kontni, '\s+', ' ', 'g'), 140),
         'modifye_le', d.modifye_le, 'pa', st.non) order by d.modifye_le desc)
-      from public.ekip_dokiman d left join public.staf st on st.id = d.modifye_pa), '[]'));
+      from public.ekip_dokiman d left join public.staf st on st.id = d.modifye_pa where d.efase_le is null), '[]'));
 end $$;
 
 create or replace function public.staf_travay_mete(p_code text, p jsonb) returns jsonb language plpgsql volatile
@@ -144,20 +152,20 @@ declare s public.staf := public._staf_a(p_code, null); t public.ekip_travay; v_i
   v_lis uuid := public._uuid(p->>'lis_id'); v_moun uuid := public._uuid(p->>'moun'); v_tit text; v_m numeric;
 begin
   if v_id is not null then
-    select * into t from public.ekip_travay where id = v_id for update;
+    select * into t from public.ekip_travay where id = v_id and efase_le is null for update;
     if t.id is null then raise exception 'Travay sa a pa egziste ankò.'; end if;
   end if;
   if coalesce((p->>'efase')::boolean, false) then
     if t.id is null then raise exception 'Travay sa a pa egziste ankò.'; end if;
     if t.kreye_pa is distinct from s.id and t.moun is distinct from s.id and not public._pe(s.role, 'jere_ekip') then
       raise exception 'Se moun ki kreye l la oswa moun ki gen l lan ki ka efase l.'; end if;
-    delete from public.ekip_travay where id = t.id;
+    update public.ekip_travay set efase_le = now() where id = t.id;
     return jsonb_build_object('ok', true);
   end if;
   v_tit := btrim(coalesce(p->>'tit', t.tit, ''));
   if length(v_tit) < 1 or length(v_tit) > 300 then raise exception 'Ekri travay la (300 karaktè maksimòm).'; end if;
   if v_moun is not null and not exists (select 1 from public.staf where id = v_moun and statut = 'actif') then raise exception 'Manm sa a pa nan ekip la.'; end if;
-  if v_lis is not null and not exists (select 1 from public.ekip_lis where id = v_lis) then raise exception 'Lis sa a pa egziste ankò.'; end if;
+  if v_lis is not null and not exists (select 1 from public.ekip_lis where id = v_lis and efase_le is null) then raise exception 'Lis sa a pa egziste ankò.'; end if;
   if nullif(btrim(coalesce(p->>'montan', '')), '') is not null then
     begin v_m := replace(replace(p->>'montan', ' ', ''), ',', '.')::numeric; exception when others then raise exception 'Montan an pa bon.'; end;
     if v_m < 0 or v_m > 100000000 then raise exception 'Montan an pa bon.'; end if;
@@ -188,13 +196,13 @@ security definer set search_path = public, extensions as $$
 declare s public.staf := public._staf_a(p_code, null); r public.ekip_pwoje; v_id uuid := public._uuid(p->>'id'); v_tit text; l text; i int := 0;
 begin
   if v_id is not null then
-    select * into r from public.ekip_pwoje where id = v_id for update;
+    select * into r from public.ekip_pwoje where id = v_id and efase_le is null for update;
     if r.id is null then raise exception 'Pwojè sa a pa egziste ankò.'; end if;
   end if;
   if coalesce((p->>'efase')::boolean, false) then
     if r.id is null then raise exception 'Pwojè sa a pa egziste ankò.'; end if;
     if r.kreye_pa is distinct from s.id and not public._pe(s.role, 'jere_ekip') then raise exception 'Se moun ki kreye pwojè a ki ka efase l.'; end if;
-    delete from public.ekip_pwoje where id = r.id;
+    update public.ekip_pwoje set efase_le = now() where id = r.id;
     return jsonb_build_object('ok', true);
   end if;
   v_tit := btrim(coalesce(p->>'tit', r.tit, ''));
@@ -218,18 +226,18 @@ security definer set search_path = public, extensions as $$
 declare s public.staf := public._staf_a(p_code, null); l public.ekip_lis; v_id uuid := public._uuid(p->>'id'); v_pj uuid := public._uuid(p->>'pwoje_id'); v_tit text;
 begin
   if v_id is not null then
-    select * into l from public.ekip_lis where id = v_id for update;
+    select * into l from public.ekip_lis where id = v_id and efase_le is null for update;
     if l.id is null then raise exception 'Lis sa a pa egziste ankò.'; end if;
   end if;
   if coalesce((p->>'efase')::boolean, false) then
     if l.id is null then raise exception 'Lis sa a pa egziste ankò.'; end if;
-    delete from public.ekip_lis where id = l.id;
+    update public.ekip_lis set efase_le = now() where id = l.id;
     return jsonb_build_object('ok', true);
   end if;
   v_tit := btrim(coalesce(p->>'tit', l.tit, ''));
   if length(v_tit) < 1 or length(v_tit) > 80 then raise exception 'Bay lis la yon non.'; end if;
   if l.id is null then
-    if v_pj is null or not exists (select 1 from public.ekip_pwoje where id = v_pj) then raise exception 'Pwojè sa a pa egziste ankò.'; end if;
+    if v_pj is null or not exists (select 1 from public.ekip_pwoje where id = v_pj and efase_le is null) then raise exception 'Pwojè sa a pa egziste ankò.'; end if;
     insert into public.ekip_lis (pwoje_id, tit, ordre) values (v_pj, v_tit, (select coalesce(max(ordre), 0) + 1 from public.ekip_lis where pwoje_id = v_pj)) returning * into l;
   else
     update public.ekip_lis set tit = v_tit, ordre = coalesce((p->>'ordre')::int, ordre) where id = l.id returning * into l;
@@ -243,12 +251,12 @@ declare s public.staf := public._staf_a(p_code, 'anons'); a public.ekip_anons; v
   v_tit text; v_pou text := coalesce(nullif(btrim(coalesce(p->>'pou', '')), ''), 'tout'); v_dat timestamptz;
 begin
   if v_id is not null then
-    select * into a from public.ekip_anons where id = v_id for update;
+    select * into a from public.ekip_anons where id = v_id and efase_le is null for update;
     if a.id is null then raise exception 'Anons sa a pa egziste ankò.'; end if;
   end if;
   if coalesce((p->>'efase')::boolean, false) then
     if a.id is null then raise exception 'Anons sa a pa egziste ankò.'; end if;
-    delete from public.ekip_anons where id = a.id;
+    update public.ekip_anons set efase_le = now() where id = a.id;
     return jsonb_build_object('ok', true);
   end if;
   v_tit := btrim(coalesce(p->>'tit', a.tit, ''));
@@ -284,7 +292,7 @@ declare s public.staf := public._staf_a(p_code, null); r jsonb;
 begin
   select jsonb_build_object('id', d.id, 'tit', d.tit, 'kontni', d.kontni, 'kreye_le', d.kreye_le, 'modifye_le', d.modifye_le,
       'pa', m.non, 'kreyate', k.non, 'pe_efase', d.kreye_pa = s.id or public._pe(s.role, 'jere_ekip')) into r
-    from public.ekip_dokiman d left join public.staf m on m.id = d.modifye_pa left join public.staf k on k.id = d.kreye_pa where d.id = p_id;
+    from public.ekip_dokiman d left join public.staf m on m.id = d.modifye_pa left join public.staf k on k.id = d.kreye_pa where d.id = p_id and d.efase_le is null;
   if r is null then raise exception 'Dokiman sa a pa egziste ankò.'; end if;
   return r;
 end $$;
@@ -294,13 +302,13 @@ security definer set search_path = public, extensions as $$
 declare s public.staf := public._staf_a(p_code, null); d public.ekip_dokiman; v_id uuid := public._uuid(p->>'id'); v_tit text;
 begin
   if v_id is not null then
-    select * into d from public.ekip_dokiman where id = v_id for update;
+    select * into d from public.ekip_dokiman where id = v_id and efase_le is null for update;
     if d.id is null then raise exception 'Dokiman sa a pa egziste ankò.'; end if;
   end if;
   if coalesce((p->>'efase')::boolean, false) then
     if d.id is null then raise exception 'Dokiman sa a pa egziste ankò.'; end if;
     if d.kreye_pa is distinct from s.id and not public._pe(s.role, 'jere_ekip') then raise exception 'Se moun ki kreye dokiman an ki ka efase l.'; end if;
-    delete from public.ekip_dokiman where id = d.id;
+    update public.ekip_dokiman set efase_le = now() where id = d.id;
     return jsonb_build_object('ok', true);
   end if;
   v_tit := btrim(coalesce(p->>'tit', d.tit, ''));
@@ -319,7 +327,7 @@ security definer set search_path = public, extensions as $$
 declare s public.staf := public._staf_a(p_code, null);
 begin
   return coalesce((select jsonb_agg(jsonb_build_object('id', b.id, 'tit', b.tit, 'kontni', b.kontni, 'pou', b.pou, 'modifye_le', b.modifye_le, 'pa', st.non) order by b.tit)
-    from public.baz_konesans b left join public.staf st on st.id = b.modifye_pa), '[]');
+    from public.baz_konesans b left join public.staf st on st.id = b.modifye_pa where b.efase_le is null), '[]');
 end $$;
 
 create or replace function public.staf_konesans_mete(p_code text, p jsonb) returns jsonb language plpgsql volatile
@@ -328,11 +336,12 @@ declare s public.staf := public._staf_a(p_code, 'konesans'); b public.baz_konesa
   v_pou text := coalesce(nullif(p->>'pou', ''), 'tou_de');
 begin
   if v_id is not null then
-    select * into b from public.baz_konesans where id = v_id for update;
+    select * into b from public.baz_konesans where id = v_id and efase_le is null for update;
     if b.id is null then raise exception 'Fich sa a pa egziste ankò.'; end if;
   end if;
   if coalesce((p->>'efase')::boolean, false) then
-    delete from public.baz_konesans where id = b.id;
+    if b.id is null then raise exception 'Fich sa a pa egziste ankò.'; end if;
+    update public.baz_konesans set efase_le = now() where id = b.id;
     return jsonb_build_object('ok', true);
   end if;
   v_tit := btrim(coalesce(p->>'tit', b.tit, ''));
@@ -376,7 +385,7 @@ begin
   return jsonb_build_object('aktif', k.aktif, 'gemini_kle', k.gemini_kle, 'gemini_model', k.gemini_model, 'wa_token', k.wa_token,
     'wa_phone_id', k.wa_phone_id, 'app_secret', k.app_secret, 'verify_token', k.verify_token, 'enstriksyon', k.enstriksyon,
     'evenement', public.evenement_public(null), 'gwoup', (select lyen_gwoup from public.evenements where id = (public._evt(null)).id),
-    'konesans', coalesce((select jsonb_agg(jsonb_build_object('tit', b.tit, 'kontni', b.kontni, 'pou', b.pou) order by b.tit) from public.baz_konesans b), '[]'));
+    'konesans', coalesce((select jsonb_agg(jsonb_build_object('tit', b.tit, 'kontni', b.kontni, 'pou', b.pou) order by b.tit) from public.baz_konesans b where b.efase_le is null), '[]'));
 end $$;
 
 revoke all on function public._anons_pou(public.staf, public.ekip_anons), public._uuid(text) from public, anon, authenticated;
