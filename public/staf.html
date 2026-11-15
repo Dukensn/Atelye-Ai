@@ -272,7 +272,7 @@
   const tel = (t) => { const d = String(t || "").replace(/\D/g, ""); return d.length === 8 ? "509" + d : d; };
   const wa = (t, msg) => `https://wa.me/${tel(t)}?text=${encodeURIComponent(msg)}`;
   const premye = (n) => String(n || "").split(" ")[0];
-  const msgTike = (x, code) => `Bonjou ${premye(x.nom)}! 🎉 Peman w lan valide. Men tikè w pou atelye konferans Atelye AI a (${x.code_court}):\n${site}/billet/${code}\n\nSamdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Montre kòd QR a nan pòt la.${D.evenement && D.evenement.lyen_gwoup ? `\n\n👥 Rejwenn gwoup WhatsApp moun ki rezève yo, se la n ap voye tout enfòmasyon yo:\n${D.evenement.lyen_gwoup}` : ""}`;
+  const msgTike = (x, code) => `Bonjou ${premye(x.nom)}! 🎉 Peman w lan valide. Men tikè w pou atelye konferans Atelye AI a (${x.code_court}):\n${site}/billet/${code}\n\nSamdi 5 desanm, 10h, Lise Anacaona, Leyogàn. Montre kòd QR a nan pòt la.${D.evenement && D.evenement.lyen_gwoup ? `\n\n👥 Rejwenn gwoup WhatsApp moun ki rezève yo, se la n ap voye tout enfòmasyon yo:\n${D.evenement.lyen_gwoup}` : ""}`;
   const msgRefi = (x, motif) => `Bonjou ${premye(x.nom)}. Se Atelye AI. Nou pa t ka valide peman pou enskripsyon ${x.code_court}: ${motif}. Reponn mesaj sa a pou n regle sa ansanm.`;
 
   const AK = (k) => !!(ME && (ME.akse_kle || []).includes(k));
@@ -610,8 +610,8 @@
   // ---- reminders J-7, J-1, morning (sent by hand from WhatsApp)
   function vRapel(v) {
     const M = {
-      "J-7": (x) => `Bonjou ${premye(x.nom)}! Rete 7 jou pou atelye konferans Atelye AI a: samdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Men tikè w: ${site}/billet/${x.billet}`,
-      "J-1": (x) => `${premye(x.nom)}, se demen! 📅 Samdi 28 novanm, 10h, Lise Anacaona, Leyogàn. Pote telefòn ou (chaje) ak chajè a. Tikè w: ${site}/billet/${x.billet}`,
+      "J-7": (x) => `Bonjou ${premye(x.nom)}! Rete 7 jou pou atelye konferans Atelye AI a: samdi 5 desanm, 10h, Lise Anacaona, Leyogàn. Men tikè w: ${site}/billet/${x.billet}`,
+      "J-1": (x) => `${premye(x.nom)}, se demen! 📅 Samdi 5 desanm, 10h, Lise Anacaona, Leyogàn. Pote telefòn ou (chaje) ak chajè a. Tikè w: ${site}/billet/${x.billet}`,
       "Maten": (x) => `Bonjou ${premye(x.nom)}! N ap tann ou jodi a a 10h nan Lise Anacaona, Leyogàn. Prepare tikè w la pou pòt la: ${site}/billet/${x.billet}`,
     };
     const L = D.lis.filter((x) => x.statut === "valide" && x.billet && x.billet_statut !== "annule");
@@ -905,7 +905,7 @@
     if (p0) return pwojeDet(v, p0);
     SUB.pwoje = null;
     v.append(el("div", { className: "wtop" }, el("p", { className: "mute small", style: "margin:0;flex:1", textContent: "Planifye chak konferans: lis pa tèm nan yon sèl pwojè." }), bPlis("Nouvo pwojè", "pj-nv", () => fòmPj())));
-    if (!ZT.pwoje.length) return vid(v, "Poko gen pwojè", "Egz.: « Konferans 28 novanm » ak lis Lojistik, Depans, Kominikasyon.");
+    if (!ZT.pwoje.length) return vid(v, "Poko gen pwojè", "Egz.: « Konferans 5 desanm » ak lis Lojistik, Depans, Kominikasyon.");
     const row = (p) => { const s = statPj(p);
       const r = el("button", { type: "button", className: "li", innerHTML: IK.pwoje }, el("span", { className: "tx" }, el("b", { textContent: p.tit }),
         el("small", { textContent: `${p.lis.length} lis · ${s.f}/${s.n} fini` }), s.n ? el("span", { className: "pb" }, el("i", { style: `width:${Math.round((100 * s.f) / s.n)}%` })) : null));
@@ -935,7 +935,7 @@
     const ch = new Set(["Lojistik", "Depans", "Kominikasyon"]);
     const lot = p ? [bouton(p.achive ? "Retire nan achiv" : "Achive", async () => { await SB.rpc("staf_pwoje_mete", { p_code: KOD, p: { id: p.id, achive: !p.achive } }); f.fèmen(); await rechaje(); }, true),
       dg(bouton("Efase", async () => { if (!confirm("Efase pwojè a ak tout lis li yo?")) return; await SB.rpc("staf_pwoje_mete", { p_code: KOD, p: { id: p.id, efase: true } }); f.fèmen(); SUB.pwoje = null; await rechaje(); }, true))] : [];
-    const f = fòm(p ? "Pwojè" : "Nouvo pwojè", `<label class="l">Non pwojè a</label><input name="tit" required maxlength="120" placeholder="Egz. Konferans 28 novanm">
+    const f = fòm(p ? "Pwojè" : "Nouvo pwojè", `<label class="l">Non pwojè a</label><input name="tit" required maxlength="120" placeholder="Egz. Konferans 5 desanm">
       <label class="l">Deskripsyon</label><textarea name="deskripsyon" rows="2" placeholder="Objektif, dat, kote…"></textarea>` +
       (p ? "" : `<label class="l">Lis pa tèm</label><div class="chips2" id="pj-tem"></div><input name="lot" placeholder="Lòt tèm (separe ak vigil)">`), p ? "Anrejistre" : "Kreye pwojè a",
       async (f) => { const lis = p ? null : [...TEM.filter((t) => ch.has(t)), ...f.lot.value.split(",").map((x) => x.trim()).filter(Boolean)];
