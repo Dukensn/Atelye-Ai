@@ -56,6 +56,10 @@
       "destination": "/api/estati?resous=1"
     },
     {
+      "source": "/r/:f",
+      "destination": "/api/estati?resous=1&f=:f"
+    },
+    {
       "source": "/billet/:code",
       "destination": "/billet"
     },
