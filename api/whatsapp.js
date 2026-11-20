@@ -118,9 +118,21 @@ async function ekip(req) {
 // The token's own scopes name the account(s); subscribe each one (idempotent).
 async function abone(k) {
   const G = "https://graph.facebook.com/v22.0", h = { authorization: `Bearer ${k.wa_token}` };
-  const dt = await (await fetch(`${G}/debug_token?input_token=${encodeURIComponent(k.wa_token)}`, { headers: h })).json().catch(() => ({}));
-  const ids = [...new Set((dt.data?.granular_scopes || []).filter((s) => s.scope.startsWith("whatsapp_business")).flatMap((s) => s.target_ids || []))];
-  if (!ids.length) return { ere: "Token an pa bay aksè a okenn kont WhatsApp." };
+  const get = async (p, hd = h) => (await fetch(`${G}/${p}`, { headers: hd })).json().catch(() => ({}));
+  const ids = new Set();
+  // 1. the token's scopes name the accounts (needs an app token to read them reliably)
+  const app = k.app_secret ? { authorization: `Bearer ${(await get("app?fields=id")).id || ""}|${k.app_secret}` } : h;
+  const dt = await get(`debug_token?input_token=${encodeURIComponent(k.wa_token)}`, app.authorization.startsWith("Bearer |") ? h : app);
+  (dt.data?.granular_scopes || []).filter((s) => s.scope.startsWith("whatsapp_business")).flatMap((s) => s.target_ids || []).forEach((i) => ids.add(i));
+  // 2. otherwise: the businesses the token can see, and their WhatsApp accounts holding this phone number
+  if (!ids.size) {
+    const biz = [...((await get("me/businesses?fields=id&limit=50")).data || []).map((b) => b.id), ...(dt.data?.granular_scopes || []).filter((s) => s.scope === "business_management").flatMap((s) => s.target_ids || [])];
+    for (const b of new Set(biz)) for (const ed of ["owned_whatsapp_business_accounts", "client_whatsapp_business_accounts"]) {
+      for (const w of (await get(`${b}/${ed}?fields=id,phone_numbers{id}&limit=50`)).data || [])
+        if (!k.wa_phone_id || (w.phone_numbers?.data || []).some((p) => p.id === k.wa_phone_id)) ids.add(w.id);
+    }
+  }
+  if (!ids.size) return { ere: "Pa jwenn kont WhatsApp la ak token sa a" + (dt.error?.message ? ` (${dt.error.message})` : "") + "." };
   const rez = [];
   for (const id of ids) {
     const r = await fetch(`${G}/${id}/subscribed_apps`, { method: "POST", headers: h });
