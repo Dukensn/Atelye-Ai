@@ -215,6 +215,9 @@
   #login { max-width: 400px; margin: 8vh auto 40px; padding: 0 16px; }
   #login .lgh { text-align: center; margin-bottom: 18px; } #login .lgh img { height: 40px; width: auto; margin: 0 auto 14px; } #login .lgh h2 { font: 500 26px/1.2 var(--serif); margin: 0; }
   #login .tabs3 { display: flex; } #login .tabs3 button { flex: 1; }
+  .rs-pw { margin: 4px 0 12px; } .rs-pw small { color: var(--mute); font-size: 13px; }
+  .rs-br { height: 8px; border-radius: 8px; background: var(--ln2); overflow: hidden; margin-bottom: 6px; } .rs-br i { display: block; height: 100%; width: 0; background: #1a9b4a; transition: width .2s; }
+  .vh { position: absolute; width: 1px; height: 1px; opacity: 0; }
 </style>
 
 </head>
@@ -321,7 +324,7 @@
         (AK("lis_enskripsyon") || AK("jwenn_tike")) && ["lis", AK("lis_enskripsyon") ? "Enskripsyon" : "Jwenn yon tikè", "Chèche, revoye oswa anile yon tikè"],
         AK("rapel") && ["rapel", "Rapèl", "Mesaj WhatsApp J-7, J-1 ak maten an"], AK("eskane") && ["skane", "Eskanè", "Tcheke tikè yo nan pòt la"]]],
       ["Espas ekip", [["asistan", "Asistan AI", "Rapò, anons, analiz, pwogram"], ["anons", "Anons", "Mesaj pou ekip la"], ["travay", "Travay", "Sa pou fè, ki moun, ki lè"],
-        ["pwoje", "Pwojè", "Lis pa tèm: lojistik, depans…"], ["dok", "Dokiman", "Li, modifye, PDF ak Word"]]],
+        ["pwoje", "Pwojè", "Lis pa tèm: lojistik, depans…"], ["dok", "Dokiman", "Li, modifye, PDF ak Word"], AK("jere_ekip") && ["resous", "Resous", "Videyo ak fichye pou pataje"]]],
       ["Kominikasyon", [AK("whatsapp") && ["wa", "WhatsApp", "Konvèsasyon kliyan ak asistan an"]]],
       ["Ekip", [AK("jere_ekip") && ["ekip", "Manm yo", "Valide kont, bay wòl ak travay"], AK("jere_ekip") && ["wol", "Wòl ak aksè", "Kreye ak modifye wòl yo"]]],
       ["Paramèt", [AK("pri_evenman") && ["param", "Evènman ak tikè", "Dat, kote, pri, gwoup WhatsApp"], ["konesans", "Baz konesans", "Sa asistan yo konnen"]]],
@@ -437,9 +440,9 @@
     $("#tb-b").classList.toggle("hidden", !back); $("#tb-l").classList.toggle("hidden", back);
     if (matchMedia("(min-width: 861px)").matches && !sub) { $("#tb-b").classList.add("hidden"); $("#tb-l").classList.remove("hidden"); }
     const v = el("div", { className: TAB === "tablo" || TAB === "wa" ? "" : "pg" }); $("#v").replaceChildren(v);   // a fresh box each time, so a slower earlier render cannot add a second copy
-    if (!D.evenement && !["mwen", "ekip", "wol", "wa", "meni", "tablo", "asistan", "anons", "travay", "pwoje", "dok", "konesans"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
+    if (!D.evenement && !["mwen", "ekip", "wol", "wa", "meni", "tablo", "asistan", "anons", "travay", "pwoje", "dok", "konesans", "resous"].includes(TAB)) { v.append(el("p", { className: "mute", textContent: "Kreye evènman an nan Paramèt." })); if (TAB !== "param") return; }
     ({ file: vFile, tablo: vTablo, lis: vLis, kach: vKach, rapel: vRapel, param: vParam, ekip: vEkip, wol: vWol, wa: vWa, mwen: vMwen, meni: vMeni,
-      asistan: vAsistan, anons: vAnons, travay: vTravay, pwoje: vPwoje, dok: vDok, konesans: vKonesans }[TAB] || vTablo)(v);
+      asistan: vAsistan, anons: vAnons, travay: vTravay, pwoje: vPwoje, dok: vDok, konesans: vKonesans, resous: vResous }[TAB] || vTablo)(v);
     if (FOK) { const x = document.querySelector(`[data-ad="${FOK}"]`); FOK = null; if (x) x.focus(); }
   }
   // a list row: icon, label, small text, value or count, chevron
@@ -991,6 +994,52 @@
   }
 
   // ---- documents: list, read, edit (Markdown), download as PDF or Word
+  // Resources: videos and files the team uploads once, then shares as a download link
+  const gwo = (n) => n > 1e9 ? (n / 1e9).toFixed(1) + " Go" : n > 1e6 ? (n / 1e6).toFixed(1) + " Mo" : Math.max(1, Math.round(n / 1e3)) + " ko";
+  const resousApi = async (aksyon, o = {}) => {
+    const r = await fetch("/api/resous", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ aksyon, kod: KOD, ...o }) });
+    const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.ere || "Gen yon pwoblèm."); return d;
+  };
+  async function vResous(v) {
+    const fi = el("input", { type: "file", multiple: true, className: "vh", id: "rs-f" });
+    const pw = el("div", { className: "rs-pw hidden" }), pb = el("i"), pt = el("small");
+    pw.append(el("div", { className: "rs-br" }, pb), pt);
+    v.append(el("div", { className: "wtop" }, el("p", { className: "mute small", style: "margin:0;flex:1", textContent: "Mete videyo, PDF oswa nenpòt fichye. Chak fichye gen yon lyen pou moun nan telechaje l sou telefòn li." }),
+      el("label", { className: "btn sm", htmlFor: "rs-f", textContent: "+ Mete fichye" })), fi, pw);
+    const lis = el("div"); v.append(lis);
+    const chaje2 = async () => {
+      lis.replaceChildren(el("p", { className: "mute", textContent: "Chajman…" }));
+      try {
+        const { fichye } = await resousApi("lis");
+        if (!fichye.length) return lis.replaceChildren(), vid(lis, "Poko gen resous", "Touche « Mete fichye » pou w ajoute yon videyo oswa yon dokiman.");
+        lis.replaceChildren(grp(...fichye.map((x) => {
+          const kopi = bouton("Kopye lyen", async (b) => { await navigator.clipboard.writeText(x.telechaje); b.textContent = "Kopye ✓"; setTimeout(() => b.textContent = "Kopye lyen", 1500); }, true);
+          const wa = el("a", { className: "btn sm light", target: "_blank", rel: "noopener", textContent: "WhatsApp",
+            href: `https://wa.me/?text=${encodeURIComponent(`Men ${x.non.replace(/-[A-Za-z0-9]{20,}(\.[^.]+)?$/, "$1")}. Touche lyen an pou w telechaje l: ${x.telechaje}`)}` });
+          const ef = bouton("Efase", async () => { if (!confirm(`Efase ${x.non}? Lyen an p ap mache ankò.`)) return; await resousApi("efase", { url: x.url }); chaje2(); }, true);
+          return el("div", { className: "li", style: "flex-wrap:wrap;cursor:default" },
+            el("span", { className: "tx", style: "flex:1;min-width:160px" }, el("b", { textContent: x.non.replace(/-[A-Za-z0-9]{20,}(\.[^.]+)?$/, "$1") }),
+              el("small", { textContent: `${gwo(x.gwosè)} · ${SB.dat(x.le, { day: "numeric", month: "short" })}` })),
+            el("span", { style: "display:flex;gap:6px;flex-wrap:wrap" }, kopi, wa, ef));
+        })));
+      } catch (er) { lis.replaceChildren(el("p", { className: "msg err", textContent: er.message })); }
+    };
+    fi.onchange = async () => {
+      const L = [...fi.files]; fi.value = ""; if (!L.length) return;
+      const { upload } = await import("/vendor/blob-client.js");
+      pw.classList.remove("hidden");
+      for (const [i, f] of L.entries()) {
+        try {
+          const non = f.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9._-]+/g, "-").slice(-80) || "fichye";
+          await upload("resous/" + non, f, { access: "public", handleUploadUrl: "/api/resous", clientPayload: JSON.stringify({ kod: KOD }), multipart: f.size > 50e6,
+            onUploadProgress: (e) => { pb.style.width = e.percentage + "%"; pt.textContent = `${f.name} · ${Math.round(e.percentage)} %${L.length > 1 ? ` (${i + 1}/${L.length})` : ""}`; } });
+          tost("✓", "Fichye a anrejistre", f.name);
+        } catch (er) { alert(`${f.name}: ${er.message}`); }
+      }
+      pw.classList.add("hidden"); pb.style.width = "0"; chaje2();
+    };
+    chaje2();
+  }
   function vDok(v) {
     if (SUB.dok) return dokDet(v);
     const q = el("input", { type: "search", className: "srch2", placeholder: "Chèche yon dokiman…" });
