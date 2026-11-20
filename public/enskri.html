@@ -92,6 +92,8 @@
   .sek { text-align: center; color: var(--mute); font-size: 13px; margin: 14px 0 0; } .sek a { color: var(--mute); }
   .pwo { margin: 10px 0 0; padding: 11px 14px; border-radius: 12px; background: #ecfdf3; color: #166534; font-size: 14px; font-weight: 600; line-height: 1.45; }
   .dl { margin: 8px 0 0; padding: 11px 14px; border-radius: 12px; background: #fff7ed; color: #9a3412; font-size: 14px; font-weight: 600; line-height: 1.45; }
+  .pat { margin-top: 16px; padding: 16px; border-radius: 14px; background: #f0fdf4; text-align: center; }
+  .pat b { font-size: 16px; } .pat p { margin: 6px 0 12px; font-size: 14px; color: var(--mute); line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -171,7 +173,12 @@
       <p style="text-align:center">Ekip la ap verifye peman an. <b>W ap resevwa tikè w la sou WhatsApp nan 24 è.</b></p>
       <div class="pay">Kòd enskripsyon w: <b class="nb" id="p3-kod">AT-0000</b><br><span class="mute small">Kenbe l: avè l ak nimewo w, ou ka jwenn tikè w nenpòt ki lè.</span></div>
       <p class="av hidden" id="p3-rete"></p>
-      <a class="btn light full" style="margin-top:14px" href="/billet">Jwenn tikè mwen</a>
+      <div class="pat">
+        <b>🙏 Ede n fè l rive pi lwen</b>
+        <p>Si w konnen yon moun sa ka itil, pataje l ba li oswa mete l sou stati w. Plas yo limite.</p>
+        <a class="btn full" id="pat-wa" target="_blank" rel="noopener" style="background:#25d366;color:#fff">Pataje sou WhatsApp</a>
+      </div>
+      <a class="btn light full" style="margin-top:12px" href="/billet">Jwenn tikè mwen</a>
     </div>
   </div>
   <p class="sek">🔒 Enfòmasyon w yo rete prive. <a href="/konfidansyalite">Konfidansyalite</a></p>
@@ -240,7 +247,9 @@
     $("#p-nb").textContent = (I.moyen === "natcash" ? K.natcash : K.moncash) || "—";
     $("#p-ben").textContent = K.benefisye || "—";
   }
+  const PATAJ = "Mwen fèk enskri nan atelye Atelye AI a: aprann kreye videyo ak AI epi fè piblisite sou Facebook. 📅 Samdi 5 desanm, Leyogàn. Plas yo limite, enskri la a 👉 https://atelye-ai.vercel.app/enskri";
   function fini() {
+    $("#pat-wa").href = "https://wa.me/?text=" + encodeURIComponent(PATAJ);
     $("#p3-kod").textContent = I.code_court;
     $("#p3-rete").classList.toggle("hidden", !(+I.rete > 0));
     if (+I.rete > 0) $("#p3-rete").textContent = `Pa bliye: pri fòmasyon an, ${SB.goud(I.rete)}, ap peye jou atelye a nan pòt la.`;
