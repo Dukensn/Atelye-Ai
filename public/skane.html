@@ -22,6 +22,7 @@
   .cam .frame { position: absolute; inset: 18%; border: 3px solid rgba(255,255,255,.7); border-radius: 18px; }
   .res { margin-top: 12px; border-radius: 18px; padding: 18px; min-height: 120px; background: #222; }
   .res.vert { background: #1f7a43; } .res.orange { background: #d97706; } .res.rouge { background: #b3261e; }
+  .res .rp { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; } .res .rp button { flex: 1; min-width: 90px; padding: 12px; border: 0; border-radius: 12px; font: inherit; font-weight: 700; background: #fff; color: #9a3412; }
   .res b { display: block; font-size: 30px; letter-spacing: -0.02em; } .res span { display: block; font-size: 18px; margin-top: 4px; }
   .card { background: #1a1a1a; border: 0; color: #fff; }
   input { background: #262626; color: #fff; }
@@ -109,10 +110,30 @@
     if (!b) return rezilta("rouge", "Enkoni", "Tikè sa a pa nan lis la.");
     if (b.statut === "annule") return rezilta("rouge", "Anile", `${b.nom} · ${b.numero}`);
     if (b.statut === "utilise") return rezilta("orange", "Deja itilize", `${b.nom} · antre a ${b.scanne_le ? lè(b.scanne_le) : "?"}`);
+    // deposit only: the rest must be paid before entering
+    if (+b.rete > 0) return rete(code, b);
+    antre(code, b);
+  }
+  function antre(code, b) {
     const le = new Date().toISOString();
     b.statut = "utilise"; b.scanne_le = le; ST.set("billets", B);
     Q.push({ code, le }); ST.set("queue", Q); konte(); voye().catch(() => {});
     rezilta("vert", "Valid ✓", `${b.nom} · ${b.type} · ${b.numero}`);
+  }
+  function rete(code, b) {
+    rezilta("orange", `Rete ${SB.goud(b.rete)}`, `${b.nom} · ${b.numero} · li peye avans lan sèlman. Kolekte rès la anvan l antre.`);
+    const bw = document.createElement("div"); bw.className = "rp";
+    [["kach", "Li peye kach"], ["moncash", "MonCash"], ["natcash", "NatCash"]].forEach(([m, t]) => {
+      const k = document.createElement("button"); k.type = "button"; k.textContent = t;
+      k.onclick = async () => {
+        if (!navigator.onLine) return alert("Konekte entènèt la pou anrejistre peman an.");
+        bw.querySelectorAll("button").forEach((x) => x.disabled = true);
+        try { await SB.rpc("staf_rete_peye", { p_code: KOD, p_id: b.id, p_moyen: m }); b.rete = 0; ST.set("billets", B); antre(code, b); }
+        catch (er) { alert(er.message); bw.querySelectorAll("button").forEach((x) => x.disabled = false); }
+      };
+      bw.append(k);
+    });
+    $("#res").append(bw);
   }
 
   // camera: native BarcodeDetector when the phone has it, jsQR otherwise
@@ -141,7 +162,7 @@
     Object.values(B).filter((b) => [b.nom, b.tel, b.numero].some((x) => String(x || "").toLowerCase().includes(q))).slice(0, 20).forEach((b) => {
       const it = document.createElement("div"); it.className = "it";
       it.innerHTML = `<div><b></b><br><small></small></div>`; it.querySelector("b").textContent = b.nom;
-      it.querySelector("small").textContent = `${b.numero} · ${b.type} · ···${b.tel} · ${b.statut === "utilise" ? "antre " + (b.scanne_le ? lè(b.scanne_le) : "") : b.statut}`;
+      it.querySelector("small").textContent = `${b.numero} · ${b.type} · ···${b.tel} · ${b.statut === "utilise" ? "antre " + (b.scanne_le ? lè(b.scanne_le) : "") : b.statut}${+b.rete > 0 ? " · rete " + SB.goud(b.rete) : ""}`;
       const k = Object.assign(document.createElement("button"), { type: "button", className: "btn sm w", textContent: "Kite l antre" });
       k.onclick = () => { tcheke(b.code, true); $("#chache").oninput(); }; it.append(k); box.append(it);
     });
