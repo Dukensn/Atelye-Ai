@@ -1,14 +1,16 @@
--- Registration: the person may pay the registration fee only, or everything at once (p_tout).
+-- Registration: the person may pay the registration fee only, or everything at once (p_reponses.peye_tout).
 -- Launch offer: the first N registrations pay only P % of the training price (registration fee unchanged).
 alter table public.types_billets add column if not exists premye_n int, add column if not exists premye_pousan int;
-drop function if exists public.inscrire(uuid, text, text, text, jsonb, text);
 create or replace function public.inscrire(p_type uuid, p_nom text, p_telephone text, p_email text default null,
-  p_reponses jsonb default '{}'::jsonb, p_moyen text default 'moncash', p_tout boolean default false) returns jsonb language plpgsql security definer
+  p_reponses jsonb default '{}'::jsonb, p_moyen text default 'moncash') returns jsonb language plpgsql security definer
 set search_path = public, extensions as $$
 declare t public.types_billets; e public.evenements; v_nom text := btrim(coalesce(p_nom, '')); cle text := public._tel_cle(p_telephone);
   em text := nullif(btrim(coalesce(p_email, '')), ''); deja public.inscriptions; v_code text; j text := encode(gen_random_bytes(18), 'hex'); r public.inscriptions;
   v_avans numeric; v_total numeric; v_fom numeric; v_avan int;
+  -- pay everything now: sent as p_reponses.peye_tout (keeps the function signature)
+  p_tout boolean := coalesce(p_reponses->>'peye_tout', '') = 'true';
 begin
+  p_reponses := coalesce(p_reponses, '{}'::jsonb) - 'peye_tout';
   select * into t from public.types_billets where id = p_type;
   select * into e from public.evenements where id = t.evenement_id;
   if t.id is null or e.statut <> 'ouvert' or t.prix_htg is null or (t.date_fin_vente is not null and t.date_fin_vente <= now())
@@ -55,8 +57,6 @@ begin
     'moyen', r.moyen_paiement, 'type', t.nom, 'total', coalesce(r.total_htg, r.montant), 'rete', public._rete(r.montant, r.total_htg, r.rete_peye_le),
     'pwomo', t.premye_n is not null and v_avan < t.premye_n);
 end $$;
-revoke all on function public.inscrire(uuid, text, text, text, jsonb, text, boolean) from public;
-grant execute on function public.inscrire(uuid, text, text, text, jsonb, text, boolean) to anon, authenticated;
 
 create or replace function public.evenement_public(p_evenement uuid default null) returns jsonb language plpgsql stable security definer
 set search_path = public as $$

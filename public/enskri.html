@@ -269,8 +269,8 @@
     if (!P) return etap(1);
     b.disabled = true;
     try {
-      I = await SB.rpc("inscrire", { p_type: T.id, p_nom: P.nom, p_telephone: P.tel, p_email: null, p_reponses: P.rep,
-        p_moyen: val("metod") || "moncash", p_tout: val("kob") === "tout" });
+      I = await SB.rpc("inscrire", { p_type: T.id, p_nom: P.nom, p_telephone: P.tel, p_email: null, p_reponses: { ...P.rep, peye_tout: val("kob") === "tout" },
+        p_moyen: val("metod") || "moncash" });
       sere(); montrePeman(); etap(3);
     } catch (err) { mesaj($("#m2a"), err.message); }
     b.disabled = false;
