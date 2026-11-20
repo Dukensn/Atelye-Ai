@@ -79,6 +79,8 @@ async function yonMesaj(k, m, non) {
   } catch (er) {
     console.error("whatsapp: asistan", er.message);
     await sv("wa_sv_relais", { p_tel: tel, p_rezon: "Asistan an pa t ka reponn: " + er.message.slice(0, 120) }).catch(() => {});
+    // never leave the customer without an answer: the team is alerted and takes over
+    await di("Mèsi pou mesaj ou 🙏 Yon moun nan ekip Atelye AI ap reponn ou nan kèk minit.").catch((e) => console.error("whatsapp: voye", e.message));
   }
 }
 
