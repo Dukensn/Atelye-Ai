@@ -105,7 +105,7 @@
     ban.className = "ban " + (b.statut === "actif" ? "hidden" : b.statut);
     ban.textContent = b.statut === "annule" ? "Tikè sa a anile." : b.statut === "utilise" ? "Tikè sa a deja itilize nan pòt la." : "";
     $("#rt").classList.toggle("hidden", !(+b.rete > 0) || b.statut !== "actif");
-    if (+b.rete > 0) $("#rt").textContent = `Rete ${SB.goud(b.rete)} pou peye — apre oswa nan pòt la jou atelye a. Avans lan pa ranbousab.`;
+    if (+b.rete > 0) $("#rt").textContent = `Pri fòmasyon an: ${SB.goud(b.rete)} pou peye apre oswa nan pòt la jou atelye a.`;
     if (b.gwoup && /^https:\/\//.test(b.gwoup)) { $("#gw").href = b.gwoup; $("#gw").classList.remove("hidden"); } else $("#gw").classList.add("hidden");
     $("#tikè").classList.remove("hidden");
     document.title = `Tikè ${b.numero} · Atelye AI`;

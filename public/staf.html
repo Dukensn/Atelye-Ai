@@ -262,7 +262,7 @@
 (() => {
   const $ = (q) => document.querySelector(q);
   const el = (t, p = {}, ...c) => { const e = Object.assign(document.createElement(t), p); e.append(...c.filter((x) => x != null)); return e; };
-  let GR = [], KOD = "", D = null, ME = null, TAB = "tablo", FILT = "", VI = false, PREMYE = true;
+  let GR = [], KOD = "", D = null, ME = null, TAB = new URLSearchParams(location.search).get("tab") || "tablo", FILT = "", VI = false, PREMYE = true;
   // team space state: tools data, unread announcements, sub-screens (open project / document), field to focus after a re-render
   let ZT = { manm: [], wol: [], pwoje: [], travay: [], anons: [], dokiman: [] }, NAN = 0, ANV = null, FOK = null;
   const SUB = { pwoje: null, dok: null, edit: false, tf: "mwen" };
@@ -566,7 +566,7 @@
           el("span", { className: "pl " + p[0], textContent: p[1] }));
         r.onclick = () => {
           const kv = el("dl", { className: "dt2" });
-          [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Peman", x.reference ? `${(x.moyen || "").toUpperCase()} · ${x.reference}` : "—"], ["Avans peye", x.total ? SB.goud(x.montant) : null], ["Rete pou peye", +x.rete > 0 ? SB.goud(x.rete) : null], ["Rès la peye", x.rete_peye_le ? `${SB.dat(x.rete_peye_le, { day: "numeric", month: "short" })} · ${(x.rete_moyen || "").toUpperCase()} · ${x.rete_peye_pa || ""}` : null], ["Valide pa", x.valide_par], ["Motif", x.motif], ["Antre", x.scanne_le && SB.dat(x.scanne_le, { timeStyle: "short" })]]
+          [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Peman", x.reference ? `${(x.moyen || "").toUpperCase()} · ${x.reference}` : "—"], ["Enskripsyon peye", x.total ? SB.goud(x.montant) : null], ["Fòmasyon pou peye", +x.rete > 0 ? SB.goud(x.rete) : null], ["Fòmasyon peye", x.rete_peye_le ? `${SB.dat(x.rete_peye_le, { day: "numeric", month: "short" })} · ${(x.rete_moyen || "").toUpperCase()} · ${x.rete_peye_pa || ""}` : null], ["Valide pa", x.valide_par], ["Motif", x.motif], ["Antre", x.scanne_le && SB.dat(x.scanne_le, { timeStyle: "short" })]]
             .forEach(([k, val]) => val && kv.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
           const a = el("div", { className: "act2" });
           if (x.billet && x.billet_statut !== "annule") {
@@ -576,7 +576,7 @@
             if (AK("ranbouse_anile")) a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
           }
           if (+x.rete > 0 && x.statut === "valide" && (AK("valide_peman") || AK("enskri_sou_plas")))
-            [["kach", "Rès la peye (kach)"], ["moncash", "Rès la peye (MonCash)"], ["natcash", "Rès la peye (NatCash)"]].forEach(([m, t]) => a.append(bouton(t, async () => {
+            [["kach", "Fòmasyon peye (kach)"], ["moncash", "Fòmasyon peye (MonCash)"], ["natcash", "Fòmasyon peye (NatCash)"]].forEach(([m, t]) => a.append(bouton(t, async () => {
               if (!confirm(`${x.nom} peye ${SB.goud(x.rete)} (${m})?`)) return;
               await SB.rpc("staf_rete_peye", { p_code: KOD, p_id: x.id, p_moyen: m }); document.getElementById("sh")?.remove(); await chaje(); afiche(); })));
           if (x.statut === "en_attente" && AK("valide_peman")) a.append(metKapti(x, async () => { document.getElementById("sh")?.remove(); await chaje(); afiche(); }));
@@ -1216,13 +1216,13 @@
       <label class="l">Kote</label><input name="lieu"><label class="l">Adrès</label><input name="adresse"><label class="l">Kapasite (plas an tout)</label><input name="capacite" type="number" min="1">
       <label class="l">Lyen gwoup WhatsApp (pou moun ki rezève)</label><input name="lyen_gwoup" type="url" placeholder="https://chat.whatsapp.com/…">
       <label class="l">Estati</label><select name="statut"><option value="ouvert">Louvri</option><option value="ferme">Fèmen</option></select>
-      <h3>Tikè yo</h3><p class="mute small">Non · pri $ · pri goud · avans (vid = peye tout an yon fwa; avans lan pa ranbousab) · kota (kantite plas) · dènye dat vant (vid = pa gen limit). Pou rabè premye yo: yon tikè pi bon mache ak yon kota oswa yon dat. Pou retire yon tikè sou sit la: kite pri goud la vid. Tikè lève-bonè a disparèt pou kont li apre dat la.</p><div id="tps"></div>
+      <h3>Tikè yo</h3><p class="mute small">Non · pri $ · pri goud · frè enskripsyon (peye kounye a, pa ranbousab; rès la peye jou atelye a · vid = tout an yon fwa) · kota (kantite plas) · dènye dat vant (vid = pa gen limit). Pou rabè premye yo: yon tikè pi bon mache ak yon kota oswa yon dat. Pou retire yon tikè sou sit la: kite pri goud la vid. Tikè lève-bonè a disparèt pou kont li apre dat la.</p><div id="tps"></div>
       <button type="button" class="btn sm light" id="tp-plis">+ Yon tip tikè</button>
       <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Anrejistre</button>`;
     f.nom.value = e.nom || "Atelye konferans Atelye AI"; f.date.value = loc(e.date); f.lieu.value = e.lieu || ""; f.adresse.value = e.adresse || ""; f.capacite.value = e.capacite || 100; f.statut.value = e.statut || "ouvert"; f.lyen_gwoup.value = e.lyen_gwoup || "";
     const tps = f.querySelector("#tps");
     const liy = (t = {}) => { const r = el("div", { className: "tp2" });
-      r.innerHTML = `<input placeholder="Non" name="n"><input placeholder="$" name="u" inputmode="decimal"><input placeholder="Goud" name="h" inputmode="numeric"><input placeholder="Avans (goud)" name="a" inputmode="numeric"><input placeholder="Kota" name="q" inputmode="numeric"><input type="datetime-local" name="d">`;
+      r.innerHTML = `<input placeholder="Non" name="n"><input placeholder="$" name="u" inputmode="decimal"><input placeholder="Goud" name="h" inputmode="numeric"><input placeholder="Enskripsyon (goud)" name="a" inputmode="numeric"><input placeholder="Kota" name="q" inputmode="numeric"><input type="datetime-local" name="d">`;
       r.querySelector("[name=a]").value = t.avans_htg ?? "";
       r.dataset.id = t.id || ""; r.querySelector("[name=n]").value = t.nom || ""; r.querySelector("[name=u]").value = t.prix_usd ?? ""; r.querySelector("[name=h]").value = t.prix_htg ?? ""; r.querySelector("[name=q]").value = t.quota ?? ""; r.querySelector("[name=d]").value = loc(t.date_fin_vente);
       tps.append(r); };

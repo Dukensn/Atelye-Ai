@@ -462,7 +462,7 @@
       d.querySelector(".px").innerHTML = `${t.prix_usd ? SB.dola(t.prix_usd) : SB.goud(t.prix_htg)} <s></s> <small></small>`;
       d.querySelector(".px s").textContent = rabè ? SB.dola(max) : "";
       d.querySelector(".px small").textContent = t.prix_usd ? `· ${SB.goud(t.prix_htg)}` : "";
-      if (t.avans_htg) { const a = document.createElement("p"); a.className = "avn"; a.textContent = `Rezève plas ou ak ${SB.goud(t.avans_htg)} sèlman · rès la jou atelye a`; d.querySelector(".px").after(a); }
+      if (t.avans_htg) { const a = document.createElement("p"); a.className = "avn"; a.textContent = `Enskripsyon ${SB.goud(t.avans_htg)} · fòmasyon ${SB.goud(t.prix_htg - t.avans_htg)} jou atelye a`; d.querySelector(".px").after(a); }
       // seats: still available vs already taken, plus a live countdown
       const kota = +t.quota || t.restants, pran = Math.max(0, kota - t.restants);
       const l = d.querySelector(".left");
