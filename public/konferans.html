@@ -227,7 +227,7 @@
   .pyl { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
   .pyl span { font-weight: 700; color: var(--mute); font-size: 14px; } .pyl img { width: 132px; height: auto; border-radius: 8px; }
   @media (max-width: 480px) { header.top nav .kl { display: none; } }
-  .tk2 .avn { margin: 6px 0 0; font-size: 14px; font-weight: 600; color: #e2553f; }
+  .tk2 .avn { margin: 6px 0 0; font-size: 14px; font-weight: 600; color: #e2553f; } .tk2 .avn.pw { color: #15803d; }
 </style>
 </head>
 <body>
@@ -462,7 +462,9 @@
       d.querySelector(".px").innerHTML = `${t.prix_usd ? SB.dola(t.prix_usd) : SB.goud(t.prix_htg)} <s></s> <small></small>`;
       d.querySelector(".px s").textContent = rabè ? SB.dola(max) : "";
       d.querySelector(".px small").textContent = t.prix_usd ? `· ${SB.goud(t.prix_htg)}` : "";
-      if (t.avans_htg) { const a = document.createElement("p"); a.className = "avn"; a.textContent = `Enskripsyon ${SB.goud(t.avans_htg)} · fòmasyon ${SB.goud(t.prix_htg - t.avans_htg)} jou atelye a`; d.querySelector(".px").after(a); }
+      if (t.avans_htg) { const f = t.prix_htg - t.avans_htg, fp = t.premye_rete > 0 ? Math.round(f * t.premye_pousan / 100) : f;
+        const a = document.createElement("p"); a.className = "avn"; a.textContent = `Enskripsyon ${SB.goud(t.avans_htg)} · fòmasyon ${SB.goud(fp)}`; d.querySelector(".px").after(a);
+        if (t.premye_rete > 0) { const g = document.createElement("p"); g.className = "avn pw"; g.textContent = `🎁 ${t.premye_n} premye yo peye fòmasyon an ${t.premye_pousan} % · rete ${t.premye_rete} plas pwomo`; a.after(g); } }
       // seats: still available vs already taken, plus a live countdown
       const kota = +t.quota || t.restants, pran = Math.max(0, kota - t.restants);
       const l = d.querySelector(".left");
