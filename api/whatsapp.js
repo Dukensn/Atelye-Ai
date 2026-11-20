@@ -46,14 +46,22 @@ async function trete(k, b) {
       continue;
     }
     if (ch.field !== "messages") continue;
-    for (const m of v.messages || []) await yonMesaj(k, m, (v.contacts || []).find((c) => c.wa_id === m.from)?.profile?.name);
+    for (const st of v.statuses || []) if (st.status === "failed") console.error("whatsapp: livrezon echwe", st.recipient_id, JSON.stringify(st.errors || []));
+    for (const m of v.messages || []) {
+      console.log(`whatsapp: mesaj ${m.type} soti ${String(m.from).slice(-4)}`);
+      try { await yonMesaj(k, m, (v.contacts || []).find((c) => c.wa_id === m.from)?.profile?.name); }
+      catch (er) { console.error("whatsapp: mesaj echwe", m.type, er.message); }
+    }
   }
 }
 
 async function yonMesaj(k, m, non) {
   const tel = m.from;
   let medya = null;
-  if ((m.type === "image" || m.type === "audio") && k.wa_token) medya = await telechaje(k, m[m.type].id).catch(() => null);
+  if ((m.type === "image" || m.type === "audio") && k.wa_token) {
+    medya = await telechaje(k, m[m.type].id).catch((er) => { console.error("whatsapp: medya", er.message); return null; });
+    console.log(`whatsapp: medya ${m.type} ${medya ? medya.mime + " " + Math.round(medya.b64.length * 0.75 / 1024) + " ko" : "pa rive"}`);
+  }
   const r = await sv("wa_sv_resevwa", { p_tel: tel, p_non: non || null, p_wa_id: m.id, p_teks: teksMesaj(m),
     p_foto: medya && medya.mime === "image/jpeg" ? medya.b64 : null });
   if (r.dub || !k.aktif || !k.wa_token || !k.wa_phone_id) return;
