@@ -119,7 +119,7 @@
   .bad { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--ln2); }
   .bad.valide { background: var(--okb); color: var(--ok); } .bad.refuse, .bad.annule, .bad.rembourse { background: var(--kob); color: var(--ko); }
   .bad.en_attente { background: var(--wab); color: var(--wa); } .bad.utilise { background: #e8eefb; color: #2453b3; }
-  .tp2 { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.6fr; gap: 6px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--ln2); }
+  .tp2 { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.6fr; gap: 6px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--ln2); }
   .tp2 input { padding: 8px 10px; font-size: 14px; } @media (max-width: 700px) { .tp2 { grid-template-columns: 1fr 1fr; } }
   .srch { margin-bottom: 10px; }
   .fot { display: flex; align-items: center; gap: 12px; }
@@ -525,7 +525,7 @@
     const tl = (ik, bg, fg, lab, val, sub, g) => el("div", { className: "kt" }, el("span", { className: "ic", style: `background:${bg};color:${fg}`, innerHTML: ik }),
       el("small", { textContent: lab }), el("b", { className: g ? "g" : "", textContent: val }), sub ? el("em", { textContent: sub }) : null);
     v.append(el("div", { className: "k4" },
-      tl(sv("M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"), "#dcfce7", "#15803d", "Lajan antre", SB.goud(c.recettes_htg), `${c.payes} tikè peye`, true),
+      tl(sv("M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"), "#dcfce7", "#15803d", "Lajan antre", SB.goud(c.recettes_htg), `${c.payes} tikè peye` + (+c.rete_htg > 0 ? ` · ${SB.goud(c.rete_htg)} rete pou kolekte (${c.rete_n})` : ""), true),
       tl(IK.ekip, "#dbeafe", "#1d4ed8", "Enskri", c.inscrits, `${c.sans_paiement} poko peye`),
       tl(IK.file, "#fef3c7", "#b45309", "Peman pou verifye", c.en_attente, c.en_attente ? "Ale nan « Peman »" : "Tout verifye ✓"),
       tl(sv("M3 9h18M3 15h18M9 3v18"), "#f3e8ff", "#7e22ce", "Plas ki rete", restan, `Jou J: ${j.entres} / ${j.attendus} antre`)));
@@ -562,11 +562,11 @@
       const ps = (x) => { const st = x.billet_statut && x.statut === "valide" ? x.billet_statut : x.statut;
         return { valide: ["ok", "Peye"], actif: ["ok", "Tikè aktif"], utilise: ["ok", "Antre"], en_attente: ["at", "An atant"], refuse: ["ko", "Refize"], annule: ["ko", "Anile"], rembourse: ["ko", "Ranbouse"] }[st] || ["at", st]; };
       box.replaceChildren(el("p", { className: "mute small", style: "margin:0 2px 6px", textContent: `${L.length} moun` }), grp(...L.slice(0, 300).map((x) => {
-        const p = ps(x), r = el("button", { type: "button", className: "li" }, ai(x.nom), el("span", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: `${x.code_court} · ${x.type} · ${x.telephone}` })),
+        const p = ps(x), r = el("button", { type: "button", className: "li" }, ai(x.nom), el("span", { className: "tx" }, el("b", { textContent: x.nom }), el("small", { textContent: `${x.code_court} · ${x.type} · ${x.telephone}${+x.rete > 0 ? " · rete " + SB.goud(x.rete) : ""}` })),
           el("span", { className: "pl " + p[0], textContent: p[1] }));
         r.onclick = () => {
           const kv = el("dl", { className: "dt2" });
-          [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Peman", x.reference ? `${(x.moyen || "").toUpperCase()} · ${x.reference}` : "—"], ["Valide pa", x.valide_par], ["Motif", x.motif], ["Antre", x.scanne_le && SB.dat(x.scanne_le, { timeStyle: "short" })]]
+          [["Kòd", x.code_court], ["WhatsApp", x.telephone], ["Tikè", x.type], ["Peman", x.reference ? `${(x.moyen || "").toUpperCase()} · ${x.reference}` : "—"], ["Avans peye", x.total ? SB.goud(x.montant) : null], ["Rete pou peye", +x.rete > 0 ? SB.goud(x.rete) : null], ["Rès la peye", x.rete_peye_le ? `${SB.dat(x.rete_peye_le, { day: "numeric", month: "short" })} · ${(x.rete_moyen || "").toUpperCase()} · ${x.rete_peye_pa || ""}` : null], ["Valide pa", x.valide_par], ["Motif", x.motif], ["Antre", x.scanne_le && SB.dat(x.scanne_le, { timeStyle: "short" })]]
             .forEach(([k, val]) => val && kv.append(el("dt", { textContent: k }), el("dd", { textContent: val })));
           const a = el("div", { className: "act2" });
           if (x.billet && x.billet_statut !== "annule") {
@@ -575,6 +575,10 @@
             if (AK("ranbouse_anile")) a.append(bouton("Anile tikè a", async () => { if (!confirm(`Anile tikè ${x.code_court}?`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: false }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
             if (AK("ranbouse_anile")) a.append(bouton("Ranbouse", async () => { if (!confirm(`Ranbouse ${x.nom}? Tikè a ap anile.`)) return; await SB.rpc("staf_anile", { p_code: KOD, p_id: x.id, p_ranbouse: true }); document.getElementById("sh")?.remove(); await chaje(); afiche(); }, true));
           }
+          if (+x.rete > 0 && x.statut === "valide" && (AK("valide_peman") || AK("enskri_sou_plas")))
+            [["kach", "Rès la peye (kach)"], ["moncash", "Rès la peye (MonCash)"], ["natcash", "Rès la peye (NatCash)"]].forEach(([m, t]) => a.append(bouton(t, async () => {
+              if (!confirm(`${x.nom} peye ${SB.goud(x.rete)} (${m})?`)) return;
+              await SB.rpc("staf_rete_peye", { p_code: KOD, p_id: x.id, p_moyen: m }); document.getElementById("sh")?.remove(); await chaje(); afiche(); })));
           if (x.statut === "en_attente" && AK("valide_peman")) a.append(metKapti(x, async () => { document.getElementById("sh")?.remove(); await chaje(); afiche(); }));
           sheet(x.nom, el("span", { className: "pl " + p[0], textContent: p[1] }), kv, a);
         };
@@ -1212,13 +1216,14 @@
       <label class="l">Kote</label><input name="lieu"><label class="l">Adrès</label><input name="adresse"><label class="l">Kapasite (plas an tout)</label><input name="capacite" type="number" min="1">
       <label class="l">Lyen gwoup WhatsApp (pou moun ki rezève)</label><input name="lyen_gwoup" type="url" placeholder="https://chat.whatsapp.com/…">
       <label class="l">Estati</label><select name="statut"><option value="ouvert">Louvri</option><option value="ferme">Fèmen</option></select>
-      <h3>Tikè yo</h3><p class="mute small">Non · pri $ · pri goud · kota (kantite plas) · dènye dat vant (vid = pa gen limit). Pou rabè premye yo: yon tikè pi bon mache ak yon kota oswa yon dat. Pou retire yon tikè sou sit la: kite pri goud la vid. Tikè lève-bonè a disparèt pou kont li apre dat la.</p><div id="tps"></div>
+      <h3>Tikè yo</h3><p class="mute small">Non · pri $ · pri goud · avans (vid = peye tout an yon fwa; avans lan pa ranbousab) · kota (kantite plas) · dènye dat vant (vid = pa gen limit). Pou rabè premye yo: yon tikè pi bon mache ak yon kota oswa yon dat. Pou retire yon tikè sou sit la: kite pri goud la vid. Tikè lève-bonè a disparèt pou kont li apre dat la.</p><div id="tps"></div>
       <button type="button" class="btn sm light" id="tp-plis">+ Yon tip tikè</button>
       <div class="msg hidden"></div><button class="btn full" style="margin-top:14px">Anrejistre</button>`;
     f.nom.value = e.nom || "Atelye konferans Atelye AI"; f.date.value = loc(e.date); f.lieu.value = e.lieu || ""; f.adresse.value = e.adresse || ""; f.capacite.value = e.capacite || 100; f.statut.value = e.statut || "ouvert"; f.lyen_gwoup.value = e.lyen_gwoup || "";
     const tps = f.querySelector("#tps");
     const liy = (t = {}) => { const r = el("div", { className: "tp2" });
-      r.innerHTML = `<input placeholder="Non" name="n"><input placeholder="$" name="u" inputmode="decimal"><input placeholder="Goud" name="h" inputmode="numeric"><input placeholder="Kota" name="q" inputmode="numeric"><input type="datetime-local" name="d">`;
+      r.innerHTML = `<input placeholder="Non" name="n"><input placeholder="$" name="u" inputmode="decimal"><input placeholder="Goud" name="h" inputmode="numeric"><input placeholder="Avans (goud)" name="a" inputmode="numeric"><input placeholder="Kota" name="q" inputmode="numeric"><input type="datetime-local" name="d">`;
+      r.querySelector("[name=a]").value = t.avans_htg ?? "";
       r.dataset.id = t.id || ""; r.querySelector("[name=n]").value = t.nom || ""; r.querySelector("[name=u]").value = t.prix_usd ?? ""; r.querySelector("[name=h]").value = t.prix_htg ?? ""; r.querySelector("[name=q]").value = t.quota ?? ""; r.querySelector("[name=d]").value = loc(t.date_fin_vente);
       tps.append(r); };
     (D.types.length ? D.types : [{ nom: "Lève-bonè" }, { nom: "Estanda" }]).forEach(liy);
@@ -1226,7 +1231,7 @@
     const iso = (s) => s ? s + ":00-05:00" : "";
     f.onsubmit = async (ev) => { ev.preventDefault(); const m = f.querySelector(".msg"); m.className = "msg hidden";
       try {
-        const types = [...tps.children].map((r, i) => ({ id: r.dataset.id, nom: r.querySelector("[name=n]").value.trim(), prix_usd: r.querySelector("[name=u]").value, prix_htg: r.querySelector("[name=h]").value, quota: Number(r.querySelector("[name=q]").value || 0), date_fin_vente: iso(r.querySelector("[name=d]").value), ordre: i})).filter((t) => t.nom);
+        const types = [...tps.children].map((r, i) => ({ id: r.dataset.id, nom: r.querySelector("[name=n]").value.trim(), prix_usd: r.querySelector("[name=u]").value, prix_htg: r.querySelector("[name=h]").value, avans_htg: r.querySelector("[name=a]").value, quota: Number(r.querySelector("[name=q]").value || 0), date_fin_vente: iso(r.querySelector("[name=d]").value), ordre: i})).filter((t) => t.nom);
         await SB.rpc("staf_evenement", { p_code: KOD, p_evenement: { id: e.id || "", nom: f.nom.value, date: iso(f.date.value), lieu: f.lieu.value, adresse: f.adresse.value, capacite: Number(f.capacite.value), statut: f.statut.value, lyen_gwoup: f.lyen_gwoup.value }, p_types: types });
         m.className = "msg ok"; m.textContent = "Anrejistre ✓"; await chaje(); TAB = "param";
       } catch (er) { m.className = "msg err"; m.textContent = er.message; } };

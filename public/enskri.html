@@ -45,6 +45,7 @@
   .pz { border: 1px solid var(--line); border-radius: 14px; padding: 0 14px; }
   .pr { display: flex; align-items: center; gap: 10px; min-height: 50px; } .pr + .pr { border-top: 1px solid var(--line); }
   .pr span { color: var(--mute); font-size: 14px; width: 74px; flex: none; } .pr b { flex: 1; font-size: 17px; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+  .av { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: #fff7ed; color: #9a3412; font-size: 14px; line-height: 1.45; }
   #p-amt { font-size: 19px; white-space: nowrap; } #p-amt small { font-size: 13px; font-weight: 500; color: var(--mute); }
   .cpy { flex: none; width: 34px; height: 34px; border: 0; border-radius: 9px; background: none; color: var(--mute); display: grid; place-items: center; cursor: pointer; padding: 0; }
   .cpy:hover { background: var(--soft); color: var(--ink); } .cpy.ok { color: #1a9b4a; }
@@ -104,6 +105,7 @@
         <div class="pr"><span id="p-met">MonCash</span><b id="p-nb">—</b><button type="button" class="cpy" data-k="nb" aria-label="Kopye nimewo a"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></div>
         <div class="pr"><span>Non</span><b id="p-ben">—</b></div>
       </div>
+      <p class="av hidden" id="p-av"></p>
       <ol class="stp"><li>Voye montan egzak la sou nimewo a.</li><li>Fè yon <b>kapti ekran</b> konfimasyon an, epi mete l anba a.</li></ol>
       <label class="up" for="kapti" id="up"><input id="kapti" name="kapti" type="file" accept="image/*" class="vh">
         <span class="upi"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></span>
@@ -145,7 +147,8 @@
       l.innerHTML = `<input type="radio" name="tip" value="${t.id}" ${plen || bloke ? "disabled" : ""}> <span><b></b><small></small></span><em></em>`;
       l.querySelector("b").textContent = t.nom;
       l.querySelector("small").textContent = plen ? "Plen" : bloke ? "Poko disponib · ap louvri " + (t.ouvre_le ? SB.dat(t.ouvre_le, { day: "numeric", month: "long" }) : "lè Lève-bonè a fini") : `${t.restants} plas ki rete` + (t.date_fin_vente ? ` · jiska ${SB.dat(t.date_fin_vente, { day: "numeric", month: "long" })}` : "");
-      l.querySelector("em").textContent = SB.goud(t.prix_htg) + (t.prix_usd ? ` · ${SB.dola(t.prix_usd)}` : "");
+      l.querySelector("em").textContent = t.avans_htg ? `Avans ${SB.goud(t.avans_htg)}` : SB.goud(t.prix_htg) + (t.prix_usd ? ` · ${SB.dola(t.prix_usd)}` : "");
+      if (t.avans_htg) l.querySelector("small").textContent += ` · total ${SB.goud(t.prix_htg)}${t.prix_usd ? ` (${SB.dola(t.prix_usd)})` : ""}`;
       return l;
     }));
     const vle = new URLSearchParams(location.search).get("tip");
@@ -154,7 +157,10 @@
   }
   function montrePeman() {
     $("#p-amt").textContent = SB.goud(I.montant);
-    if (I.prix_usd) { const u = document.createElement("small"); u.textContent = SB.dola(I.prix_usd); $("#p-amt").append(" ", u); }
+    const avans = I.rete > 0;
+    if (I.prix_usd && !avans) { const u = document.createElement("small"); u.textContent = SB.dola(I.prix_usd); $("#p-amt").append(" ", u); }
+    $("#p-av").classList.toggle("hidden", !avans);
+    if (avans) $("#p-av").textContent = `Sa a se avans lan pou rezève plas ou. Rès la (${SB.goud(I.rete)}) ap peye apre oswa jou atelye a — total ${SB.goud(I.total)}. Avans lan pa ranbousab.`;
     $("#p-met").textContent = I.moyen === "natcash" ? "NatCash" : "MonCash";
     $("#p-nb").textContent = (I.moyen === "natcash" ? K.natcash : K.moncash) || "—";
     $("#p-ben").textContent = K.benefisye || "—";
