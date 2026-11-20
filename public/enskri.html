@@ -122,10 +122,10 @@
       <label for="non">Non konplè ou</label><input id="non" name="non" type="text" autocomplete="name" maxlength="80" required placeholder="Egz. Marie Joseph">
       <label for="telefon">Nimewo WhatsApp ou</label><input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX" maxlength="20" required>
       <p class="hint">Se sou nimewo sa a w ap resevwa tikè w la.</p>
-      <label>Ki nivo ou?</label>
-      <div class="chp" data-n="nivo"><label><input type="radio" name="nivo" value="Debitan">Debitan</label><label><input type="radio" name="nivo" value="Mwen konn kèk bagay">Mwen konn kèk bagay</label><label><input type="radio" name="nivo" value="Avanse">Avanse</label></div>
-      <label>Kisa w plis vle aprann?</label>
-      <div class="chp" data-n="vle"><label><input type="radio" name="vle" value="Videyo ak AI">Videyo ak AI</label><label><input type="radio" name="vle" value="Facebook Ads">Facebook Ads</label><label><input type="radio" name="vle" value="Tou de">Tou de</label></div>
+      <label>Èske w deja itilize AI tankou ChatGPT oswa Claude?</label>
+      <div class="chp"><label><input type="radio" name="nivo" value="Souvan">Wi, souvan</label><label><input type="radio" name="nivo" value="Kèk fwa">Kèk fwa</label><label><input type="radio" name="nivo" value="Poko janm">Poko janm</label></div>
+      <label>Kisa w vle fè ak sa w ap aprann nan?</label>
+      <div class="chp"><label><input type="radio" name="vle" value="Videyo pou rezo sosyal">Fè videyo pou rezo sosyal</label><label><input type="radio" name="vle" value="Piblisite pou biznis mwen">Fè piblisite pou biznis mwen</label><label><input type="radio" name="vle" value="Vann sèvis la bay lòt moun">Vann sèvis sa a bay lòt moun</label></div>
       <div id="m1" class="msg hidden"></div>
       <button class="btn full" style="margin-top:20px">Swivan →</button>
       <p class="chj"><a href="/billet">Ou enskri deja? Jwenn tikè w la</a></p>
@@ -217,13 +217,13 @@
   const fom = (t) => { const f = t.prix_htg - (t.avans_htg || 0); return t.premye_rete > 0 ? Math.round(f * t.premye_pousan / 100) : f; };
   function fee() {
     if (!T) { $("#f1 button").disabled = true; mesaj($("#m1"), "Enskripsyon yo fèmen."); return; }
-    const F = fom(T), pwomo = T.premye_rete > 0, fen = T.date_fin_vente ? SB.dat(T.date_fin_vente, { day: "numeric", month: "long" }) : "";
+    const F = fom(T), pwomo = T.premye_rete > 0;
     $("#fee").hidden = false;
     $("#fee-a").textContent = SB.goud(T.avans_htg || F);
     $("#fee-s").textContent = T.avans_htg
       ? `Peye l kounye a pou rezève plas ou (pa ranbousab). Fòmasyon an: ${SB.goud(F)}${pwomo ? ` (${T.premye_pousan} %)` : ""}, ou peye l kounye a oswa jou atelye a.`
       : `${T.restants} plas ki rete.`;
-    $("#fee-d").hidden = !fen; $("#fee-d").textContent = `⏰ Enskri avan ${fen}. Pa gen enskripsyon jou atelye a.`;
+    $("#fee-d").hidden = false; $("#fee-d").textContent = `⚠️ Plas yo limite: ${T.restants} plas ki rete. Rezève pa w la kounye a.`;
     $("#fee-p").hidden = !pwomo;
     if (pwomo) $("#fee-p").textContent = `🎁 ${T.premye_n} premye moun ki enskri yo peye fòmasyon an ${T.premye_pousan} % sèlman: ${SB.goud(F)} olye ${SB.goud(T.prix_htg - (T.avans_htg || 0))}. Rete ${T.premye_rete} plas pwomo.`;
     $("#o1").textContent = SB.goud(T.avans_htg || F); $("#o2").textContent = SB.goud((T.avans_htg || 0) + F);

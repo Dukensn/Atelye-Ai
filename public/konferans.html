@@ -475,7 +475,7 @@
       if (plen) cd.textContent = "Tikè sa a fini";
       else if (bloke && t.ouvre_le) { cd.dataset.fen = t.ouvre_le; cd.dataset.pre = "Disponib nan"; cd.dataset.fini = "1"; }
       else if (bloke) cd.textContent = "Ap louvri lè plas Lève-bonè yo fini";
-      else if (t.date_fin_vente) { cd.dataset.fen = t.date_fin_vente; cd.dataset.pre = "Enskripsyon yo fèmen nan"; }
+      else if (t.date_fin_vente) { cd.dataset.fen = t.date_fin_vente; cd.dataset.pre = "Rabè a fini nan"; }
       else if (EVT.date) { cd.dataset.fen = EVT.date; cd.dataset.pre = "Atelye a kòmanse nan"; }
       if (!plen && t.restants <= 10) l.classList.add("lo");
       const btn = d.querySelector(".btn"); btn.textContent = plen ? "Plen" : bloke ? "Poko disponib" : "Rezève";

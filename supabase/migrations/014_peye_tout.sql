@@ -77,6 +77,6 @@ begin
         and (t.date_fin_vente is null or t.date_fin_vente > now())), '[]'::jsonb));
 end $$;
 
--- this event: registrations close before 2 December (Haiti time); the first 5 pay 60 % of the training
-update public.types_billets set date_fin_vente = '2026-12-02 00:00:00-05', premye_n = 5, premye_pousan = 60
+-- this event: the first 5 pay 60 % of the training
+update public.types_billets set premye_n = 5, premye_pousan = 60
   where prix_htg = 6500 and avans_htg = 1000;
