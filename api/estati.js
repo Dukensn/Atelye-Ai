@@ -1,5 +1,5 @@
 import { PEMAN, json, kontni, li, netwaye, paramet } from "../lib/store.js";
-import { resous } from "../lib/resous.js";
+import { resous, telechaje } from "../lib/resous.js";
 
 // The app polls this while the student waits; once accepted it shows the login form (number + password).
 // The id is a random UUID only that phone knows.
@@ -12,6 +12,7 @@ async function konfig() {
 export async function GET(req) {
   const u = new URL(req.url);
   if (u.pathname.endsWith("/konfig") || u.searchParams.has("konfig")) return konfig();
+  if (u.searchParams.has("resous")) return telechaje(req);
   const id = netwaye(new URL(req.url).searchParams.get("id"), 40);
   if (!/^[0-9a-f-]{36}$/.test(id)) return json({ ere: "id" }, 404);
   const e = await li(`enskripsyon/${id}.json`);
