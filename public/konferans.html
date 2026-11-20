@@ -228,6 +228,25 @@
   .pyl span { font-weight: 700; color: var(--mute); font-size: 14px; } .pyl img { width: 132px; height: auto; border-radius: 8px; }
   @media (max-width: 480px) { header.top nav .kl { display: none; } }
   .tk2 .avn { margin: 6px 0 0; font-size: 14px; font-weight: 600; color: #e2553f; } .tk2 .avn.pw { color: #15803d; }
+  /* debit card in 3D, slowly turning on itself */
+  .sl figure.k3 { display: grid; place-items: center; background: radial-gradient(circle at 50% 55%, #ffd34d 0 34%, #f3f2ee 34.5%); perspective: 900px; }
+  .k3s { width: 58%; aspect-ratio: 1.586; transform-style: preserve-3d; }
+  .k3c { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: k3v 9s linear infinite; }
+  .k3f, .k3b { position: absolute; inset: 0; border-radius: 6% / 9.5%; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden;
+    background: linear-gradient(135deg, #1d1d1d, #050505 60%, #222); box-shadow: 0 18px 40px rgba(0,0,0,.35); color: #fff; font: 600 clamp(9px, 2.2vw, 15px)/1 Inter, system-ui, sans-serif; }
+  .k3f::after, .k3b::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.16) 45%, transparent 60%); animation: k3l 9s linear infinite; }
+  .k3b { transform: rotateY(180deg); }
+  .k3f .cp { position: absolute; left: 9%; top: 30%; width: 13%; aspect-ratio: 1.3; border-radius: 18%; background: linear-gradient(135deg, #e9ff6b, #c6f132); box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
+  .k3f .nfc { position: absolute; right: 9%; top: 26%; width: 7%; aspect-ratio: .6; border: .35em solid #fff; border-color: transparent #fff transparent transparent; border-radius: 50%; }
+  .k3f .nb { position: absolute; left: 9%; top: 60%; letter-spacing: .12em; font-size: 1.05em; }
+  .k3f .nm { position: absolute; left: 9%; bottom: 11%; opacity: .75; letter-spacing: .14em; font-size: .8em; }
+  .k3f .lg, .k3b .lg { position: absolute; right: 8%; bottom: 10%; display: flex; } .lg i { width: 1.9em; height: 1.9em; border-radius: 50%; background: #ffc83d; } .lg i + i { margin-left: -.7em; background: rgba(198,241,50,.9); }
+  .k3b .bd { position: absolute; left: 0; right: 0; top: 14%; height: 18%; background: #000; }
+  .k3b .sg { position: absolute; left: 8%; top: 42%; width: 60%; height: 14%; border-radius: 3px; background: repeating-linear-gradient(90deg, #eee 0 6px, #ddd 6px 12px); }
+  .k3b .cv { position: absolute; left: 72%; top: 45%; font-size: .8em; opacity: .85; }
+  @keyframes k3v { from { transform: rotateX(8deg) rotateY(0); } to { transform: rotateX(8deg) rotateY(360deg); } }
+  @keyframes k3l { 0%, 100% { transform: translateX(-60%); } 50% { transform: translateX(60%); } }
+  @media (prefers-reduced-motion: reduce) { .k3c { animation-duration: 40s; } .k3f::after, .k3b::after { animation: none; } }
 </style>
 </head>
 <body>
@@ -285,6 +304,8 @@
     <article class="ko" id="k-videyo">
       <div class="sl" data-auto aria-roledescription="carousel" aria-label="Egzanp videyo">
         <div class="tr">
+          <figure><video src="/egzanp/feyton-1.mp4" poster="/egzanp/feyton-1.jpg" muted loop playsinline preload="none" aria-label="Feyton AI: seri ayisyen"></video><div class="tt"><b>Feyton AI</b><i></i><small>Yon seri ayisyen fèt ak AI</small></div></figure>
+          <figure><video src="/egzanp/banana-1.mp4" poster="/egzanp/banana-1.jpg" muted loop playsinline preload="none" aria-label="Animasyon 3D: Bananito"></video><div class="tt"><b>Animasyon 3D</b><i></i><small>Pèsonaj ki pale, fèt ak AI</small></div></figure>
           <figure><video src="/egzanp/higgsfield-1.mp4" poster="/egzanp/higgsfield-1.jpg" muted loop playsinline preload="none" aria-label="Videyo AI: Fim sinema ak Higgsfield"></video><div class="tt"><b>Videyo AI</b><i></i><small>Fim sinema ak Higgsfield</small></div></figure>
           <figure><video src="/egzanp/myel-1.mp4" poster="/egzanp/myel-1.jpg" muted loop playsinline preload="none" aria-label="What if?: Pa gen myèl sou tè a"></video><div class="tt"><b>What if?</b><i></i><small>Pa gen myèl sou tè a</small></div></figure>
           <figure><video src="/egzanp/stickman-1.mp4" poster="/egzanp/stickman-1.jpg" muted loop playsinline preload="none" aria-label="Animasyon: Istwa Ayiti"></video><div class="tt"><b>Animasyon</b><i></i><small>Istwa Ayiti</small></div></figure>
@@ -330,10 +351,50 @@
       </div>
     </article>
 
+    <article class="ko" id="k-pratik">
+      <div class="sl" data-auto aria-roledescription="carousel" aria-label="Pratik">
+        <div class="tr">
+          <figure><video src="/egzanp/motion-2.mp4" poster="/egzanp/motion-2.jpg" muted loop playsinline preload="none" aria-label="Pratik: reklam videyo"></video><div class="tt"><b>Pratik</b><i></i><small>Ou fè pa w la, sou telefòn ou</small></div></figure>
+          <figure><video src="/egzanp/marketing-1.mp4" poster="/egzanp/marketing-1.jpg" muted loop playsinline preload="none" aria-label="Pratik: kanpay Facebook"></video><div class="tt"><b>Kanpay</b><i></i><small>Lanse l ansanm ak nou</small></div></figure>
+        </div>
+      </div>
+      <div>
+        <div class="no">13h15 – 14h45<span class="st">PRATIK</span></div>
+        <h3>Pratik: videyo ak piblisite pa w</h3>
+        <p>Ou pa sèlman gade: ou kreye pwòp videyo w pou biznis ou oswa chèn ou, epi ou prepare kanpay Facebook li, avèk nou bò kote w pou korije ak konseye w.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kreye yon videyo konplè ak AI, depi ide a rive nan montaj la</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Transfòme l an reklam ki fè moun aji</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Prepare kanpay Facebook la: odyans, bidjè, mesaj</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Kesyon ak repons sou pwojè pa w</li>
+        </ul>
+        <a class="btn" href="/enskri">Rezève</a>
+      </div>
+    </article>
+
+    <article class="ko" id="k-oto">
+      <div class="sl">
+        <div class="tr">
+          <figure><video src="/egzanp/oto-1.mp4" poster="/egzanp/oto-1.jpg" muted loop playsinline preload="none" aria-label="Otomatizasyon"></video><div class="tt"><b>Bonis</b><i></i><small>Kite AI reponn kliyan ou</small></div></figure>
+        </div>
+      </div>
+      <div>
+        <div class="no">14h45 – 15h15</div>
+        <h3>Bonis: otomatize repons yo</h3>
+        <p>Yon apèsi sou kijan pou kite AI reponn kliyan ou yo sou WhatsApp pandan w ap travay sou lòt bagay.</p>
+        <a class="btn" href="/enskri">Rezève</a>
+      </div>
+    </article>
+
     <article class="ko" id="k-kat">
       <div class="sl">
         <div class="tr">
-          <figure><img src="/art/kat.jpg" alt="Kat debi vityèl" loading="lazy"></figure>
+          <figure class="k3"><div class="k3s" role="img" aria-label="Kat debi vityèl ki ap vire">
+            <div class="k3c">
+              <div class="k3f"><span class="cp"></span><span class="nfc"></span><span class="nb">••••  ••••  ••••  4821</span><span class="nm">ATELYE AI</span><span class="lg"><i></i><i></i></span></div>
+              <div class="k3b"><span class="bd"></span><span class="sg"></span><span class="cv">CVV •••</span><span class="lg"><i></i><i></i></span></div>
+            </div>
+          </div></figure>
         </div>
       </div>
       <div>
