@@ -1,4 +1,5 @@
 import { PEMAN, json, kontni, li, netwaye, paramet } from "../lib/store.js";
+import { resous } from "../lib/resous.js";
 
 // The app polls this while the student waits; once accepted it shows the login form (number + password).
 // The id is a random UUID only that phone knows.
@@ -22,4 +23,10 @@ export async function GET(req) {
     ...(paye ? { kominote: (await kontni()).lyen_kominote } : {}),
     telefon: e.telefon,
   });
+}
+
+// /api/resous (vercel.json rewrite): team resources, see lib/resous.js
+export async function POST(req) {
+  if (new URL(req.url).searchParams.has("resous")) return resous(req);
+  return json({ ere: "non" }, 404);
 }
