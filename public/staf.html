@@ -1193,7 +1193,8 @@
         el("li", { textContent: "Verify token: kole kòd sa a:" }), kopi(K.verify_token),
         el("li", { textContent: "Webhook fields: koche « messages » (ak « smb_message_echoes » si w kenbe aplikasyon WhatsApp Business la)." })),
       el("div", { className: "act2" }, bouton("Teste koneksyon WhatsApp", async () => { const r = await waApi("tcheke");
-        res.textContent = r.ok ? `✓ Konekte: ${r.non || ""} ${r.nimewo || ""}${r.kalite ? " · kalite " + r.kalite : ""}` : "✗ " + r.ere; }, true)), res);
+        const ab = r.abone?.kont ? (r.abone.kont.every((x) => x.ok) ? " · ✓ Mesaj yo ap rive" : " · ✗ Abònman: " + (r.abone.kont.find((x) => !x.ok)?.ere || "echwe")) : r.abone?.ere ? " · ✗ " + r.abone.ere : "";
+        res.textContent = r.ok ? `✓ Konekte: ${r.non || ""} ${r.nimewo || ""}${r.kalite ? " · kalite " + r.kalite : ""}${ab}` : "✗ " + r.ere; }, true)), res);
     v.append(f, kon);
   }
 

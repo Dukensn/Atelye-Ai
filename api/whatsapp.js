@@ -107,10 +107,27 @@ async function ekip(req) {
       if (!k.wa_token || !k.wa_phone_id) return json({ ok: false, ere: "Token oswa Phone number ID manke." });
       const r = await fetch(`https://graph.facebook.com/v22.0/${k.wa_phone_id}?fields=display_phone_number,verified_name,quality_rating`, { headers: { authorization: `Bearer ${k.wa_token}` } });
       const d = await r.json().catch(() => ({}));
-      return r.ok ? json({ ok: true, nimewo: d.display_phone_number, non: d.verified_name, kalite: d.quality_rating }) : json({ ok: false, ere: d.error?.message || "Meta refize." });
+      if (!r.ok) return json({ ok: false, ere: d.error?.message || "Meta refize." });
+      return json({ ok: true, nimewo: d.display_phone_number, non: d.verified_name, kalite: d.quality_rating, abone: await abone(k).catch((er) => ({ ere: er.message })) });
     }
     return json({ ere: "Aksyon inkoni." }, 400);
   } catch (er) { return json({ ere: er.message }, 500); }
+}
+
+// Meta only forwards a WhatsApp account's messages to apps that account is subscribed to.
+// The token's own scopes name the account(s); subscribe each one (idempotent).
+async function abone(k) {
+  const G = "https://graph.facebook.com/v22.0", h = { authorization: `Bearer ${k.wa_token}` };
+  const dt = await (await fetch(`${G}/debug_token?input_token=${encodeURIComponent(k.wa_token)}`, { headers: h })).json().catch(() => ({}));
+  const ids = [...new Set((dt.data?.granular_scopes || []).filter((s) => s.scope.startsWith("whatsapp_business")).flatMap((s) => s.target_ids || []))];
+  if (!ids.length) return { ere: "Token an pa bay aksè a okenn kont WhatsApp." };
+  const rez = [];
+  for (const id of ids) {
+    const r = await fetch(`${G}/${id}/subscribed_apps`, { method: "POST", headers: h });
+    const d = await r.json().catch(() => ({}));
+    rez.push({ id, ok: r.ok && d.success !== false, ere: d.error?.message });
+  }
+  return { kont: rez };
 }
 
 async function ajanEkip(b) {
