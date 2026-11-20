@@ -90,6 +90,8 @@
   .opt span { flex: 1; } .opt b { display: block; font-size: 15.5px; } .opt small { color: var(--mute); font-size: 13px; } .opt em { font-style: normal; font-weight: 800; font-size: 17px; white-space: nowrap; }
   .ok3 { width: 56px; height: 56px; margin: 4px auto 0; border-radius: 50%; background: #1a9b4a; color: #fff; display: grid; place-items: center; font-size: 28px; font-weight: 800; }
   .sek { text-align: center; color: var(--mute); font-size: 13px; margin: 14px 0 0; } .sek a { color: var(--mute); }
+  .pwo { margin: 10px 0 0; padding: 11px 14px; border-radius: 12px; background: #ecfdf3; color: #166534; font-size: 14px; font-weight: 600; line-height: 1.45; }
+  .dl { margin: 8px 0 0; padding: 11px 14px; border-radius: 12px; background: #fff7ed; color: #9a3412; font-size: 14px; font-weight: 600; line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -114,6 +116,8 @@
         <span>Frè enskripsyon</span><b id="fee-a">—</b>
         <small id="fee-s"></small>
       </div>
+      <p class="pwo" id="fee-p" hidden></p>
+      <p class="dl" id="fee-d" hidden></p>
       <div id="tip-w" hidden><label>Ki tikè?</label><div id="tip" class="tip"></div></div>
       <label for="non">Non konplè ou</label><input id="non" name="non" type="text" autocomplete="name" maxlength="80" required placeholder="Egz. Marie Joseph">
       <label for="telefon">Nimewo WhatsApp ou</label><input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="3X XX XXXX" maxlength="20" required>
@@ -132,7 +136,7 @@
       <label style="margin-top:0">Konbyen w ap peye kounye a?</label>
       <div class="opt" id="opt">
         <label><input type="radio" name="kob" value="enskri" checked><span><b>Frè enskripsyon an sèlman</b><small id="o1s"></small></span><em id="o1"></em></label>
-        <label><input type="radio" name="kob" value="tout"><span><b>Tout kounye a</b><small>Enskripsyon + fòmasyon · pa gen anyen pou peye jou atelye a</small></span><em id="o2"></em></label>
+        <label><input type="radio" name="kob" value="tout"><span><b>Tout kounye a</b><small>Enskripsyon + fòmasyon · anyen pou peye jou atelye a</small></span><em id="o2"></em></label>
       </div>
       <label>Ak kisa?</label>
       <div class="mt2 pm"><label><input type="radio" name="metod" value="moncash" checked><img src="/art/peye-moncash.svg" alt="Peye ak MonCash" width="200" height="50"></label><label><input type="radio" name="metod" value="natcash"><img src="/art/natcash.svg" alt="Peye ak NatCash" width="200" height="50"></label></div>
@@ -209,15 +213,21 @@
     }
     fee();
   }
+  // training price after the launch offer (first N registrations pay P %); the server applies the same rule
+  const fom = (t) => { const f = t.prix_htg - (t.avans_htg || 0); return t.premye_rete > 0 ? Math.round(f * t.premye_pousan / 100) : f; };
   function fee() {
-    if (!T) { $("#f1 button").disabled = true; mesaj($("#m1"), "Pa gen plas ankò."); return; }
+    if (!T) { $("#f1 button").disabled = true; mesaj($("#m1"), "Enskripsyon yo fèmen."); return; }
+    const F = fom(T), pwomo = T.premye_rete > 0, fen = T.date_fin_vente ? SB.dat(T.date_fin_vente, { day: "numeric", month: "long" }) : "";
     $("#fee").hidden = false;
-    $("#fee-a").textContent = SB.goud(T.avans_htg || T.prix_htg);
+    $("#fee-a").textContent = SB.goud(T.avans_htg || F);
     $("#fee-s").textContent = T.avans_htg
-      ? `Peye kounye a pou rezève plas ou. Pri fòmasyon an se ${SB.goud(T.prix_htg - T.avans_htg)}: ou peye l jou atelye a, oswa kounye a si w vle. Frè enskripsyon an pa ranbousab. ${T.restants} plas ki rete.`
-      : `Pri konplè atelye a. ${T.restants} plas ki rete.`;
-    $("#o1").textContent = SB.goud(T.avans_htg || T.prix_htg); $("#o2").textContent = SB.goud(T.prix_htg);
-    $("#o1s").textContent = T.avans_htg ? `Fòmasyon an (${SB.goud(T.prix_htg - T.avans_htg)}) peye jou atelye a` : "";
+      ? `Peye l kounye a pou rezève plas ou (pa ranbousab). Fòmasyon an: ${SB.goud(F)}${pwomo ? ` (${T.premye_pousan} %)` : ""}, ou peye l kounye a oswa jou atelye a.`
+      : `${T.restants} plas ki rete.`;
+    $("#fee-d").hidden = !fen; $("#fee-d").textContent = `⏰ Enskri avan ${fen}. Pa gen enskripsyon jou atelye a.`;
+    $("#fee-p").hidden = !pwomo;
+    if (pwomo) $("#fee-p").textContent = `🎁 ${T.premye_n} premye moun ki enskri yo peye fòmasyon an ${T.premye_pousan} % sèlman: ${SB.goud(F)} olye ${SB.goud(T.prix_htg - (T.avans_htg || 0))}. Rete ${T.premye_rete} plas pwomo.`;
+    $("#o1").textContent = SB.goud(T.avans_htg || F); $("#o2").textContent = SB.goud((T.avans_htg || 0) + F);
+    $("#o1s").textContent = T.avans_htg ? `Fòmasyon an (${SB.goud(F)}) peye jou atelye a` : "";
     $("#opt").hidden = !T.avans_htg;
     $("#opt").previousElementSibling.hidden = !T.avans_htg;
   }
