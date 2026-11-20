@@ -103,6 +103,11 @@ async function ekip(req) {
       } });
       return json(rep);
     }
+    if (b.aksyon === "abone") {
+      const waba = String(b.waba || "").replace(/\D/g, "");
+      if (!waba || !k.wa_token) return json({ ere: "Mete ID kont WhatsApp la (WABA ID)." }, 400);
+      return json({ ok: true, abone: await abone(k, waba).catch((er) => ({ ere: er.message })) });
+    }
     if (b.aksyon === "tcheke") {
       if (!k.wa_token || !k.wa_phone_id) return json({ ok: false, ere: "Token oswa Phone number ID manke." });
       const r = await fetch(`https://graph.facebook.com/v22.0/${k.wa_phone_id}?fields=display_phone_number,verified_name,quality_rating`, { headers: { authorization: `Bearer ${k.wa_token}` } });
@@ -116,10 +121,11 @@ async function ekip(req) {
 
 // Meta only forwards a WhatsApp account's messages to apps that account is subscribed to.
 // The token's own scopes name the account(s); subscribe each one (idempotent).
-async function abone(k) {
+async function abone(k, waba) {
   const G = "https://graph.facebook.com/v22.0", h = { authorization: `Bearer ${k.wa_token}` };
   const get = async (p, hd = h) => (await fetch(`${G}/${p}`, { headers: hd })).json().catch(() => ({}));
-  const ids = new Set();
+  const ids = new Set(waba ? [waba] : []);
+  if (waba) return abonnKont(G, h, ids);
   // 1. the token's scopes name the accounts (needs an app token to read them reliably)
   const app = k.app_secret ? { authorization: `Bearer ${(await get("app?fields=id")).id || ""}|${k.app_secret}` } : h;
   const dt = await get(`debug_token?input_token=${encodeURIComponent(k.wa_token)}`, app.authorization.startsWith("Bearer |") ? h : app);
@@ -132,7 +138,11 @@ async function abone(k) {
         if (!k.wa_phone_id || (w.phone_numbers?.data || []).some((p) => p.id === k.wa_phone_id)) ids.add(w.id);
     }
   }
-  if (!ids.size) return { ere: "Pa jwenn kont WhatsApp la ak token sa a" + (dt.error?.message ? ` (${dt.error.message})` : "") + "." };
+  if (!ids.size) return { manke_waba: true, ere: "Pa jwenn kont WhatsApp la otomatikman" + (dt.error?.message ? ` (${dt.error.message})` : "") + ". Mete WABA ID a anba a." };
+  return abonnKont(G, h, ids);
+}
+
+async function abonnKont(G, h, ids) {
   const rez = [];
   for (const id of ids) {
     const r = await fetch(`${G}/${id}/subscribed_apps`, { method: "POST", headers: h });

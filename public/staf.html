@@ -1187,6 +1187,11 @@
       try { await SB.rpc("staf_wa_konfig_mete", { p_code: KOD, p: { gemini_kle: f.gemini_kle.value, gemini_model: f.gemini_model.value.trim(), wa_phone_id: f.wa_phone_id.value, wa_token: f.wa_token.value, app_secret: f.app_secret.value, enstriksyon: f.enstriksyon.value, mo_relais: f.mo_relais.value } });
         m.className = "msg ok"; m.textContent = "Anrejistre ✓"; setTimeout(() => afiche(), 900); } catch (e) { m.className = "msg err"; m.textContent = e.message; } };
     const res = el("div", { className: "mute small" });
+    // fallback when the token doesn't reveal the WhatsApp account: subscribe it by its id
+    const wi = el("input", { inputMode: "numeric", placeholder: "WhatsApp Business Account ID" }), wr = el("p", { className: "msg" });
+    const wb = el("div", { className: "hidden", style: "margin-top:10px" }, el("label", { className: "l", textContent: "ID kont WhatsApp la (WhatsApp Manager → Account overview)" }), wi,
+      el("div", { className: "act2" }, bouton("Abòne kont lan", async () => { const r = await waApi("abone", { waba: wi.value });
+        const x = r.abone?.kont?.[0]; wr.textContent = x?.ok ? "✓ Mesaj yo ap rive" : "✗ " + (x?.ere || r.abone?.ere || r.ere || "echwe"); })), wr);
     const kon = el("div", { className: "card", style: "padding:18px;margin-top:12px" }, el("h3", { style: "margin-top:0", textContent: "Konekte Meta" }),
       el("ol", { className: "gid" }, el("li", { textContent: "developers.facebook.com → app Atelye AI → WhatsApp → Configuration." }),
         el("li", { textContent: "Callback URL: kole adrès sa a:" }), kopi(hook),
@@ -1194,7 +1199,8 @@
         el("li", { textContent: "Webhook fields: koche « messages » (ak « smb_message_echoes » si w kenbe aplikasyon WhatsApp Business la)." })),
       el("div", { className: "act2" }, bouton("Teste koneksyon WhatsApp", async () => { const r = await waApi("tcheke");
         const ab = r.abone?.kont ? (r.abone.kont.every((x) => x.ok) ? " · ✓ Mesaj yo ap rive" : " · ✗ Abònman: " + (r.abone.kont.find((x) => !x.ok)?.ere || "echwe")) : r.abone?.ere ? " · ✗ " + r.abone.ere : "";
-        res.textContent = r.ok ? `✓ Konekte: ${r.non || ""} ${r.nimewo || ""}${r.kalite ? " · kalite " + r.kalite : ""}${ab}` : "✗ " + r.ere; }, true)), res);
+        res.textContent = r.ok ? `✓ Konekte: ${r.non || ""} ${r.nimewo || ""}${r.kalite ? " · kalite " + r.kalite : ""}${ab}` : "✗ " + r.ere;
+        wb.classList.toggle("hidden", !r.abone?.manke_waba); }, true)), res, wb);
     v.append(f, kon);
   }
 
